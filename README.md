@@ -1,0 +1,2 @@
+# flunky
+Source generator
