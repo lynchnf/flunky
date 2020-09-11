@@ -1,2 +1,3 @@
-# flunky
+# Flunky
+
 Source generator
