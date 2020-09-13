@@ -15,7 +15,7 @@
     </parent>
 
     <name>${artifactId?replace("-", " ")?capitalize}</name>
-    <description>${description}</description>
+<#if description??>    <description>${description}</description></#if>
 
     <properties>
         <java.version>1.8</java.version>

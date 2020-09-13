@@ -19,18 +19,39 @@ public class ${entityName} {
     @Version
     private Integer version = 0;
 <#list fields as field>
-<#if temporal??>   @Temporal(TemporalType.${temporal})</#if>
-    @Column(length = ${length}, precision = ${precision}, scale = ${scale}, nullable = ${nullable})
-    private ${field.type} ${field.fieldName};
+<#if field.temporal??>    @Temporal(TemporalType.${field.temporal})
+</#if><#assign myParms = [] />
+<#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
+<#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
+<#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
+<#if field.nullable??><#assign myParms = myParms + [ "nullable = ${field.nullable}" ] /></#if>
+<#list myParms>    @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
+</#list>    private ${field.type} ${field.fieldName};
 </#list>
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 <#list fields as field>
 
     public ${field.type} get${field.fieldName?cap_first}() {
-    return ${field.fieldName};
+        return ${field.fieldName};
     }
 
     public void set${field.fieldName?cap_first}(${field.type} ${field.fieldName}) {
-    this.${field.fieldName} = ${field.fieldName};
+        this.${field.fieldName} = ${field.fieldName};
     }
 </#list>
 }

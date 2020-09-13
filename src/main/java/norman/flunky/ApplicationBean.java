@@ -2,6 +2,7 @@ package norman.flunky;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,9 +107,9 @@ public class ApplicationBean {
                     Map<String, String> dataRow = new LinkedHashMap<>();
                     for (int i = 0; i < headingRow.length; i++) {
                         if (i < row.length) {
-                            dataRow.put(headingRow[i], row[i]);
+                            dataRow.put(StringUtils.trimToNull(headingRow[i]), StringUtils.trimToNull(row[i]));
                         } else {
-                            dataRow.put(headingRow[i], null);
+                            dataRow.put(StringUtils.trimToNull(headingRow[i]), null);
                         }
                     }
                     dataMaps.add(dataRow);
