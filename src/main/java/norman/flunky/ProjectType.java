@@ -23,16 +23,53 @@ public enum ProjectType {
         genBeans.add(
                 new GenerationBean("bootstrap-4.4.1.min.js", "/src/main/resources/static/js/bootstrap-4.4.1.min.js",
                         COPY));
+        genBeans.add(new GenerationBean("common.js", "/src/main/resources/static/js/common.js", COPY));
         genBeans.add(new GenerationBean("dashboardController-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/DashboardController.java", GENERATE));
+        genBeans.add(
+                new GenerationBean("fa-brands-400.eot", "/src/main/resources/static/webfonts/fa-brands-400.eot", COPY));
+        genBeans.add(
+                new GenerationBean("fa-brands-400.svg", "/src/main/resources/static/webfonts/fa-brands-400.svg", COPY));
+        genBeans.add(
+                new GenerationBean("fa-brands-400.ttf", "/src/main/resources/static/webfonts/fa-brands-400.ttf", COPY));
+        genBeans.add(new GenerationBean("fa-brands-400.woff", "/src/main/resources/static/webfonts/fa-brands-400.woff",
+                COPY));
+        genBeans.add(
+                new GenerationBean("fa-brands-400.woff2", "/src/main/resources/static/webfonts/fa-brands-400.woff2",
+                        COPY));
+        genBeans.add(new GenerationBean("fa-regular-400.eot", "/src/main/resources/static/webfonts/fa-regular-400.eot",
+                COPY));
+        genBeans.add(new GenerationBean("fa-regular-400.svg", "/src/main/resources/static/webfonts/fa-regular-400.svg",
+                COPY));
+        genBeans.add(new GenerationBean("fa-regular-400.ttf", "/src/main/resources/static/webfonts/fa-regular-400.ttf",
+                COPY));
+        genBeans.add(
+                new GenerationBean("fa-regular-400.woff", "/src/main/resources/static/webfonts/fa-regular-400.woff",
+                        COPY));
+        genBeans.add(
+                new GenerationBean("fa-regular-400.woff2", "/src/main/resources/static/webfonts/fa-regular-400.woff2",
+                        COPY));
+        genBeans.add(
+                new GenerationBean("fa-solid-900.eot", "/src/main/resources/static/webfonts/fa-solid-900.eot", COPY));
+        genBeans.add(
+                new GenerationBean("fa-solid-900.svg", "/src/main/resources/static/webfonts/fa-solid-900.svg", COPY));
+        genBeans.add(
+                new GenerationBean("fa-solid-900.ttf", "/src/main/resources/static/webfonts/fa-solid-900.ttf", COPY));
+        genBeans.add(
+                new GenerationBean("fa-solid-900.woff", "/src/main/resources/static/webfonts/fa-solid-900.woff", COPY));
+        genBeans.add(new GenerationBean("fa-solid-900.woff2", "/src/main/resources/static/webfonts/fa-solid-900.woff2",
+                COPY));
         genBeans.add(new GenerationBean("fontawesome-free-5.14.0.min.css",
                 "/src/main/resources/static/css/fontawesome-free-5.14.0.min.css", COPY));
         genBeans.add(new GenerationBean("index-html.ftl", "/src/main/resources/templates/index.html", GENERATE));
+        genBeans.add(
+                new GenerationBean("jquery-3.5.1.min.js", "/src/main/resources/static/js/jquery-3.5.1.min.js", COPY));
         genBeans.add(new GenerationBean("listForm-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/view/ListForm.java", GENERATE));
         genBeans.add(new GenerationBean("logback-xml.ftl", "/src/main/resources/logback.xml", GENERATE));
         genBeans.add(new GenerationBean("loggingException-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/LoggingException.java", GENERATE));
+        genBeans.add(new GenerationBean("main.css", "/src/main/resources/static/css/main.css", COPY));
         genBeans.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
         return genBeans;
     }
