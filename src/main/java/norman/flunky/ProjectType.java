@@ -14,6 +14,7 @@ public enum ProjectType {
 
     public List<GenerationBean> getApplicationGenerationProperties() {
         List<GenerationBean> genBeans = new ArrayList<>();
+        genBeans.add(new GenerationBean("alerts.html", "/src/main/resources/templates/fragments/alerts.html", COPY));
         genBeans.add(new GenerationBean("application-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/Application.java", GENERATE));
         genBeans.add(new GenerationBean("application-properties", "/src/main/resources/application.properties", COPY));
@@ -26,6 +27,7 @@ public enum ProjectType {
         genBeans.add(new GenerationBean("common.js", "/src/main/resources/static/js/common.js", COPY));
         genBeans.add(new GenerationBean("dashboardController-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/DashboardController.java", GENERATE));
+        genBeans.add(new GenerationBean("error.html", "/src/main/resources/templates/error.html", COPY));
         genBeans.add(
                 new GenerationBean("fa-brands-400.eot", "/src/main/resources/static/webfonts/fa-brands-400.eot", COPY));
         genBeans.add(
@@ -61,6 +63,9 @@ public enum ProjectType {
                 COPY));
         genBeans.add(new GenerationBean("fontawesome-free-5.14.0.min.css",
                 "/src/main/resources/static/css/fontawesome-free-5.14.0.min.css", COPY));
+        genBeans.add(new GenerationBean("footer.html", "/src/main/resources/templates/fragments/footer.html", COPY));
+        genBeans.add(
+                new GenerationBean("head-html.ftl", "/src/main/resources/templates/fragments/head.html", GENERATE));
         genBeans.add(new GenerationBean("index-html.ftl", "/src/main/resources/templates/index.html", GENERATE));
         genBeans.add(
                 new GenerationBean("jquery-3.5.1.min.js", "/src/main/resources/static/js/jquery-3.5.1.min.js", COPY));
@@ -70,7 +75,11 @@ public enum ProjectType {
         genBeans.add(new GenerationBean("loggingException-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/LoggingException.java", GENERATE));
         genBeans.add(new GenerationBean("main.css", "/src/main/resources/static/css/main.css", COPY));
+        genBeans.add(
+                new GenerationBean("menu-html.ftl", "/src/main/resources/templates/fragments/menu.html", GENERATE));
         genBeans.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
+        genBeans.add(
+                new GenerationBean("popper-1.16.1.min.js", "/src/main/resources/static/js/popper-1.16.1.min.js", COPY));
         return genBeans;
     }
 
@@ -80,6 +89,8 @@ public enum ProjectType {
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName}.java", GENERATE));
         genBeans.add(new GenerationBean("entityController-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName}Controller.java",
+                GENERATE));
+        genBeans.add(new GenerationBean("entityList-html.ftl", "/src/main/resources/templates/${entityName}.html",
                 GENERATE));
         genBeans.add(new GenerationBean("entityListForm-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListForm.java",

@@ -1,3 +1,5 @@
+application.version=@project.version@
+#
 # Error page stuff.
 server.error.whitelabel.enabled=false
 server.error.include-exception=true
