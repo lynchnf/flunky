@@ -17,7 +17,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown">${entity.plural?capitalize}</a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" th:href="@{/${entity.entityName?uncap_first}List}">${entity.singular?capitalize} List</a>
+                        <a class="dropdown-item" th:href="@{/${entity.entityName}List}">${entity.singular?capitalize} List</a>
                     </div>
                 </li>
 </#list>

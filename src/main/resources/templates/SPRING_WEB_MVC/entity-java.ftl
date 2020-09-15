@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-public class ${entityName} {
+public class ${entityName?cap_first} {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

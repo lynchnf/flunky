@@ -1,23 +1,23 @@
 package ${application.basePackage}.web.view;
 
-import ${application.basePackage}.domain.${entityName};
+import ${application.basePackage}.domain.${entityName?cap_first};
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ${entityName}ListForm extends ListForm<${entityName}> {
-    private List<${entityName}View> rows = new ArrayList<>();
+public class ${entityName?cap_first}ListForm extends ListForm<${entityName?cap_first}> {
+    private List<${entityName?cap_first}View> rows = new ArrayList<>();
 
-    public ${entityName}ListForm(Page<${entityName}> innerPage) {
+    public ${entityName?cap_first}ListForm(Page<${entityName?cap_first}> innerPage) {
         super(innerPage);
-        for (${entityName} entity : innerPage.getContent()) {
-            ${entityName}View row = new ${entityName}View(entity);
+        for (${entityName?cap_first} entity : innerPage.getContent()) {
+            ${entityName?cap_first}View row = new ${entityName?cap_first}View(entity);
             rows.add(row);
         }
     }
 
-    public List<${entityName}View> getRows() {
+    public List<${entityName?cap_first}View> getRows() {
         return rows;
     }
 }

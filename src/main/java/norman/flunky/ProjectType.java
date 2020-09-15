@@ -86,23 +86,24 @@ public enum ProjectType {
     public List<GenerationBean> getEntityGenerationProperties() {
         List<GenerationBean> genBeans = new ArrayList<>();
         genBeans.add(new GenerationBean("entity-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName}.java", GENERATE));
-        genBeans.add(new GenerationBean("entityController-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName}Controller.java",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName?cap_first}.java",
                 GENERATE));
-        genBeans.add(new GenerationBean("entityList-html.ftl", "/src/main/resources/templates/${entityName}.html",
+        genBeans.add(new GenerationBean("entityController-java.ftl",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName?cap_first}Controller.java",
+                GENERATE));
+        genBeans.add(new GenerationBean("entityList-html.ftl", "/src/main/resources/templates/${entityName}List.html",
                 GENERATE));
         genBeans.add(new GenerationBean("entityListForm-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListForm.java",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}ListForm.java",
                 GENERATE));
         genBeans.add(new GenerationBean("entityRepository-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/repository/${entityName}Repository.java",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/repository/${entityName?cap_first}Repository.java",
                 GENERATE));
         genBeans.add(new GenerationBean("entityService-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName}Service.java",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName?cap_first}Service.java",
                 GENERATE));
         genBeans.add(new GenerationBean("entityView-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}View.java",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}View.java",
                 GENERATE));
         return genBeans;
     }

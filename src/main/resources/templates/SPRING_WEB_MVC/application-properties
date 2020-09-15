@@ -1,5 +1,8 @@
 application.version=@project.version@
 #
+# Get messages (such as application.version) from this properties file.
+spring.messages.basename=application
+#
 # Error page stuff.
 server.error.whitelabel.enabled=false
 server.error.include-exception=true
