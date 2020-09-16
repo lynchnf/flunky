@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class ${entityName?cap_first}Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(${entityName?cap_first}Controller.class);
     private static final String defaultSortColumn = "id";
-    private static final String[] sortableColumns = {<#list fields as field>"${field.fieldName}"<#sep>, </#sep></#list>};
+    private static final String[] sortableColumns = {<#list fields?filter(f -> f.sortable?? && f.sortable == "true") as field>"${field.fieldName}"<#sep>, </#sep></#list>};
     @Autowired
     private ${entityName?cap_first}Service service;
 
