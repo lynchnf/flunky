@@ -61,15 +61,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="row:${listForm.rows}">
+            <tr th:each="row:${r"${listForm.rows}"}">
                 <td></td>
-                <td><a th:href="@{/acct(id=${row.id})}" th:text="${row.name}"></a></td>
-                <td th:text="${row.type}"></td>
-                <td th:text="${#numbers.formatCurrency(row.creditLimit)}"></td>
-                <td th:text="${row.number}"></td>
-                <td th:text="${#dates.format(row.effDate,'M/d/yyyy')}"></td>
-                <td th:text="${#numbers.formatCurrency(row.balance)}"></td>
-                <td th:text="${#dates.format(row.lastTranDate,'M/d/yyyy')}"></td>
+<#list fields as field>
+<#if field.fieldName == mainColumn>
+                <td><a th:href="@{/acct(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}"></a></td>
+<#else>
+                <td th:text="${r"${row."}${field.fieldName}"></td>
+</#if>
+</#list>
             </tr>
             </tbody>
         </table>

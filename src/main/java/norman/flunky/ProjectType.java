@@ -96,14 +96,14 @@ public enum ProjectType {
         genBeans.add(new GenerationBean("entityListForm-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}ListForm.java",
                 GENERATE));
+        genBeans.add(new GenerationBean("entityListRow-java.ftl",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}ListRow.java",
+                GENERATE));
         genBeans.add(new GenerationBean("entityRepository-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/repository/${entityName?cap_first}Repository.java",
                 GENERATE));
         genBeans.add(new GenerationBean("entityService-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName?cap_first}Service.java",
-                GENERATE));
-        genBeans.add(new GenerationBean("entityView-java.ftl",
-                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}View.java",
                 GENERATE));
         return genBeans;
     }

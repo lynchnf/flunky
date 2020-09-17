@@ -26,9 +26,9 @@ public class ${entityName?cap_first}Controller {
 
     @GetMapping("/${entityName}List")
     public String load${entityName?cap_first}List(@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "${pageSize}") int pageSize,
-            @RequestParam(value = "sortColumn", required = false, defaultValue = "${sortColumn}") String sortColumn,
-            @RequestParam(value = "sortDirection", required = false, defaultValue = "${sortDirection}") Sort.Direction sortDirection,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "${defaultPage}") int pageSize,
+            @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainColumn}") String sortColumn,
+            @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
             Model model) {
 
         // Convert sort column from string to an array of strings.
