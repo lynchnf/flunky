@@ -61,6 +61,8 @@ public enum ProjectType {
                 new GenerationBean("fa-solid-900.woff", "/src/main/resources/static/webfonts/fa-solid-900.woff", COPY));
         genBeans.add(new GenerationBean("fa-solid-900.woff2", "/src/main/resources/static/webfonts/fa-solid-900.woff2",
                 COPY));
+        genBeans.add(new GenerationBean("fakeDataUtil-java.ftl",
+                "/src/test/java/${basePackage?replace(\".\", \"/\")}/FakeDataUtil.java", GENERATE));
         genBeans.add(new GenerationBean("fontawesome-free-5.14.0.min.css",
                 "/src/main/resources/static/css/fontawesome-free-5.14.0.min.css", COPY));
         genBeans.add(new GenerationBean("footer.html", "/src/main/resources/templates/fragments/footer.html", COPY));

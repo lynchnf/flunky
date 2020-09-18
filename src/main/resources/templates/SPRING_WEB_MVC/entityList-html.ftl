@@ -65,9 +65,9 @@
                 <td></td>
 <#list fields as field>
 <#if field.fieldName == mainColumn>
-                <td><a th:href="@{/acct(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}"></a></td>
+                <td><a th:href="@{/acct(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
 <#else>
-                <td th:text="${r"${row."}${field.fieldName}"></td>
+                <td th:text="${r"${row."}${field.fieldName}}"></td>
 </#if>
 </#list>
             </tr>
