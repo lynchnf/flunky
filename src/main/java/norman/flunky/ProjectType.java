@@ -79,6 +79,9 @@ public enum ProjectType {
                 new GenerationBean("menu-html.ftl", "/src/main/resources/templates/fragments/menu.html", GENERATE));
         genBeans.add(new GenerationBean("notFoundException-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/NotFoundException.java", GENERATE));
+        genBeans.add(new GenerationBean("optimisticLockingException-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/OptimisticLockingException.java",
+                GENERATE));
         genBeans.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
         genBeans.add(
                 new GenerationBean("popper-1.16.1.min.js", "/src/main/resources/static/js/popper-1.16.1.min.js", COPY));
@@ -92,6 +95,9 @@ public enum ProjectType {
                 GENERATE));
         genBeans.add(new GenerationBean("entityController-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName?cap_first}Controller.java",
+                GENERATE));
+        genBeans.add(new GenerationBean("entityEditForm-java.ftl",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}EditForm.java",
                 GENERATE));
         genBeans.add(new GenerationBean("entityList-html.ftl", "/src/main/resources/templates/${entityName}List.html",
                 GENERATE));

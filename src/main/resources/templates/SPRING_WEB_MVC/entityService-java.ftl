@@ -3,11 +3,13 @@ package ${application.basePackage}.service;
 import ${application.basePackage}.domain.${entityName?cap_first};
 import ${application.basePackage}.domain.repository.${entityName?cap_first}Repository;
 import ${application.basePackage}.exception.NotFoundException;
+import ${application.basePackage}.exception.OptimisticLockingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,5 +30,13 @@ public class ${entityName?cap_first}Service {
             throw new NotFoundException(LOGGER, "${singular?cap_first}", id);
         }
         return optional.get();
+    }
+
+    public ${entityName?cap_first} save(${entityName?cap_first} entity) throws OptimisticLockingException {
+        try {
+            return repository.save(entity);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            throw new OptimisticLockingException(LOGGER, "${singular?cap_first}", entity.getId(), e);
+        }
     }
 }

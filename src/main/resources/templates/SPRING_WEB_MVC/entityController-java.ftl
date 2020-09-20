@@ -2,7 +2,9 @@ package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
 import ${application.basePackage}.exception.NotFoundException;
+import ${application.basePackage}.exception.OptimisticLockingException;
 import ${application.basePackage}.service.${entityName?cap_first}Service;
+import ${application.basePackage}.web.view.${entityName?cap_first}EditForm;
 import ${application.basePackage}.web.view.${entityName?cap_first}ListForm;
 import ${application.basePackage}.web.view.${entityName?cap_first}View;
 import org.slf4j.Logger;
@@ -13,10 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 
 @Controller
@@ -44,6 +49,7 @@ public class ${entityName?cap_first}Controller {
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, sortDirection, sortColumns);
         Page<${entityName?cap_first}> page = service.findAll(pageable);
 
+        // Display the page of records.
         ${entityName?cap_first}ListForm listForm = new ${entityName?cap_first}ListForm(page);
         model.addAttribute("listForm", listForm);
         return "${entityName}List";
@@ -58,6 +64,55 @@ public class ${entityName?cap_first}Controller {
             return "${entityName}View";
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular?cap_first} not found.");
+            return "redirect:/${entityName}List";
+        }
+    }
+
+    @GetMapping("/${entityName}Edit")
+    public String load${entityName?cap_first}Edit(@RequestParam(value = "id", required = false) Long id, Model model,
+            RedirectAttributes redirectAttributes) {
+
+        // If no id, add new record.
+        if (id == null) {
+            model.addAttribute("editForm", new ${entityName?cap_first}EditForm());
+            return "${entityName}Edit";
+        }
+
+        // Otherwise, edit existing record.
+        try {
+            ${entityName?cap_first} entity = service.findById(id);
+            ${entityName?cap_first}EditForm editForm = new ${entityName?cap_first}EditForm(entity);
+            model.addAttribute("editForm", editForm);
+            return "${entityName}Edit";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular?cap_first} not found.");
+            return "redirect:/${entityName}List";
+        }
+    }
+
+    @PostMapping("/${entityName}Edit")
+    public String process${entityName?cap_first}Edit(@Valid ${entityName?cap_first}EditForm editForm, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "${entityName}Edit";
+        }
+
+        // Convert form to entity.
+        Long id = editForm.getId();
+        ${entityName?cap_first} entity = editForm.toEntity();
+
+        // Save entity.
+        try {
+            ${entityName?cap_first} save = service.save(entity);
+            String successMessage = "${singular?cap_first} successfully added.";
+            if (id != null) {
+                successMessage = "${singular?cap_first} successfully updated";
+            }
+            redirectAttributes.addFlashAttribute("successMessage", successMessage);
+            redirectAttributes.addAttribute("id", save.getId());
+            return "redirect:/${entityName}?id={id}";
+        } catch (OptimisticLockingException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular?cap_first} was updated by another user.");
             return "redirect:/${entityName}List";
         }
     }
