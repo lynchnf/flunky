@@ -4,7 +4,7 @@
 <body>
 <header th:replace="fragments/menu::menu"></header>
 <main class="container">
-    <h1>${singular?capitalize} List</h1>
+    <h1>${plural?capitalize}</h1>
     <div th:replace="fragments/alerts::alerts"></div>
     <form id="listForm" action="#" method="get" th:action="@{/${entityName}List}">
         <input type="hidden" class="pageNumber" name="pageNumber" th:value="${r"${listForm.number}"}"/>
@@ -42,7 +42,6 @@
         <table class="table table-sm table-striped">
             <thead>
             <tr>
-                <th></th>
 <#list fields as field>
 <#if field.sortable?? && field.sortable == "true">
                 <th>
@@ -62,10 +61,9 @@
             </thead>
             <tbody>
             <tr th:each="row:${r"${listForm.rows}"}">
-                <td></td>
 <#list fields as field>
 <#if field.fieldName == mainColumn>
-                <td><a th:href="@{/acct(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
 <#else>
                 <td th:text="${r"${row."}${field.fieldName}}"></td>
 </#if>

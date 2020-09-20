@@ -74,11 +74,11 @@ public enum ProjectType {
         genBeans.add(new GenerationBean("listForm-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/view/ListForm.java", GENERATE));
         genBeans.add(new GenerationBean("logback-xml.ftl", "/src/main/resources/logback.xml", GENERATE));
-        genBeans.add(new GenerationBean("loggingException-java.ftl",
-                "/src/main/java/${basePackage?replace(\".\", \"/\")}/LoggingException.java", GENERATE));
         genBeans.add(new GenerationBean("main.css", "/src/main/resources/static/css/main.css", COPY));
         genBeans.add(
                 new GenerationBean("menu-html.ftl", "/src/main/resources/templates/fragments/menu.html", GENERATE));
+        genBeans.add(new GenerationBean("notFoundException-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/NotFoundException.java", GENERATE));
         genBeans.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
         genBeans.add(
                 new GenerationBean("popper-1.16.1.min.js", "/src/main/resources/static/js/popper-1.16.1.min.js", COPY));
@@ -106,6 +106,11 @@ public enum ProjectType {
                 GENERATE));
         genBeans.add(new GenerationBean("entityService-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName?cap_first}Service.java",
+                GENERATE));
+        genBeans.add(new GenerationBean("entityView-html.ftl", "/src/main/resources/templates/${entityName}View.html",
+                GENERATE));
+        genBeans.add(new GenerationBean("entityView-java.ftl",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName?cap_first}View.java",
                 GENERATE));
         return genBeans;
     }

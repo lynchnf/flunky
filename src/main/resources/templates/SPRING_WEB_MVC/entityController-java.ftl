@@ -1,8 +1,10 @@
 package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
+import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.service.${entityName?cap_first}Service;
 import ${application.basePackage}.web.view.${entityName?cap_first}ListForm;
+import ${application.basePackage}.web.view.${entityName?cap_first}View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 
@@ -44,5 +47,18 @@ public class ${entityName?cap_first}Controller {
         ${entityName?cap_first}ListForm listForm = new ${entityName?cap_first}ListForm(page);
         model.addAttribute("listForm", listForm);
         return "${entityName}List";
+    }
+
+    @GetMapping("/${entityName}")
+    public String load${entityName?cap_first}View(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            ${entityName?cap_first} entity = service.findById(id);
+            ${entityName?cap_first}View view = new ${entityName?cap_first}View(entity);
+            model.addAttribute("view", view);
+            return "${entityName}View";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular?cap_first} not found.");
+            return "redirect:/${entityName}List";
+        }
     }
 }
