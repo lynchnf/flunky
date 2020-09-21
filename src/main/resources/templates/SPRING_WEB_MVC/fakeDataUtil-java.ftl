@@ -24,7 +24,6 @@ public class FakeDataUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataUtil.class);
     private static final Random RANDOM = new Random();
     private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final int NBR_OF_RECORDS = 47;
     private static String[] NONSENSE_WORDS =
             {"asonanscopards", "chocally", "ohibly", "sedulang", "refricalize", "recompleaper", "firmerproguer",
                     "bestrutives", "scicanes", "diffusalized", "incurted", "misnards", "eparcharisker", "symped",
@@ -36,17 +35,19 @@ public class FakeDataUtil {
 
     public static void main(String[] args) {
 <#list entities as entity>
-        for (int i = 0; i < NBR_OF_RECORDS; i++) {
+        for (int i = 0; i < ${entity.nbrOfFakeRecords}; i++) {
             ${entity.entityName?cap_first} record = new ${entity.entityName?cap_first}();
 <#list entity.fields as field>
 <#if field.type == "String">
             record.set${field.fieldName?cap_first}(nextRandomString(${field.length}));
-<#elseif field.type == "Integer" || field.type == "Long">
-            record.set${field.fieldName?cap_first}(nextRandomInteger(10000, 99999));
+<#elseif field.type == "Integer">
+            record.set${field.fieldName?cap_first}(nextRandomInteger(${field.lowFakeValue}, ${field.highFakeValue}));
+<#elseif field.type == "Long">
+            record.set${field.fieldName?cap_first}((long) nextRandomInteger(${field.lowFakeValue}, ${field.highFakeValue}));
 <#elseif field.type == "BigDecimal">
-            record.set${field.fieldName?cap_first}(nextRandomBigDecimal(-9999, 9999, ${field.scale}));
+            record.set${field.fieldName?cap_first}(nextRandomBigDecimal(${field.lowFakeValue}, ${field.highFakeValue}, ${field.scale}));
 <#elseif field.type == "Date">
-            record.set${field.fieldName?cap_first}(nextRandomDate(150, 60));
+            record.set${field.fieldName?cap_first}(nextRandomDate(${field.lowFakeValue}, ${field.highFakeValue}));
 <#elseif field.type == "Boolean">
             record.set${field.fieldName?cap_first}(nextRandomBoolean());
 </#if>
@@ -80,17 +81,17 @@ public class FakeDataUtil {
         return RANDOM.nextInt(high - low + 1) + low;
     }
 
-    private static BigDecimal nextRandomBigDecimal(int unscaledlow, int unscaledHigh, int scale) {
-        return BigDecimal.valueOf(RANDOM.nextInt(unscaledHigh - unscaledlow + 1) + unscaledlow, scale);
+    private static BigDecimal nextRandomBigDecimal(int unscaledLow, int unscaledHigh, int scale) {
+        return BigDecimal.valueOf(RANDOM.nextInt(unscaledHigh - unscaledLow + 1) + unscaledLow, scale);
     }
 
-    private static Date nextRandomDate(int daysPast, int daysFuture) {
+    private static Date nextRandomDate(int daysLow, int daysHigh) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.HOUR, 0);
-        int days = RANDOM.nextInt(daysFuture + daysPast + 1) - daysPast;
+        int days = RANDOM.nextInt(daysHigh - daysLow + 1) + daysLow;
         cal.add(Calendar.DATE, days);
         return cal.getTime();
     }

@@ -7,13 +7,13 @@ import java.util.Date;
 
 public class ${entityName?cap_first}View {
     private Long id;
-<#list fields as field>
+<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
     private ${field.type} ${field.fieldName};
 </#list>
 
     public ${entityName?cap_first}View(${entityName?cap_first} entity) {
         id = entity.getId();
-<#list fields as field>
+<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
         ${field.fieldName} = entity.get${field.fieldName?cap_first}();
 </#list>
     }
@@ -21,7 +21,7 @@ public class ${entityName?cap_first}View {
     public Long getId() {
         return id;
     }
-<#list fields as field>
+<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
 
     public ${field.type} get${field.fieldName?cap_first}() {
         return ${field.fieldName};

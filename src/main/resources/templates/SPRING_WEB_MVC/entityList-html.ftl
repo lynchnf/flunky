@@ -6,7 +6,7 @@
 <main class="container">
     <h1>${plural?capitalize}</h1>
     <div th:replace="fragments/alerts::alerts"></div>
-    <form id="listForm" action="#" method="get" th:action="@{/${entityName}List}">
+    <form id="listForm" action="#" method="get" th:action="@{/entityNameList}">
         <input type="hidden" class="pageNumber" name="pageNumber" th:value="${r"${listForm.number}"}"/>
         <input type="hidden" class="pageSize" name="pageSize" th:value="${r"${listForm.size}"}"/>
         <input type="hidden" class="sortColumn" name="sortColumn" th:value="${r"${listForm.sortColumn}"}"/>
@@ -42,7 +42,7 @@
         <table class="table table-sm table-striped">
             <thead>
             <tr>
-<#list fields as field>
+<#list fields?filter(f -> f.onList?? && f.onList == "true") as field>
 <#if field.sortable?? && field.sortable == "true">
                 <th>
                     <a class="changeSort" data-list-form="listForm" data-sort-column="${field.fieldName}" href="#">
@@ -61,11 +61,27 @@
             </thead>
             <tbody>
             <tr th:each="row:${r"${listForm.rows}"}">
-<#list fields as field>
+<#list fields?filter(f -> f.onList?? && f.onList == "true") as field>
 <#if field.fieldName == mainColumn>
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
+<#if field.type == "String" || field.type == "Boolean">
+                <td><a th:href="@{/entityName(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
+<#elseif field.type == "Integer" || field.type == "Long">
+                <td><a th:href="@{/entityName(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></a></td>
+<#elseif field.type == "BigDecimal">
+                <td><a th:href="@{/entityName(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></a></td>
+<#elseif field.type == "Date">
+                <td><a th:href="@{/entityName(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></a></td>
+</#if>
 <#else>
+<#if field.type == "String" || field.type == "Boolean">
                 <td th:text="${r"${row."}${field.fieldName}}"></td>
+<#elseif field.type == "Integer" || field.type == "Long">
+                <td th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></td>
+<#elseif field.type == "BigDecimal">
+                <td th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></td>
+<#elseif field.type == "Date">
+                <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></td>
+</#if>
 </#if>
 </#list>
             </tr>
