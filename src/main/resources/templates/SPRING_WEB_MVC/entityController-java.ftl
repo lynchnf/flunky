@@ -91,7 +91,7 @@ public class ${entityName?cap_first}Controller {
     }
 
     @PostMapping("/${entityName}Edit")
-    public String process${entityName?cap_first}Edit(@Valid ${entityName?cap_first}EditForm editForm, BindingResult bindingResult,
+    public String process${entityName?cap_first}Edit(@Valid @ModelAttribute("editForm") ${entityName?cap_first}EditForm editForm, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "${entityName}Edit";

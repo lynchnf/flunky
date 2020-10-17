@@ -25,13 +25,13 @@ public class FakeDataUtil {
     private static final Random RANDOM = new Random();
     private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
     private static String[] NONSENSE_WORDS =
-            {"asonanscopards", "chocally", "ohibly", "sedulang", "refricalize", "recompleaper", "firmerproguer",
-                    "bestrutives", "scicanes", "diffusalized", "incurted", "misnards", "eparcharisker", "symped",
-                    "scriod", "gracion", "sphelmed", "quisity", "rheuportify", "composeserage", "rubslong", "founned",
-                    "terfein", "waterraytoxing", "dragram", "flemiles", "sessportion", "baushed", "biliverse",
-                    "miranders", "andates", "actudelinders", "divexiett", "defiosking", "subfilit", "peribelisbured",
-                    "hearcans", "museme", "shinfooting", "tracappron", "drifulated", "piradodgetnall", "ampurrendollan",
-                    "depershing", "driple", "posirow", "casecurried", "boatives", "shrecokee", "dusalation"};
+            {"acaer", "ahalty", "aquents", "aturned", "baxtoy", "bilkons", "boycher", "carlds", "corrot", "corsarm",
+                    "cortmum", "defas", "deferts", "dialks", "dignate", "distard", "diveher", "expuls", "famongs",
+                    "fierer", "gogogox", "griled", "heddies", "hoddlen", "holize", "houshia", "ifringe", "immegap",
+                    "lammour", "liledge", "marsons", "merint", "mistial", "morior", "mouruge", "nekmit", "novaly",
+                    "oclate", "onama", "partia", "posion", "pricall", "qiameth", "rention", "sementa", "skimat",
+                    "skizzle", "specons", "stally", "stictic", "sweeds", "sweeds", "twenbat", "walrie", "winfirn",
+                    "yoffa"};
 
     public static void main(String[] args) {
 <#list entities as entity>

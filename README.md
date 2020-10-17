@@ -1,3 +1,3 @@
 # Flunky
 
-Source generator
+Source code generator

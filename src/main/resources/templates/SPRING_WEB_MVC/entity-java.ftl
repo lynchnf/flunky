@@ -19,7 +19,7 @@ public class ${entityName?cap_first} {
     @Version
     private Integer version = 0;
 <#list fields as field>
-<#if field.temporal??>    @Temporal(TemporalType.${field.temporal})
+<#if field.type?? && field.type == "Date">    @Temporal(TemporalType.DATE)
 </#if><#assign myParms = [] />
 <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
 <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>

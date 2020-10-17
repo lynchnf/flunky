@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>Flunky</name>
-    <description>Source generator</description>
+    <description>Source code generator</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
