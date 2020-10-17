@@ -8,7 +8,7 @@
     <div th:replace="fragments/alerts::alerts"></div>
 <#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
     <div class="form-group row">
-        <label class="col-sm-3 col-form-label">${field.label}</label>
+        <label class="col-sm-3 col-form-label">${field.label?capitalize}</label>
         <div class="col-sm-9">
 <#if field.type == "String" || field.type == "Boolean">
             <p class="form-control-plaintext" th:text="${r"${view."}${field.fieldName}}"></p>

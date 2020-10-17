@@ -15,7 +15,7 @@
         <input type="hidden" th:field="*{version}"/>
 <#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label">${field.label}</label>
+            <label class="col-sm-3 col-form-label">${field.label?capitalize}</label>
             <div class="col-sm-9">
                 <input type="text" class="form-control" th:field="*{${field.fieldName}}" th:errorclass="is-invalid"/>
             </div>
