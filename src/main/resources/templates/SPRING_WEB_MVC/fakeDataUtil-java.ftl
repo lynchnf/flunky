@@ -35,6 +35,7 @@ public class FakeDataUtil {
 
     public static void main(String[] args) {
 <#list entities as entity>
+        List<${entity.entityName?cap_first}> ${entity.entityName}List = new ArrayList<>();
         for (int i = 0; i < ${entity.nbrOfFakeRecords}; i++) {
             ${entity.entityName?cap_first} record = new ${entity.entityName?cap_first}();
 <#list entity.fields as field>
@@ -52,6 +53,11 @@ public class FakeDataUtil {
             record.set${field.fieldName?cap_first}(nextRandomBoolean());
 </#if>
 </#list>
+            ${entity.entityName}List.add(record);
+        }
+</#list>
+<#list entities as entity>
+        for (${entity.entityName?cap_first} record : ${entity.entityName}List) {
             printInsert(record);
         }
 </#list>

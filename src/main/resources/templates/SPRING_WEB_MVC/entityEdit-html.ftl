@@ -15,9 +15,17 @@
         <input type="hidden" th:field="*{version}"/>
 <#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label">${field.label?capitalize}</label>
+            <label class="col-sm-3 col-form-label">${field.label?capitalize}<#if field.type?? && field.type == "Date"> (M/d/yyyy)</#if></label>
             <div class="col-sm-9">
+<#if field.type?? && field.type == "Boolean">
+                <select class="form-control" th:field="*{${field.fieldName}}" th:errorclass="is-invalid">
+                    <option value="">Please select ...</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+<#else>
                 <input type="text" class="form-control" th:field="*{${field.fieldName}}" th:errorclass="is-invalid"/>
+</#if>
             </div>
         </div>
 </#list>
@@ -25,5 +33,12 @@
     </form>
 </main>
 <footer th:replace="fragments/footer::footer"></footer>
+<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true" && f.type?? && f.type == "Date")>
+<script>
+    <#items  as field>
+    $("#${field.fieldName}").datepicker({uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome'});
+    </#items>
+</script>
+</#list>
 </body>
 </html>

@@ -72,6 +72,11 @@ public enum ProjectType {
             applicationGenerationProperties
                     .add(new GenerationBean("footer.html", "/src/main/resources/templates/fragments/footer.html",
                             COPY));
+            applicationGenerationProperties.add(new GenerationBean("gijgo-1.9.13.min.css",
+                    "/src/main/resources/static/css/gijgo-1.9.13.min.css", COPY));
+            applicationGenerationProperties
+                    .add(new GenerationBean("gijgo-1.9.13.min.js", "/src/main/resources/static/js/gijgo-1.9.13.min.js",
+                            COPY));
             applicationGenerationProperties
                     .add(new GenerationBean("head-html.ftl", "/src/main/resources/templates/fragments/head.html",
                             GENERATE));
