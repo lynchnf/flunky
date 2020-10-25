@@ -8,12 +8,12 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${r"${LOG_FILE_HOME}/${LOG_FILE_NAME}"}</file>
+        <file>${r"${LOG_FILE_HOME}/${LOG_FILE_NAME}.log"}</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %message%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${r"${LOG_FILE_HOME}/${LOG_FILE_NAME}"}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <fileNamePattern>${r"${LOG_FILE_HOME}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}-%i.log"}</fileNamePattern>
             <maxFileSize>50MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>10GB</totalSizeCap>

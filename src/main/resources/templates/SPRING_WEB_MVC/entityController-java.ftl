@@ -1,9 +1,15 @@
 package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+    import ${application.basePackage}.domain.${field.type};
+</#list>
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.exception.OptimisticLockingException;
 import ${application.basePackage}.service.${entityName?cap_first}Service;
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+    import ${application.basePackage}.service.${field.type}Service;
+</#list>
 import ${application.basePackage}.web.view.${entityName?cap_first}EditForm;
 import ${application.basePackage}.web.view.${entityName?cap_first}ListForm;
 import ${application.basePackage}.web.view.${entityName?cap_first}View;
@@ -32,11 +38,15 @@ public class ${entityName?cap_first}Controller {
     private static final String[] sortableColumns = {<#list fields?filter(f -> f.sortable?? && f.sortable == "true") as field>"${field.fieldName}"<#sep>, </#sep></#list>};
     @Autowired
     private ${entityName?cap_first}Service service;
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+    @Autowired
+    private ${field.type}Service ${field.fieldName}Service;
+</#list>
 
     @GetMapping("/${entityName}List")
     public String load${entityName?cap_first}List(@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "${defaultPage}") int pageSize,
-            @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainColumn}") String sortColumn,
+            @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainField}") String sortColumn,
             @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
             Model model) {
 
@@ -100,10 +110,13 @@ public class ${entityName?cap_first}Controller {
 
         // Convert form to entity.
         Long id = editForm.getId();
-        ${entityName?cap_first} entity = editForm.toEntity();
-
-        // Save entity.
         try {
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+            editForm.set${field.fieldName?cap_first}Service(${field.fieldName}Service);
+</#list>
+            ${entityName?cap_first} entity = editForm.toEntity();
+
+            // Save entity.
             ${entityName?cap_first} save = service.save(entity);
             String successMessage = "${singular?cap_first} successfully added.";
             if (id != null) {
@@ -112,9 +125,19 @@ public class ${entityName?cap_first}Controller {
             redirectAttributes.addFlashAttribute("successMessage", successMessage);
             redirectAttributes.addAttribute("id", save.getId());
             return "redirect:/${entityName}?id={id}";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getEntityName() + " not found.");
+            return "redirect:/${entityName}List";
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular?cap_first} was updated by another user.");
             return "redirect:/${entityName}List";
         }
     }
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+
+    @ModelAttribute("all${field.fieldName?cap_first}")
+    public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown() {
+        return ${field.fieldName}Service.findAll();
+    }
+</#list>
 }

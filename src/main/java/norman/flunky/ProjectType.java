@@ -14,6 +14,7 @@ public enum ProjectType {
 
     ProjectType() {
         if (name().equals("SPRING_WEB_MVC")) {
+            applicationGenerationProperties.add(new GenerationBean(".gitignore", "/.gitignore", COPY));
             applicationGenerationProperties
                     .add(new GenerationBean("alerts.html", "/src/main/resources/templates/fragments/alerts.html",
                             COPY));
@@ -104,6 +105,7 @@ public enum ProjectType {
             applicationGenerationProperties.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
             applicationGenerationProperties.add(new GenerationBean("popper-1.16.1.min.js",
                     "/src/main/resources/static/js/popper-1.16.1.min.js", COPY));
+            applicationGenerationProperties.add(new GenerationBean("readme-md.ftl", "/README.md", GENERATE));
 
             entityGenerationProperties.add(new GenerationBean("entity-java.ftl",
                     "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName?cap_first}.java",

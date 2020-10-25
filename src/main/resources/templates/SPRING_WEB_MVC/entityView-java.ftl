@@ -1,6 +1,9 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
+<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+import ${application.basePackage}.domain.${field.type};
+</#list>
 
 import java.math.BigDecimal;
 import java.util.Date;
