@@ -18,9 +18,9 @@
 <#elseif field.temporal?? && field.temporal="DATE">
             <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'M/d/yyyy')}"></p>
 <#elseif field.temporal?? && field.temporal="TIME">
-            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'H:m:s')}"></p>
+            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'h:m a')}"></p>
 <#elseif field.temporal?? && field.temporal="TIMESTAMP">
-            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'M/d/yyyy H:m:s')}"></p>
+            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'M/d/yyyy h:m a')}"></p>
 <#elseif field.type == "Integer">
             <p class="form-control-plaintext" th:text="${r"${#numbers.formatInteger(view."}${field.fieldName},1,'DEFAULT')}"></p>
 <#elseif field.type == "Long">

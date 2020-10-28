@@ -73,11 +73,6 @@ public enum ProjectType {
             applicationGenerationProperties
                     .add(new GenerationBean("footer.html", "/src/main/resources/templates/fragments/footer.html",
                             COPY));
-            applicationGenerationProperties.add(new GenerationBean("gijgo-1.9.13.min.css",
-                    "/src/main/resources/static/css/gijgo-1.9.13.min.css", COPY));
-            applicationGenerationProperties
-                    .add(new GenerationBean("gijgo-1.9.13.min.js", "/src/main/resources/static/js/gijgo-1.9.13.min.js",
-                            COPY));
             applicationGenerationProperties
                     .add(new GenerationBean("head-html.ftl", "/src/main/resources/templates/fragments/head.html",
                             GENERATE));
@@ -97,6 +92,8 @@ public enum ProjectType {
             applicationGenerationProperties
                     .add(new GenerationBean("menu-html.ftl", "/src/main/resources/templates/fragments/menu.html",
                             GENERATE));
+            applicationGenerationProperties.add(new GenerationBean("moment-2.29.1.min.js",
+                    "/src/main/resources/static/js/moment-2.29.1.min.js", COPY));
             applicationGenerationProperties.add(new GenerationBean("notFoundException-java.ftl",
                     "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/NotFoundException.java", GENERATE));
             applicationGenerationProperties.add(new GenerationBean("optimisticLockingException-java.ftl",
@@ -106,6 +103,10 @@ public enum ProjectType {
             applicationGenerationProperties.add(new GenerationBean("popper-1.16.1.min.js",
                     "/src/main/resources/static/js/popper-1.16.1.min.js", COPY));
             applicationGenerationProperties.add(new GenerationBean("readme-md.ftl", "/README.md", GENERATE));
+            applicationGenerationProperties.add(new GenerationBean("tempusdominus-bootstrap-4-5.1.3.min.css",
+                    "/src/main/resources/static/css/tempusdominus-bootstrap-4-5.1.3.min.css", COPY));
+            applicationGenerationProperties.add(new GenerationBean("tempusdominus-bootstrap-4-5.1.3.min.js",
+                    "/src/main/resources/static/js/tempusdominus-bootstrap-4-5.1.3.min.js", COPY));
 
             entityGenerationProperties.add(new GenerationBean("entity-java.ftl",
                     "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName?cap_first}.java",

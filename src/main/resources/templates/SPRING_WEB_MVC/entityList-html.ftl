@@ -71,9 +71,9 @@
 <#elseif field.temporal?? && field.temporal="DATE">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></a></td>
 <#elseif field.temporal?? && field.temporal="TIME">
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'H:m:s')}"></a></td>
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'h:m a')}"></a></td>
 <#elseif field.temporal?? && field.temporal="TIMESTAMP">
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy H:m:s')}"></a></td>
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy h:m a')}"></a></td>
 <#elseif field.type == "Integer">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></a></td>
 <#elseif field.type == "Long">
@@ -92,9 +92,9 @@
 <#elseif field.temporal?? && field.temporal="DATE">
                 <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></td>
 <#elseif field.temporal?? && field.temporal="TIME">
-                <td th:text="${r"${#dates.format(row."}${field.fieldName},'H:m:s')}"></td>
+                <td th:text="${r"${#dates.format(row."}${field.fieldName},'h:m a')}"></td>
 <#elseif field.temporal?? && field.temporal="TIMESTAMP">
-                <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy H:m:s')}"></td>
+                <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy h:m a')}"></td>
 <#elseif field.type == "Integer">
                 <td th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></td>
 <#elseif field.type == "Long">
