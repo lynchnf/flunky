@@ -29,6 +29,7 @@ public class FakeDataUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataUtil.class);
     private static final Random RANDOM = new Random();
     private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
     private static final String[] NONSENSE_WORDS =
             {"acaer", "ahalty", "aquents", "aturned", "baxtoy", "bilkons", "boycher", "carlds", "corrot", "corsarm",
                 "cortmum", "defas", "deferts", "dialks", "dignate", "distard", "diveher", "expuls", "famongs",
@@ -70,8 +71,12 @@ public class FakeDataUtil {
             record.set${field.fieldName?cap_first}(nextRandomBigDecimal(${field.lowFakeValue}, ${field.highFakeValue}, ${field.scale}));
 <#elseif field.type == "Boolean">
             record.set${field.fieldName?cap_first}(nextRandomBoolean());
-<#elseif field.type == "Date">
+<#elseif field.temporal?? && field.temporal="DATE">
             record.set${field.fieldName?cap_first}(nextRandomDate(${field.lowFakeValue}, ${field.highFakeValue}));
+<#elseif field.temporal?? && field.temporal="TIME">
+            record.set${field.fieldName?cap_first}(nextRandomTime(${field.lowFakeValue}, ${field.highFakeValue}));
+<#elseif field.temporal?? && field.temporal="TIMESTAMP">
+            record.set${field.fieldName?cap_first}(nextRandomTimestamp(${field.lowFakeValue}, ${field.highFakeValue}));
 <#elseif field.type == "Integer">
             record.set${field.fieldName?cap_first}(nextRandomInteger(${field.lowFakeValue}, ${field.highFakeValue}));
 <#elseif field.type == "Long">
@@ -130,7 +135,31 @@ public class FakeDataUtil {
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.HOUR, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        int days = RANDOM.nextInt(daysHigh - daysLow + 1) + daysLow;
+        cal.add(Calendar.DATE, days);
+        return cal.getTime();
+    }
+
+    private static Date nextRandomTime(int hoursLow, int hoursHigh) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, RANDOM.nextInt(60));
+        cal.set(Calendar.MINUTE, RANDOM.nextInt(60));
+        int hours = RANDOM.nextInt(hoursHigh - hoursLow + 1) + hoursLow;
+        cal.set(Calendar.HOUR_OF_DAY, hours);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.MONTH, Calendar.JANUARY);
+        cal.set(Calendar.YEAR, 1970);
+        return cal.getTime();
+    }
+
+    private static Date nextRandomTimestamp(int daysLow, int daysHigh) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, RANDOM.nextInt(60));
+        cal.set(Calendar.MINUTE, RANDOM.nextInt(60));
+        cal.set(Calendar.HOUR_OF_DAY, RANDOM.nextInt(24));
         int days = RANDOM.nextInt(daysHigh - daysLow + 1) + daysLow;
         cal.add(Calendar.DATE, days);
         return cal.getTime();
@@ -158,6 +187,10 @@ public class FakeDataUtil {
             }
         } while (!done);
         return StringUtils.capitalize(randomString.toString());
+    }
+
+    private static <T> T nextRandomEnum(T[] values) {
+        return values[RANDOM.nextInt(values.length)];
     }
 
     private static <T> T nextRandomEntity(List<T> entityList) {
@@ -266,7 +299,17 @@ public class FakeDataUtil {
         } else if (Boolean.class.isAssignableFrom(returnType)) {
             columnValue = String.valueOf(value).toUpperCase();
         } else if (Date.class.isAssignableFrom(returnType)) {
-            columnValue = "'" + YYMD.format((Date) value) + "'";
+            String datePart = YYMD.format((Date) value);
+            String timePart = HMS.format((Date) value);
+            if (!datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
+                columnValue = "'" + datePart + " " + timePart + "'";
+            } else if (!datePart.equals("1970-01-01") && timePart.equals("00:00:00")) {
+                columnValue = "'" + datePart + "'";
+            } else if (datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
+                columnValue = "'" + timePart + "'";
+            } else {
+                columnValue = "NULL";
+            }
         } else if (Integer.class.isAssignableFrom(returnType)) {
             columnValue = String.valueOf(value);
         } else if (Long.class.isAssignableFrom(returnType)) {

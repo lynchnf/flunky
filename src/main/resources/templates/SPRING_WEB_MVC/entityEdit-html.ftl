@@ -13,9 +13,10 @@
         </ul>
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" th:field="*{version}"/>
+
 <#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label">${field.label?capitalize}<#if field.type == "Date"> (M/d/yyyy)</#if></label>
+            <label class="col-sm-3 col-form-label">${field.label?capitalize}<#if field.temporal?? && field.temporal="DATE"> (M/d/yyyy)<#elseif field.temporal?? && field.temporal="TIME"> (H:m:s)<#elseif field.temporal?? && field.temporal="TIMESTAMP"> (M/d/yyyy H:m:s)</#if></label>
             <div class="col-sm-9">
 <#if field.type == "BigDecimal">
                 <input type="text" class="form-control" th:field="*{${field.fieldName}}" th:errorclass="is-invalid"/>
@@ -42,14 +43,21 @@
             </div>
         </div>
 </#list>
+
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </main>
 <footer th:replace="fragments/footer::footer"></footer>
-<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true" && f.type?? && f.type == "Date")>
+<#list fields?filter(f -> f.onEdit?? && f.onEdit == "true" && f.temporal??)>
 <script>
 <#items as field>
+<#if field.temporal="DATE">
     $("#${field.fieldName}").datepicker({uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome'});
+<#elseif field.temporal="TIME">
+    $("#${field.fieldName}").timepicker({uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome'});
+<#elseif field.temporal="TIMESTAMP">
+    $("#${field.fieldName}").datetimepicker({uiLibrary: 'bootstrap4', iconsLibrary: 'fontawesome'});
+</#if>
 </#items>
 </script>
 </#list>

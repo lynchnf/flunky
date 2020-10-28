@@ -6,6 +6,7 @@
 <main class="container">
     <h1>${plural?capitalize}</h1>
     <div th:replace="fragments/alerts::alerts"></div>
+
     <form id="listForm" action="#" method="get" th:action="@{/${entityName}List}">
         <input type="hidden" class="pageNumber" name="pageNumber" th:value="${r"${listForm.number}"}"/>
         <input type="hidden" class="pageSize" name="pageSize" th:value="${r"${listForm.size}"}"/>
@@ -67,8 +68,12 @@
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></a></td>
 <#elseif field.type == "Boolean">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
-<#elseif field.type == "Date">
+<#elseif field.temporal?? && field.temporal="DATE">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></a></td>
+<#elseif field.temporal?? && field.temporal="TIME">
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'H:m:s')}"></a></td>
+<#elseif field.temporal?? && field.temporal="TIMESTAMP">
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy H:m:s')}"></a></td>
 <#elseif field.type == "Integer">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></a></td>
 <#elseif field.type == "Long">
@@ -84,8 +89,12 @@
                 <td th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></td>
 <#elseif field.type == "Boolean">
                 <td th:text="${r"${row."}${field.fieldName}}"></td>
-<#elseif field.type == "Date">
+<#elseif field.temporal?? && field.temporal="DATE">
                 <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></td>
+<#elseif field.temporal?? && field.temporal="TIME">
+                <td th:text="${r"${#dates.format(row."}${field.fieldName},'H:m:s')}"></td>
+<#elseif field.temporal?? && field.temporal="TIMESTAMP">
+                <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy H:m:s')}"></td>
 <#elseif field.type == "Integer">
                 <td th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></td>
 <#elseif field.type == "Long">

@@ -39,8 +39,8 @@ public class ${entityName?cap_first} {
 <#list myParms>
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
 </#list>
-<#elseif field.type == "Date">
-    @Temporal(TemporalType.DATE)
+<#elseif field.temporal??>
+    @Temporal(TemporalType.${field.temporal})
 <#list myParms>
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
 </#list>

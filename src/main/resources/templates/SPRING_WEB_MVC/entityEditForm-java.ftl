@@ -45,7 +45,13 @@ public class ${entityName?cap_first}EditForm {
 <#elseif field.type == "Boolean">
     private ${field.type} ${field.fieldName};
 <#elseif field.type == "Date">
+<#if field.temporal?? && field.temporal="DATE">
     @DateTimeFormat(pattern = "M/d/yyyy")
+<#elseif field.temporal?? && field.temporal="TIME">
+    @DateTimeFormat(pattern = "H:m:s")
+<#elseif field.temporal?? && field.temporal="TIMESTAMP">
+    @DateTimeFormat(pattern = "M/d/yyyy H:m:s")
+</#if>
     private ${field.type} ${field.fieldName};
 <#elseif field.type == "Integer">
     @NumberFormat(style = NumberFormat.Style.NUMBER)

@@ -6,6 +6,7 @@
 <main class="container">
     <h1>${singular?capitalize}</h1>
     <div th:replace="fragments/alerts::alerts"></div>
+
 <#list fields?filter(f -> f.onEdit?? && f.onEdit == "true") as field>
     <div class="form-group row">
         <label class="col-sm-3 col-form-label">${field.label?capitalize}</label>
@@ -14,8 +15,12 @@
             <p class="form-control-plaintext" th:text="${r"${#numbers.formatCurrency(view."}${field.fieldName})}"></p>
 <#elseif field.type == "Boolean">
             <p class="form-control-plaintext" th:text="${r"${view."}${field.fieldName}}"></p>
-<#elseif field.type == "Date">
+<#elseif field.temporal?? && field.temporal="DATE">
             <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'M/d/yyyy')}"></p>
+<#elseif field.temporal?? && field.temporal="TIME">
+            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'H:m:s')}"></p>
+<#elseif field.temporal?? && field.temporal="TIMESTAMP">
+            <p class="form-control-plaintext" th:text="${r"${#dates.format(view."}${field.fieldName},'M/d/yyyy H:m:s')}"></p>
 <#elseif field.type == "Integer">
             <p class="form-control-plaintext" th:text="${r"${#numbers.formatInteger(view."}${field.fieldName},1,'DEFAULT')}"></p>
 <#elseif field.type == "Long">
