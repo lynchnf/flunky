@@ -66,41 +66,28 @@
 <#if field.fieldName == mainField>
 <#if field.type == "BigDecimal">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></a></td>
-<#elseif field.type == "Boolean">
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
 <#elseif field.temporal?? && field.temporal="DATE">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></a></td>
 <#elseif field.temporal?? && field.temporal="TIME">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'h:m a')}"></a></td>
 <#elseif field.temporal?? && field.temporal="TIMESTAMP">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy h:m a')}"></a></td>
-<#elseif field.type == "Integer">
+<#elseif field.type == "Integer" || field.type == "Long">
                 <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></a></td>
-<#elseif field.type == "Long">
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></a></td>
-<#elseif field.type == "String">
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
 <#else>
-                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}"
-                       th:text="${r"${(row."}${field.fieldName} != null)?row.${field.fieldName}.id:null}"></a></td>
+                <td><a th:href="@{/${entityName}(id=${r"${row.id}"})}" th:text="${r"${row."}${field.fieldName}}"></a></td>
 </#if>
 <#else>
 <#if field.type == "BigDecimal">
                 <td th:text="${r"${#numbers.formatCurrency(row."}${field.fieldName})}"></td>
-<#elseif field.type == "Boolean">
-                <td th:text="${r"${row."}${field.fieldName}}"></td>
 <#elseif field.temporal?? && field.temporal="DATE">
                 <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy')}"></td>
 <#elseif field.temporal?? && field.temporal="TIME">
                 <td th:text="${r"${#dates.format(row."}${field.fieldName},'h:m a')}"></td>
 <#elseif field.temporal?? && field.temporal="TIMESTAMP">
                 <td th:text="${r"${#dates.format(row."}${field.fieldName},'M/d/yyyy h:m a')}"></td>
-<#elseif field.type == "Integer">
+<#elseif field.type == "Integer" || field.type == "Long">
                 <td th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></td>
-<#elseif field.type == "Long">
-                <td th:text="${r"${#numbers.formatInteger(row."}${field.fieldName},1,'DEFAULT')}"></td>
-<#elseif field.type == "String">
-                <td th:text="${r"${row."}${field.fieldName}}"></td>
 <#else>
                 <td th:text="${r"${row."}${field.fieldName}}"></td>
 </#if>

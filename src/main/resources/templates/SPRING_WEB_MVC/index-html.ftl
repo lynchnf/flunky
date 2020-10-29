@@ -6,11 +6,13 @@
 <main class="container-fluid">
     <h1>${artifactId?replace("-", " ")?capitalize}</h1>
     <div th:replace="fragments/alerts::alerts"></div>
-    <div></div>
-    <ul>
-        <li>Content goes here.</li>
-        <li>And here.</li>
-    </ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p>Content goes here.</p>
+            <p>And here.</p>
+        </div>
+    </div>
 </main>
 <footer th:replace="fragments/footer::footer"></footer>
 </body>

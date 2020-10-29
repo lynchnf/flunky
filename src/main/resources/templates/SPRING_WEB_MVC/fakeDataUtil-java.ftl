@@ -3,6 +3,9 @@ package ${basePackage};
 <#list entities as entity>
 import ${basePackage}.domain.${entity.entityName?cap_first};
 </#list>
+<#list enums as enum>
+import ${basePackage}.domain.${enum.enumName?cap_first};
+</#list>
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +86,9 @@ public class FakeDataUtil {
             record.set${field.fieldName?cap_first}((long) nextRandomInteger(${field.lowFakeValue}, ${field.highFakeValue}));
 <#elseif field.type == "String">
             record.set${field.fieldName?cap_first}(nextRandomString(${field.length}));
-<#else>
+<#elseif field.enumerated??>
+            record.set${field.fieldName?cap_first}(nextRandomEnum(${field.type}.values()));
+<#elseif field.joinColumn??>
             record.set${field.fieldName?cap_first}(nextRandomEntity(${field.type?uncap_first}List));
 </#if>
 </#list>

@@ -1,7 +1,7 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
-<#list fields?filter(f -> f.onList?? && f.onList == "true" && f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.onList?? && f.onList == "true" && (f.enumerated?? || f.joinColumn??)) as field>
 import ${application.basePackage}.domain.${field.type};
 </#list>
 

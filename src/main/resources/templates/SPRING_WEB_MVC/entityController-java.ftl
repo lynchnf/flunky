@@ -1,13 +1,13 @@
 package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName?cap_first};
-<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.joinColumn??) as field>
     import ${application.basePackage}.domain.${field.type};
 </#list>
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.exception.OptimisticLockingException;
 import ${application.basePackage}.service.${entityName?cap_first}Service;
-<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.joinColumn??) as field>
     import ${application.basePackage}.service.${field.type}Service;
 </#list>
 import ${application.basePackage}.web.view.${entityName?cap_first}EditForm;
@@ -38,7 +38,7 @@ public class ${entityName?cap_first}Controller {
     private static final String[] sortableColumns = {<#list fields?filter(f -> f.sortable?? && f.sortable == "true") as field>"${field.fieldName}"<#sep>, </#sep></#list>};
     @Autowired
     private ${entityName?cap_first}Service service;
-<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.joinColumn??) as field>
     @Autowired
     private ${field.type}Service ${field.fieldName}Service;
 </#list>
@@ -111,7 +111,7 @@ public class ${entityName?cap_first}Controller {
         // Convert form to entity.
         Long id = editForm.getId();
         try {
-<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.joinColumn??) as field>
             editForm.set${field.fieldName?cap_first}Service(${field.fieldName}Service);
 </#list>
             ${entityName?cap_first} entity = editForm.toEntity();
@@ -133,7 +133,7 @@ public class ${entityName?cap_first}Controller {
             return "redirect:/${entityName}List";
         }
     }
-<#list fields?filter(f -> f.type != "BigDecimal" && f.type != "Boolean" && f.type != "Date" && f.type != "Integer" && f.type != "Long" && f.type != "String") as field>
+<#list fields?filter(f -> f.joinColumn??) as field>
 
     @ModelAttribute("all${field.fieldName?cap_first}")
     public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown() {

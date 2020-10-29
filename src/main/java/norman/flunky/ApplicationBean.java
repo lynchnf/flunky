@@ -48,13 +48,17 @@ public class ApplicationBean {
             List<Map<String, String>> enumRowList = buildListOfMapsFromCsvFile(enumsFilePath);
 
             // Use enum rows to create enums models.
+            List<Map<String, Object>> applicationEnums = new ArrayList<>();
+            applicationModel.put("enums", applicationEnums);
             for (Map<String, String> enumRow : enumRowList) {
-                Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
-                enumModels.add(enumModel);
+                Map<String, Object> enumModel1 = new LinkedHashMap<>(enumRow);
+                Map<String, Object> enumModel2 = new LinkedHashMap<>(enumRow);
+                enumModels.add(enumModel1);
+                applicationEnums.add(enumModel2);
 
                 // Add application properties to enum models.
                 Map<String, Object> applicationModel1 = new LinkedHashMap<>();
-                enumModel.put("application", applicationModel1);
+                enumModel1.put("application", applicationModel1);
                 applicationModel1.put("groupId", properties.getProperty("group.id"));
                 applicationModel1.put("artifactId", properties.getProperty("artifact.id"));
                 applicationModel1.put("version", properties.getProperty("version"));
