@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 
 import static norman.flunky.TemplateType.COPY;
@@ -46,6 +47,14 @@ public class Main {
         Map<String, Object> appModel = appBean.getApplicationModel();
         for (GenerationBean appGenBean : type.getApplicationGenerationProperties()) {
             createSourceFile(pthCfg, tmpDir, tmpCfg, projDir, appModel, appGenBean);
+        }
+
+        // Create enum source files.
+        List<Map<String, Object>> enumModels = appBean.getEnumModels();
+        for (Map<String, Object> enumModel : enumModels) {
+            for (GenerationBean enumGenBean : type.getEnumGenerationProperties()) {
+                createSourceFile(pthCfg, tmpDir, tmpCfg, projDir, enumModel, enumGenBean);
+            }
         }
 
         // Create entity source files.

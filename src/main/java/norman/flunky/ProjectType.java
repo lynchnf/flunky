@@ -10,6 +10,7 @@ public enum ProjectType {
     SPRING_WEB_MVC;
 
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
+    private List<GenerationBean> enumGenerationProperties = new ArrayList<>();
     private List<GenerationBean> entityGenerationProperties = new ArrayList<>();
 
     ProjectType() {
@@ -108,6 +109,10 @@ public enum ProjectType {
             applicationGenerationProperties.add(new GenerationBean("tempusdominus-bootstrap-4-5.1.3.min.js",
                     "/src/main/resources/static/js/tempusdominus-bootstrap-4-5.1.3.min.js", COPY));
 
+            enumGenerationProperties.add(new GenerationBean("enum-java.ftl",
+                    "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${enumName?cap_first}.java",
+                    GENERATE));
+
             entityGenerationProperties.add(new GenerationBean("entity-java.ftl",
                     "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName?cap_first}.java",
                     GENERATE));
@@ -147,5 +152,9 @@ public enum ProjectType {
 
     public List<GenerationBean> getEntityGenerationProperties() {
         return entityGenerationProperties;
+    }
+
+    public List<GenerationBean> getEnumGenerationProperties() {
+        return enumGenerationProperties;
     }
 }

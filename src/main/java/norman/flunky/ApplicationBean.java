@@ -22,6 +22,7 @@ public class ApplicationBean {
     private File projectDirectory;
     private Map<String, Object> applicationModel = new LinkedHashMap<>();
     private List<Map<String, Object>> entityModels = new ArrayList<>();
+    private List<Map<String, Object>> enumModels = new ArrayList<>();
 
     public ApplicationBean(String path) {
         File file = new File(path);
@@ -34,13 +35,32 @@ public class ApplicationBean {
             projectDirectory = new File(properties.getProperty("project.directory"));
 
             // Get field rows and group them by entity names.
-            String property1 = properties.getProperty("fields.file");
-            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(property1);
+            String fieldsFilePath = properties.getProperty("fields.file");
+            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(fieldsFilePath);
             Map<String, List<Map<String, String>>> entityFieldListMap = buildEntityFieldListMap(fieldRowList);
 
             // Get entity rows.
-            String property = properties.getProperty("entities.file");
-            List<Map<String, String>> entityRowList = buildListOfMapsFromCsvFile(property);
+            String entitiesFilePath = properties.getProperty("entities.file");
+            List<Map<String, String>> entityRowList = buildListOfMapsFromCsvFile(entitiesFilePath);
+
+            // Get enum rows.
+            String enumsFilePath = properties.getProperty("enums.file");
+            List<Map<String, String>> enumRowList = buildListOfMapsFromCsvFile(enumsFilePath);
+
+            // Use enum rows to create enums models.
+            for (Map<String, String> enumRow : enumRowList) {
+                Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
+                enumModels.add(enumModel);
+
+                // Add application properties to enum models.
+                Map<String, Object> applicationModel1 = new LinkedHashMap<>();
+                enumModel.put("application", applicationModel1);
+                applicationModel1.put("groupId", properties.getProperty("group.id"));
+                applicationModel1.put("artifactId", properties.getProperty("artifact.id"));
+                applicationModel1.put("version", properties.getProperty("version"));
+                applicationModel1.put("basePackage", properties.getProperty("base.package"));
+                applicationModel1.put("description", properties.getProperty("description"));
+            }
 
             // Use entity rows to create standalone entity models and application entity models.
             List<Map<String, Object>> applicationEntities = new ArrayList<>();
@@ -157,5 +177,9 @@ public class ApplicationBean {
 
     public List<Map<String, Object>> getEntityModels() {
         return entityModels;
+    }
+
+    public List<Map<String, Object>> getEnumModels() {
+        return enumModels;
     }
 }
