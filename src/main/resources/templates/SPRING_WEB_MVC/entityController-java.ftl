@@ -120,7 +120,7 @@ public class ${entityName?cap_first}Controller {
             ${entityName?cap_first} save = service.save(entity);
             String successMessage = "${singular?cap_first} successfully added.";
             if (id != null) {
-                successMessage = "${singular?cap_first} successfully updated";
+                successMessage = "${singular?cap_first} successfully updated.";
             }
             redirectAttributes.addFlashAttribute("successMessage", successMessage);
             redirectAttributes.addAttribute("id", save.getId());
