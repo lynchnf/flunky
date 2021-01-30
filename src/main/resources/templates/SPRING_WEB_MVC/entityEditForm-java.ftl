@@ -37,7 +37,7 @@ public class ${entityName?cap_first}EditForm {
     @Size(max = ${field.length}, message = "${field.label?capitalize} may not be over {max} characters long.")
 </#if>
 <#if field.precision?? && field.scale??>
-    @Digits(integer = ${field.precision}, fraction = ${field.scale}, message = "${field.label?capitalize} value out of bounds. (<{integer} digits>.<{fraction} digits> expected)")
+    @Digits(integer = ${field.precision?number-field.scale?number}, fraction = ${field.scale}, message = "${field.label?capitalize} value out of bounds. (<{integer} digits>.<{fraction} digits> expected)")
 </#if>
 <#if field.joinColumn??>
     private Long ${field.fieldName}Id;
