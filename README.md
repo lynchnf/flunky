@@ -17,4 +17,7 @@ Source code generator
 - [ ] unit tests
 - [ ] validation of files
 - [ ] separate jar files
+  - [ ] GenerationBean, ProjectType interface, TemplateType in one jar
+  - [ ] ProjectType implementation and template resources in second jar
+  - [ ] ApplicationBean, Main, LoggingException in third bean 
 - [ ] bat and shell files to run from command line

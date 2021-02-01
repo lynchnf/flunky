@@ -1,4 +1,4 @@
-package norman.flunky;
+package norman.flunky.api;
 
 public class GenerationBean {
     private String templateName;

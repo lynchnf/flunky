@@ -1,9 +1,12 @@
-package norman.flunky;
+package norman.flunky.main;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import norman.flunky.api.GenerationBean;
+import norman.flunky.api.ProjectType;
+import norman.flunky.api.TemplateType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +21,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-
-import static norman.flunky.TemplateType.COPY;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -40,7 +41,8 @@ public class Main {
         Configuration tmpCfg = createTemplateConfiguration(tmpDir);
 
         // Create project directory.
-        File projDir = createProjDir(appBean.getProjectDirectory());
+        File projectDirectory = appBean.getProjectDirectory();
+        File projDir = createProjDir(projectDirectory);
         LOGGER.info("Creating project in directory " + projDir + ".");
 
         // Create application source files.
@@ -72,16 +74,10 @@ public class Main {
         }
     }
 
-    private static File createProjDir(File dir) {
-        if (!dir.mkdirs()) {
-            throw new LoggingException(LOGGER, "Unable to create project directory " + dir + ".");
-        }
-        return dir;
-    }
-
     private static File getTemplateDir(ProjectType type) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         URL resource = contextClassLoader.getResource("templates/readme.txt");
+
         try {
             File readmeFile = new File(resource.toURI().getPath());
             return new File(readmeFile.getParentFile(), type.name());
@@ -107,12 +103,19 @@ public class Main {
         }
     }
 
+    private static File createProjDir(File dir) {
+        if (!dir.mkdirs()) {
+            throw new LoggingException(LOGGER, "Unable to create project directory " + dir + ".");
+        }
+        return dir;
+    }
+
     private static void createSourceFile(Configuration pthCfg, File tmpDir, Configuration tmpCfg, File projDir,
             Map<String, Object> dataModel, GenerationBean genBean) {
         String outPath = generatePath(pthCfg, genBean.getOutputFilePath(), dataModel);
         File outFile = createOutputFile(projDir, outPath);
         String templateName = genBean.getTemplateName();
-        if (genBean.getTemplateType() == COPY) {
+        if (genBean.getTemplateType() == TemplateType.COPY) {
             copySourceFile(tmpDir, templateName, outFile);
         } else {
             generateSourceFile(tmpCfg, templateName, outFile, dataModel);

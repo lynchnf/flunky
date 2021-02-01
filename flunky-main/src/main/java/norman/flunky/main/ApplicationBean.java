@@ -1,7 +1,8 @@
-package norman.flunky;
+package norman.flunky.main;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import norman.flunky.api.ProjectType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,15 @@ public class ApplicationBean {
     private List<Map<String, Object>> enumModels = new ArrayList<>();
 
     public ApplicationBean(String path) {
-        File file = new File(path);
         Reader reader = null;
+
         try {
+            File file = new File(path);
             reader = new FileReader(file);
             Properties properties = new Properties();
             properties.load(reader);
-            projectType = ProjectType.valueOf(properties.getProperty("project.type"));
+
+            projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).newInstance();
             projectDirectory = new File(properties.getProperty("project.directory"));
 
             // Get field rows and group them by entity names.
@@ -103,7 +106,7 @@ public class ApplicationBean {
             applicationModel.put("version", properties.getProperty("version"));
             applicationModel.put("basePackage", properties.getProperty("base.package"));
             applicationModel.put("description", properties.getProperty("description"));
-        } catch (IOException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException e) {
             throw new LoggingException(LOGGER, "Unable to load properties from file " + path + ".", e);
         } finally {
             if (reader != null) {

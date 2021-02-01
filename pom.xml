@@ -9,7 +9,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>flunky-core</module>
+        <module>flunky-api</module>
+        <module>flunky-spring-web-mvc</module>
+        <module>flunky-main</module>
     </modules>
 
     <name>Flunky</name>
@@ -35,6 +37,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.25</version>
             </dependency>
             <dependency>
                 <groupId>com.opencsv</groupId>

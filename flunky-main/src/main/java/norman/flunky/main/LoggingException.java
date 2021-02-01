@@ -1,4 +1,4 @@
-package norman.flunky;
+package norman.flunky.main;
 
 import org.slf4j.Logger;
 
