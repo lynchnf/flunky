@@ -24,6 +24,7 @@
             <groupId>norman</groupId>
             <artifactId>flunky-spring-web-mvc</artifactId>
             <version>${pom.parent.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
