@@ -161,7 +161,7 @@ public class SpringWebMvcProjectType implements ProjectType {
     }
 
     @Override
-    public String name() {
+    public String getTemplatePrefix() {
         return "spring/web/mvc";
     }
 

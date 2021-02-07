@@ -3,7 +3,7 @@ package norman.flunky.api;
 import java.util.List;
 
 public interface ProjectType {
-    String name();
+    String getTemplatePrefix();
 
     List<GenerationBean> getApplicationGenerationProperties();
 

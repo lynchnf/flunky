@@ -31,8 +31,7 @@ public class Main {
         // Convert applications properties file to a bean.
         ApplicationBean appBean = new ApplicationBean(args[0]);
         ProjectType type = appBean.getProjectType();
-        // TODO Change name to getTemplatePrefix and return String.
-        String tmpPrefix = type.name();
+        String tmpPrefix = type.getTemplatePrefix();
 
         // Create Freemarker configuration.
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
@@ -72,41 +71,6 @@ public class Main {
             throw new LoggingException(LOGGER, "Missing program argument.");
         }
     }
-
-/*
-    @Deprecated
-    private static File getTemplateDir(ProjectType type) {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        URL resource = contextClassLoader.getResource("templates/readme.txt");
-
-        try {
-            File readmeFile = new File(resource.toURI().getPath());
-            return new File(readmeFile.getParentFile(), type.name());
-        } catch (URISyntaxException e) {
-            throw new LoggingException(LOGGER, "Unable to resolve template directory.", e);
-        }
-    }
-*/
-
-/*
-    @Deprecated
-    private static Configuration createTemplateConfiguration(File tmpDir) {
-        Configuration cfg = new Configuration(Configuration.VERSION_2_3_30);
-        try {
-            cfg.setDirectoryForTemplateLoading(tmpDir);
-            cfg.setDefaultEncoding("UTF-8");
-            // TODO During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
-            //cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-            cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
-            cfg.setLogTemplateExceptions(false);
-            cfg.setWrapUncheckedExceptions(true);
-            cfg.setFallbackOnNullLoopVariable(false);
-            return cfg;
-        } catch (IOException e) {
-            throw new LoggingException(LOGGER, "Unable to set template loading directory " + tmpDir + ".", e);
-        }
-    }
-*/
 
     private static File createProjDir(File dir) {
         if (!dir.mkdirs()) {

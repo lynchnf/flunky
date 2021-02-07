@@ -1,0 +1,21 @@
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>zip</format>
+    </formats>
+    <baseDirectory>${pom.parent.artifactId}</baseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/bin</directory>
+            <filtered>true</filtered>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>
