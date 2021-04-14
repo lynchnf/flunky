@@ -10,8 +10,8 @@
 
     <modules>
         <module>flunky-api</module>
-        <module>flunky-spring-web-mvc</module>
         <module>flunky-main</module>
+        <module>flunky-ref-impl</module>
     </modules>
 
     <name>Flunky</name>

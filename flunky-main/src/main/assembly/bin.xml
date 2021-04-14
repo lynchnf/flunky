@@ -1,21 +1,34 @@
-<assembly>
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
     <id>bin</id>
     <formats>
-        <format>tar.gz</format>
         <format>zip</format>
+        <format>tar.gz</format>
     </formats>
     <baseDirectory>${pom.parent.artifactId}</baseDirectory>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>bin</outputDirectory>
+            <directory>src/main/bin</directory>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>README.txt</source>
+        </file>
+    </files>
     <dependencySets>
+        <dependencySet>
+            <includes>
+                <include>${pom.parent.groupId}:${pom.artifactId}</include>
+            </includes>
+        </dependencySet>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <scope>runtime</scope>
+            <useProjectArtifact>false</useProjectArtifact>
         </dependencySet>
     </dependencySets>
-    <fileSets>
-        <fileSet>
-            <directory>src/main/bin</directory>
-            <filtered>true</filtered>
-            <outputDirectory>bin</outputDirectory>
-        </fileSet>
-    </fileSets>
 </assembly>

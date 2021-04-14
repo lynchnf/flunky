@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,30 +26,32 @@ public class ApplicationBean {
     private List<Map<String, Object>> entityModels = new ArrayList<>();
     private List<Map<String, Object>> enumModels = new ArrayList<>();
 
-    public ApplicationBean(String path) {
+    public ApplicationBean(String appPropsPath) {
         Reader reader = null;
 
         try {
-            File file = new File(path);
-            reader = new FileReader(file);
+            File appPropsFile = new File(appPropsPath);
+            File appPropsDir = appPropsFile.getParentFile();
+            reader = new FileReader(appPropsFile);
             Properties properties = new Properties();
             properties.load(reader);
 
-            projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).newInstance();
+            projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).getDeclaredConstructor()
+                    .newInstance();
             projectDirectory = new File(properties.getProperty("project.directory"));
 
             // Get field rows and group them by entity names.
-            String fieldsFilePath = properties.getProperty("fields.file");
-            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(fieldsFilePath);
+            String fieldsFileName = properties.getProperty("fields.file");
+            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
             Map<String, List<Map<String, String>>> entityFieldListMap = buildEntityFieldListMap(fieldRowList);
 
             // Get entity rows.
-            String entitiesFilePath = properties.getProperty("entities.file");
-            List<Map<String, String>> entityRowList = buildListOfMapsFromCsvFile(entitiesFilePath);
+            String entitiesFileName = properties.getProperty("entities.file");
+            List<Map<String, String>> entityRowList = buildListOfMapsFromCsvFile(entitiesFileName, appPropsDir);
 
             // Get enum rows.
-            String enumsFilePath = properties.getProperty("enums.file");
-            List<Map<String, String>> enumRowList = buildListOfMapsFromCsvFile(enumsFilePath);
+            String enumsFileName = properties.getProperty("enums.file");
+            List<Map<String, String>> enumRowList = buildListOfMapsFromCsvFile(enumsFileName, appPropsDir);
 
             // Use enum rows to create enums models.
             List<Map<String, Object>> applicationEnums = new ArrayList<>();
@@ -106,50 +109,53 @@ public class ApplicationBean {
             applicationModel.put("version", properties.getProperty("version"));
             applicationModel.put("basePackage", properties.getProperty("base.package"));
             applicationModel.put("description", properties.getProperty("description"));
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException e) {
-            throw new LoggingException(LOGGER, "Unable to load properties from file " + path + ".", e);
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | InvocationTargetException e) {
+            throw new LoggingException(LOGGER, "Unable to load properties from file " + appPropsPath + ".", e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    LOGGER.warn("Unable to close reader for file " + path + ".", e);
+                    LOGGER.warn("Unable to close reader for file " + appPropsPath + ".", e);
                 }
             }
         }
     }
 
-    private List<Map<String, String>> buildListOfMapsFromCsvFile(String path) {
+    private List<Map<String, String>> buildListOfMapsFromCsvFile(String fileName, File dir) {
         List<Map<String, String>> dataMaps = new ArrayList<>();
-        File file = new File(path);
-        CSVReader reader = null;
-        try {
-            reader = new CSVReader(new FileReader(file));
-            List<String[]> rows = reader.readAll();
-            String headingRow[] = null;
-            for (String[] row : rows) {
-                if (headingRow == null) {
-                    headingRow = row;
-                } else {
-                    Map<String, String> dataRow = new LinkedHashMap<>();
-                    for (int i = 0; i < headingRow.length; i++) {
-                        if (i < row.length) {
-                            dataRow.put(StringUtils.trimToNull(headingRow[i]), StringUtils.trimToNull(row[i]));
-                        } else {
-                            dataRow.put(StringUtils.trimToNull(headingRow[i]), null);
+        // If file name is null or blank, return an empty list.
+        if (StringUtils.isNotBlank(fileName)) {
+            File file = new File(dir, fileName);
+            CSVReader reader = null;
+            try {
+                reader = new CSVReader(new FileReader(file));
+                List<String[]> rows = reader.readAll();
+                String headingRow[] = null;
+                for (String[] row : rows) {
+                    if (headingRow == null) {
+                        headingRow = row;
+                    } else {
+                        Map<String, String> dataRow = new LinkedHashMap<>();
+                        for (int i = 0; i < headingRow.length; i++) {
+                            if (i < row.length) {
+                                dataRow.put(StringUtils.trimToNull(headingRow[i]), StringUtils.trimToNull(row[i]));
+                            } else {
+                                dataRow.put(StringUtils.trimToNull(headingRow[i]), null);
+                            }
                         }
+                        dataMaps.add(dataRow);
                     }
-                    dataMaps.add(dataRow);
                 }
-            }
-        } catch (IOException | CsvException e) {
-            throw new LoggingException(LOGGER, "Unable to read CVS data from file " + path + ".", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to close CVS reader for file " + path + ".", e);
+            } catch (IOException | CsvException e) {
+                throw new LoggingException(LOGGER, "Unable to read CVS data from file " + fileName + ".", e);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        LOGGER.warn("Unable to close CVS reader for file " + fileName + ".", e);
+                    }
                 }
             }
         }
