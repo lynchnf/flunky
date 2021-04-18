@@ -6,23 +6,31 @@
         <format>zip</format>
         <format>tar.gz</format>
     </formats>
-    <baseDirectory>${pom.parent.artifactId}</baseDirectory>
+    <baseDirectory>${project.parent.artifactId}</baseDirectory>
     <fileSets>
         <fileSet>
             <outputDirectory>bin</outputDirectory>
             <directory>src/main/bin</directory>
             <filtered>true</filtered>
         </fileSet>
+        <fileSet>
+            <directory>../</directory>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+            </includes>
+        </fileSet>
     </fileSets>
     <files>
         <file>
-            <source>README.txt</source>
+            <source>../flunky-ref-impl/README.md</source>
+            <destName>flunky-ref-impl.md</destName>
         </file>
     </files>
     <dependencySets>
         <dependencySet>
             <includes>
-                <include>${pom.parent.groupId}:${pom.artifactId}</include>
+                <include>${project.parent.groupId}:${project.artifactId}</include>
             </includes>
         </dependencySet>
         <dependencySet>
