@@ -15,8 +15,7 @@ These CSV files should contain information about [entities](https://en.wikipedia
 (or [tables](https://en.wikipedia.org/wiki/Table_(database\))), fields (or rows), and (optionally)
 [enums](https://en.wikipedia.org/wiki/Enumerated_type).
 
-The Flunky project comes with one example implementation JAR, `flunky-ref-impl-x.x.x.jar`.
-(See documentation [here](flunky-ref-impl/README.md).)
+The Flunky project comes with one example implementation JAR, [flunky-ref-impl-x.x.x.jar](flunky-ref-impl/README.md).
 If you are building Flunky from source, this JAR will be created when Flunky is built.
 If you downloaded a binary distribution of Flunky (i.e. a tar or zip file), you will have to download an implementation
 JAR file separately.
@@ -55,6 +54,8 @@ When done, this will produce a directory named `flunky` which will contain every
 To use Flunky to generate a new project, do the following:
 
 1.  Copy an implementation JAR file in to directory `flunky/lib`.
+    An example would be the example implementation JAR, [flunky-ref-impl-x.x.x.jar](flunky-ref-impl/README.md) which is
+    a part of this project.
 
 2.  Create a properties file with the following fields:
 
@@ -72,7 +73,7 @@ To use Flunky to generate a new project, do the following:
     See the [Maven guide to naming conventions](https://maven.apache.org/guides/mini/guide-naming-conventions.html) for
     more information on "good" values for your group id, artifact id, and version.
     
-3.  Create CSV files (as documented for your implementation JAR).
+3.  Create CSV files (as documented for your implementation JAR from step 1).
     These CSV files need to be in the same directory as your properties file.
 
 4.  On a Linux machine, execute command `./flunky/bin/flunky.sh <path-to-your-properties-file>`. 
