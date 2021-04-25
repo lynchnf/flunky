@@ -27,7 +27,7 @@ These commands will produce a file named `flunky-ref-impl-x.x.x.jar` in director
 Copy file `flunky-ref-impl-x.x.x.jar` to directory `lib` in your Flunky installation as described by step 1 of the
 [Flunky - To Run](../README.md#to-run) instructions.
 
-Create the following CSV files  as described by step 3 of the [Flunky - To Run](../README.md#to-run) instructions.
+Create the following CSV files as described by step 3 of the [Flunky - To Run](../README.md#to-run) instructions.
 
 ### Entities File
 

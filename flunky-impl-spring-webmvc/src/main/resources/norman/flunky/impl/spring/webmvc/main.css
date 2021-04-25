@@ -1,0 +1,11 @@
+.success-message {
+    color: #007f00;
+}
+
+.error-message {
+    color: #c00000;
+}
+
+.field-error {
+    background-color: #ff7f7f;
+}

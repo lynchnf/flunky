@@ -58,7 +58,7 @@ public class RefImplProjectType implements ProjectType {
 
     @Override
     public String getTemplatePrefix() {
-        return "flunky/ref/impl";
+        return "norman/flunky/ref/impl";
     }
 
     @Override

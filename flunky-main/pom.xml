@@ -32,6 +32,19 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
+        <!-- TODO Remove this dependency when development for this implementation is complete. -->
+        <dependency>
+            <groupId>norman</groupId>
+            <artifactId>flunky-ref-impl</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>norman</groupId>
+            <artifactId>flunky-impl-spring-webmvc</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

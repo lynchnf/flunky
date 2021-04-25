@@ -12,6 +12,7 @@
         <module>flunky-api</module>
         <module>flunky-main</module>
         <module>flunky-ref-impl</module>
+        <module>flunky-impl-spring-webmvc</module>
     </modules>
 
     <name>Flunky</name>

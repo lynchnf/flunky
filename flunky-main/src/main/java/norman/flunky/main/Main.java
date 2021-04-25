@@ -1,5 +1,6 @@
 package norman.flunky.main;
 
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -132,15 +133,25 @@ public class Main {
 
     private static void generateSourceFile(Configuration cfg, ClassLoader loader, String tmpPrefix, String tmpName,
             File outFile, Map<String, Object> dataModel) {
-        InputStream template = null;
+        InputStream template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName);
         Writer writer = null;
         try {
-            template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName);
-            writer = new FileWriter(outFile);
-            Template tmp = new Template("name", new InputStreamReader(template), cfg);
-            tmp.process(dataModel, writer);
-        } catch (IOException | TemplateException e) {
-            e.printStackTrace();
+            if (template == null) {
+                throw new LoggingException(LOGGER, "Unable to find template " + tmpName);
+            }
+            try {
+                writer = new FileWriter(outFile);
+            } catch (IOException e) {
+                throw new LoggingException(LOGGER, "Unable to open writer for file " + outFile, e);
+            }
+            try {
+                Template tmp = new Template("name", new InputStreamReader(template), cfg);
+                tmp.process(dataModel, writer);
+            } catch (ParseException | TemplateException e) {
+                throw new LoggingException(LOGGER, "Unable to process template " + tmpName, e);
+            } catch (IOException e) {
+                throw new LoggingException(LOGGER, "Unable to open input stream for template " + tmpName, e);
+            }
         } finally {
             if (template != null) {
                 try {

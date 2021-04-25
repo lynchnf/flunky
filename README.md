@@ -47,7 +47,7 @@ execute `tar -xf flunky-main-x.x.x-bin.tar.gz`.
     
 On a Windows machine, copy file `flunky-main-x.x.x-bin.zip` to your target directory and unzip it.
 
-When done, this will produce a directory named `flunky` which will contain everything needed to run Flunky.
+When done, this will produce a directory named `flunky` which will contain what you need to run Flunky.
     
 ## To Run
 

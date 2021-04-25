@@ -1,0 +1,8 @@
+entityName,fieldName,label,type,length,precision,scale,nullable,listDisplay,viewDisplay,editDisplay,dftValue
+Customer,acctNbr,Account Number,String,20,,,false,sort,show,edit,
+Customer,name,Name,String,50,,,,sort,show,edit,
+Customer,addressLine1,Address Line 1,String,50,,,,,,edit,
+Customer,addressLine2,Address Line 2,String,50,,,,,,edit,
+Customer,city,City,String,20,,,,show,show,,
+Customer,stateCode,State,String,2,,,,show,show,show,"""IL"""
+Customer,postalCode,Zip Code,String,10,,,,,,hide,
