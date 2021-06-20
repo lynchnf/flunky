@@ -21,6 +21,8 @@ public class SpringWebmvcProjectType implements ProjectType {
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/Application.java", TemplateType.GENERATE));
         applicationGenerationProperties
                 .add(new GenerationBean("common.js", "/src/main/resources/static/js/common.js", TemplateType.COPY));
+        applicationGenerationProperties.add(new GenerationBean("FakeDataUtil-java.ftl",
+                "/src/test/java/${basePackage?replace(\".\", \"/\")}/FakeDataUtil.java", TemplateType.GENERATE));
         applicationGenerationProperties.add(new GenerationBean("HomeController-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/HomeController.java", TemplateType.GENERATE));
         applicationGenerationProperties
