@@ -34,13 +34,13 @@ A CSV file that contains information about entity fields to be created for your 
 
 LIST
 
-    listDisplay - Valid values are hide, show, or sort. If left blank, hide is the default.
+    listDisplay - Valid values are show, hide, or sort. If left blank, show is the default.
     
 VIEW
 
-    viewDisplay - Valid values are hide or show. If left blank, hide is the default.
+    viewDisplay - Valid values are show or hide. If left blank, show is the default.
     
 EDIT
 
-    editDisplay - Valid values are hide, show, or edit. If left blank, hide is the default.
+    editDisplay - Valid values are show, hide, or edit. If left blank, show is the default.
     dftValue -

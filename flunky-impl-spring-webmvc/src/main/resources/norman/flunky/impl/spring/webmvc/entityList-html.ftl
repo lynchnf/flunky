@@ -63,8 +63,8 @@
 
         <table>
             <tr>
-<#list fields?filter(f -> f.listDisplay?? && (f.listDisplay == "show" || f.listDisplay == "sort")) as field>
-    <#if field.listDisplay == "sort">
+<#list fields?filter(f -> !f.listDisplay?? || f.listDisplay != "hide") as field>
+    <#if field.listDisplay?? && field.listDisplay == "sort">
                 <th>
                     <a class="changeSort" data-list-form="listForm" data-sort-column="${field.fieldName}" href="#">
                         ${field.label?capitalize}
@@ -80,8 +80,8 @@
 </#list>
             </tr>
             <tr th:each="row:${r"${"}listForm.rows}">
-<#list fields?filter(f -> f.listDisplay?? && (f.listDisplay == "show" || f.listDisplay == "sort")) as field>
-    <#if field.fieldName == mainField>
+<#list fields?filter(f -> !f.listDisplay?? || f.listDisplay != "hide") as field>
+                    <#if field.fieldName == mainField>
                 <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}row.${field.fieldName}}"></a></td>
     <#else>
                 <td th:text="${r"${"}row.${field.fieldName}}"></td>

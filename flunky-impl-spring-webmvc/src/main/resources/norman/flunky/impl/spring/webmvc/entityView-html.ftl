@@ -30,8 +30,8 @@
     </div>
 
     <table>
-<#list fields?filter(f -> f.viewDisplay?? && f.viewDisplay == "show") as field>
-        <tr>
+<#list fields?filter(f -> !f.viewDisplay?? || f.viewDisplay != "hide") as field>
+            <tr>
             <th>${field.label}</th>
             <td th:text="${r"${"}view.${field.fieldName}}"></td>
         </tr>

@@ -34,20 +34,20 @@
         </ul>
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" th:field="*{version}"/>
-<#list fields?filter(f -> !f.editDisplay?? || f.editDisplay == "hide") as field>
+<#list fields?filter(f -> !f.editDisplay?? || f.editDisplay != "edit") as field>
         <input type="hidden" th:field="*{${field.fieldName}}"/>
 </#list>
         <table>
-<#list fields?filter(f -> f.editDisplay?? && (f.editDisplay == "show" || f.editDisplay == "edit")) as field>
-    <#if field.editDisplay == "show">
-            <tr>
-                <th>${field.label}</th>
-                <td th:text="${r"${"}editForm.${field.fieldName}}"></td>
-            </tr>
-    <#elseif field.editDisplay == "edit">
+<#list fields?filter(f -> !f.editDisplay?? || f.editDisplay != "hide") as field>
+    <#if field.editDisplay?? && field.editDisplay == "edit">
             <tr>
                 <th>${field.label}</th>
                 <td><input type="text" th:field="*{${field.fieldName}}" th:errorclass="field-error"/></td>
+            </tr>
+    <#else>
+            <tr>
+                <th>${field.label}</th>
+                <td th:text="${r"${"}editForm.${field.fieldName}}"></td>
             </tr>
     </#if>
 </#list>
