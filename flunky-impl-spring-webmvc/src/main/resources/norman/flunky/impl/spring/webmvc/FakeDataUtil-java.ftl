@@ -45,20 +45,17 @@ public class FakeDataUtil {
 
     public static void main(String[] args) {
         Map<String, String> mainFieldMap = new HashMap<>();
-
 <#list entities as entity>
+
         mainFieldMap.put("${entity.entityName}", "${entity.mainField}");
         List<${entity.entityName}> ${entity.entityName?uncap_first}List = new ArrayList<>();
         for (int i = 0; i < ${entity.nbrOfFakeRecords}; i++) {
-            ${entity.entityName} record = new ${entity.entityName}();
-    <#list entity.fields as field>
-            record.set${field.fieldName?cap_first}(nextRandomString(${field.length}));
-    </#list>
-            ${entity.entityName?uncap_first}List.add(record);
+            ${entity.entityName} entity = nextRandom${entity.entityName}();
+            ${entity.entityName?uncap_first}List.add(entity);
         }
 </#list>
 
-    File file = new File(System.getProperty("user.dir") + "/src/main/resources/import.sql");
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/import.sql");
         if (file.exists()) {
             String msg = String.format("File %s already exists.", file.getAbsolutePath());
             LOGGER.error(msg);
@@ -86,6 +83,16 @@ public class FakeDataUtil {
             throw new RuntimeException(msg, e);
         }
     }
+<#list entities as entity>
+
+    public static ${entity.entityName} nextRandom${entity.entityName}() {
+        ${entity.entityName} entity = new ${entity.entityName}();
+    <#list entity.fields as field>
+        entity.set${field.fieldName?cap_first}(nextRandomString(${field.length}));
+    </#list>
+        return entity;
+    }
+</#list>
 
     private static String nextRandomString(int limit) {
         StringBuilder randomString = null;

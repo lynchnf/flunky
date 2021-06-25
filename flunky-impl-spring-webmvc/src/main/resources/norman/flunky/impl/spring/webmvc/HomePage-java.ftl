@@ -6,8 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
+public class HomePage {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HomePage.class);
 
     @GetMapping("/")
     public String loadHomePage() {

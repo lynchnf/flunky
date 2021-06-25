@@ -23,8 +23,8 @@ public class SpringWebmvcProjectType implements ProjectType {
                 .add(new GenerationBean("common.js", "/src/main/resources/static/js/common.js", TemplateType.COPY));
         applicationGenerationProperties.add(new GenerationBean("FakeDataUtil-java.ftl",
                 "/src/test/java/${basePackage?replace(\".\", \"/\")}/FakeDataUtil.java", TemplateType.GENERATE));
-        applicationGenerationProperties.add(new GenerationBean("HomeController-java.ftl",
-                "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/HomeController.java", TemplateType.GENERATE));
+        applicationGenerationProperties.add(new GenerationBean("HomePage-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/HomePage.java", TemplateType.GENERATE));
         applicationGenerationProperties
                 .add(new GenerationBean("index-html.ftl", "/src/main/resources/templates/index.html",
                         TemplateType.GENERATE));
@@ -51,10 +51,16 @@ public class SpringWebmvcProjectType implements ProjectType {
         entityGenerationProperties.add(new GenerationBean("EntityController-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName}Controller.java",
                 TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityControllerTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/web/${entityName}ControllerTest.java",
+                TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityEdit-html.ftl",
                 "/src/main/resources/templates/${entityName?uncap_first}Edit.html", TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityEditForm-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}EditForm.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityEditFormTest-java.ftl",
+                "/src/main/test/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}EditFormTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityList-html.ftl",
                 "/src/main/resources/templates/${entityName?uncap_first}List.html", TemplateType.GENERATE));
@@ -63,6 +69,9 @@ public class SpringWebmvcProjectType implements ProjectType {
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityListRow-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListRow.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityListRowTest-java.ftl",
+                "/src/main/test/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListRowTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityRepository-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/repository/${entityName}Repository.java",
