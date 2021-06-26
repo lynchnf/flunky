@@ -60,7 +60,7 @@ public class SpringWebmvcProjectType implements ProjectType {
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}EditForm.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityEditFormTest-java.ftl",
-                "/src/main/test/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}EditFormTest.java",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}EditFormTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityList-html.ftl",
                 "/src/main/resources/templates/${entityName?uncap_first}List.html", TemplateType.GENERATE));
@@ -71,7 +71,7 @@ public class SpringWebmvcProjectType implements ProjectType {
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListRow.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityListRowTest-java.ftl",
-                "/src/main/test/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListRowTest.java",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ListRowTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityRepository-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/repository/${entityName}Repository.java",
@@ -83,6 +83,9 @@ public class SpringWebmvcProjectType implements ProjectType {
                 "/src/main/resources/templates/${entityName?uncap_first}View.html", TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityView-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}View.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityViewTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/web/view/${entityName}ViewTest.java",
                 TemplateType.GENERATE));
     }
 

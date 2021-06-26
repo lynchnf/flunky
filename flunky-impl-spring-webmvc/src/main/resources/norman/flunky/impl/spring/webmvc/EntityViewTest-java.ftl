@@ -1,5 +1,3 @@
-import ${application.basePackage}.domain.${entityName};
-
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};

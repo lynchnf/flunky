@@ -1,6 +1,8 @@
 package ${basePackage};
 
-import ${basePackage}.domain.Customer;
+<#list entities as entity>
+import ${basePackage}.domain.${entity.entityName};
+</#list>
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,15 +65,19 @@ public class FakeDataUtil {
         }
         try (PrintWriter writer = new PrintWriter(file)) {
             String tableName = null;
-            for (Customer record : customerList) {
+<#list entities as entity>
+
+            for (${entity.entityName} record : ${entity.entityName?uncap_first}List) {
                 tableName = camelToSnake(record.getClass().getSimpleName());
                 printInsert(record, mainFieldMap, writer);
             }
-            if (!customerList.isEmpty()) {
-                String msg = String.format("Successfully wrote %d insert statements for table %s.", customerList.size(),
+            if (!${entity.entityName?uncap_first}List.isEmpty()) {
+                String msg = String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}List.size(),
                         tableName);
                 LOGGER.info(msg);
             }
+</#list>
+
             if (writer.checkError()) {
                 String msg = String.format("Error occurred while writing to file %s", file.getAbsolutePath());
                 LOGGER.error(msg);

@@ -28,7 +28,7 @@
         </ul>
     </div>
 
-    <form action="#" method="post" th:action="@{/customerEdit}" th:object="${r"${"}editForm}">
+    <form action="#" method="post" th:action="@{/${entityName?uncap_first}Edit}" th:object="${r"${"}editForm}">
         <ul class="error-message" th:if="${r"${"}#fields.hasAnyErrors()}">
             <li th:each="err:${r"${"}#fields.allErrors()}" th:text="${r"${"}err}"></li>
         </ul>

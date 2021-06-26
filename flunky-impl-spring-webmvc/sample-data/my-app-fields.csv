@@ -1,8 +1,10 @@
 entityName,fieldName,label,type,length,precision,scale,nullable,listDisplay,viewDisplay,editDisplay,dftValue
-Customer,acctNbr,Account Number,String,20,,,false,sort,show,edit,
-Customer,name,Name,String,50,,,,sort,show,edit,
-Customer,addressLine1,Address Line 1,String,50,,,,hide,hide,edit,
-Customer,addressLine2,Address Line 2,String,50,,,,hide,hide,edit,
-Customer,city,City,String,20,,,,,,,
-Customer,stateCode,State,String,2,,,,,,,"""IL"""
-Customer,postalCode,Zip Code,String,10,,,,hide,hide,hide,
+Customer,acctNbr,Account Number,String,10,,,false,sort,,edit,
+Customer,name,Name,String,50,,,false,sort,,edit,
+Customer,addressLine1,Address Line 1,String,50,,,false,hide,,edit,
+Customer,addressLine2,Address Line 2,String,50,,,false,hide,,edit,
+Customer,city,City,String,20,,,false,,,edit,
+Customer,stateCode,State,String,2,,,false,sort,,edit,
+Customer,postalCode,Zip Code,String,10,,,false,,,edit,
+Item,sku,SKU,String,20,,,false,sort,,edit,
+Item,description,Description,String,100,,,false,,,edit,

@@ -28,7 +28,7 @@
         </ul>
     </div>
 
-    <form id="listForm" action="#" method="get" th:action="@{/customerList}">
+    <form id="listForm" action="#" method="get" th:action="@{/${entityName?uncap_first}List}">
         <input type="hidden" class="pageNumber" name="pageNumber" th:value="${r"${"}listForm.number}"/>
         <input type="hidden" class="pageSize" name="pageSize" th:value="${r"${"}listForm.size}"/>
         <input type="hidden" class="sortColumn" name="sortColumn" th:value="${r"${"}listForm.sortColumn}"/>

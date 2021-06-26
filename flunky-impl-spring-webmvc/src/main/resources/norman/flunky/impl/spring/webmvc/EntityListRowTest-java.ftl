@@ -12,7 +12,7 @@ public class ${entityName}ListRowTest {
         ${entityName} entity = nextRandom${entityName}();
         ${entityName}ListRow row = new ${entityName}ListRow(entity);
 <#list fields?filter(f -> !f.listDisplay?? || f.listDisplay != "hide") as field>
-        assertEquals(entity.get${field.fieldName}(), row.get${field.fieldName}());
+        assertEquals(entity.get${field.fieldName?cap_first}(), row.get${field.fieldName?cap_first}());
 </#list>
     }
 }

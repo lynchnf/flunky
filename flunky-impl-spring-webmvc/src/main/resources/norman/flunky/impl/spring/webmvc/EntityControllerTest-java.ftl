@@ -74,7 +74,7 @@ public class ${entityName}ControllerTest {
         assertEquals(2, listForm.getTotalPages());
         for (int i = 0; i < pageSize; i++) {
             assertEquals(entities.get(i).getId(), listForm.getRows().get(i).getId());
-            assertEquals(entities.get(i).getAcctNbr(), listForm.getRows().get(i).getAcctNbr());
+            assertEquals(entities.get(i).get${mainField?cap_first}(), listForm.getRows().get(i).get${mainField?cap_first}());
         }
     }
 
@@ -93,7 +93,7 @@ public class ${entityName}ControllerTest {
         // @formatter:on
         ${entityName}View view = (${entityName}View) mvcResult.getModelAndView().getModel().get("view");
         assertEquals(entity.getId(), view.getId());
-        assertEquals(entity.getAcctNbr(), view.getAcctNbr());
+        assertEquals(entity.get${mainField?cap_first}(), view.get${mainField?cap_first}());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class ${entityName}ControllerTest {
         ${entityName}EditForm editForm = (${entityName}EditForm) mvcResult.getModelAndView().getModel().get("editForm");
         assertEquals(entity.getId(), editForm.getId());
         assertEquals(entity.getVersion(), editForm.getVersion());
-        assertEquals(entity.getAcctNbr(), editForm.getAcctNbr());
+        assertEquals(entity.get${mainField?cap_first}(), editForm.get${mainField?cap_first}());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class ${entityName}ControllerTest {
         ${entityName}EditForm editForm = (${entityName}EditForm) mvcResult.getModelAndView().getModel().get("editForm");
         assertNull(editForm.getId());
         assertEquals(0, editForm.getVersion());
-        assertNull(editForm.getAcctNbr());
+        assertNull(editForm.get${mainField?cap_first}());
     }
 
     @Test
@@ -154,13 +154,9 @@ public class ${entityName}ControllerTest {
 
         // @formatter:off
         mockMvc.perform(post("/${entityName?uncap_first}Edit")
-                    .param("acctNbr", entity.getAcctNbr())
-                    .param("name", entity.getName())
-                    .param("addressLine1", entity.getAddressLine1())
-                    .param("addressLine2", entity.getAddressLine2())
-                    .param("city", entity.getCity())
-                    .param("stateCode", entity.getStateCode())
-                    .param("postalCode", entity.getPostalCode()))
+<#list fields as field>
+                    .param("${field.fieldName}", entity.get${field.fieldName?cap_first}())<#if field?is_last>)</#if>
+</#list>
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/${entityName?uncap_first}?id=1"))
                 .andExpect(flash().attribute("successMessage","${entityName} successfully added."));
@@ -178,13 +174,13 @@ public class ${entityName}ControllerTest {
         AbstractBindingResult bindingResult = (AbstractBindingResult) mvcResult.getModelAndView().getModel()
                 .get("org.springframework.validation.BindingResult.editForm");
         assertTrue(bindingResult.hasErrors());
-        assertNotNull(bindingResult.getFieldError("acctNbr"));
-        assertNull(bindingResult.getFieldError("name"));
-        assertNull(bindingResult.getFieldError("addressLine1"));
-        assertNull(bindingResult.getFieldError("addressLine2"));
-        assertNull(bindingResult.getFieldError("city"));
-        assertNull(bindingResult.getFieldError("stateCode"));
-        assertNull(bindingResult.getFieldError("postalCode"));
+<#list fields as field>
+    <#if field.nullable?? && field.nullable == "false">
+        assertNotNull(bindingResult.getFieldError("${field.fieldName}"));
+    <#else>
+        assertNull(bindingResult.getFieldError("${field.fieldName}"));
+    </#if>
+</#list>
     }
 
     @Test
@@ -192,25 +188,17 @@ public class ${entityName}ControllerTest {
         // @formatter:off
         String bigString = RandomStringUtils.randomAlphabetic(300);
         MvcResult mvcResult = mockMvc.perform(post("/${entityName?uncap_first}Edit")
-                    .param("acctNbr", bigString)
-                    .param("name", bigString)
-                    .param("addressLine1", bigString)
-                    .param("addressLine2", bigString)
-                    .param("city", bigString)
-                    .param("stateCode", bigString)
-                    .param("postalCode", bigString))
+<#list fields as field>
+                    .param("${field.fieldName}", bigString)<#if field?is_last>)</#if>
+</#list>
                 .andExpect(status().isOk())
                 .andReturn();
         // @formatter:on
         AbstractBindingResult bindingResult = (AbstractBindingResult) mvcResult.getModelAndView().getModel()
                 .get("org.springframework.validation.BindingResult.editForm");
         assertTrue(bindingResult.hasErrors());
-        assertNotNull(bindingResult.getFieldError("acctNbr"));
-        assertNotNull(bindingResult.getFieldError("name"));
-        assertNotNull(bindingResult.getFieldError("addressLine1"));
-        assertNotNull(bindingResult.getFieldError("addressLine2"));
-        assertNotNull(bindingResult.getFieldError("city"));
-        assertNotNull(bindingResult.getFieldError("stateCode"));
-        assertNotNull(bindingResult.getFieldError("postalCode"));
+<#list fields as field>
+        assertNotNull(bindingResult.getFieldError("${field.fieldName}"));
+</#list>
     }
 }
