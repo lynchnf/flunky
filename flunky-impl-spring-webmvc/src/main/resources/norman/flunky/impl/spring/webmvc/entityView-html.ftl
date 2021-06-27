@@ -31,7 +31,7 @@
 
     <table>
 <#list fields?filter(f -> !f.viewDisplay?? || f.viewDisplay != "hide") as field>
-            <tr>
+        <tr>
             <th>${field.label}</th>
             <td th:text="${r"${"}view.${field.fieldName}}"></td>
         </tr>

@@ -1,3 +1,2 @@
 entityName,singular,plural,toString,mainField,defaultSort,defaultPage,nbrOfFakeRecords
-Customer,Customer,Customers,name,acctNbr,ASC,10,77
-Item,Item,Items,sku,sku,ASC,20,102
+EntityName,Singular,Plural,toString,mainField,ASC,10,123

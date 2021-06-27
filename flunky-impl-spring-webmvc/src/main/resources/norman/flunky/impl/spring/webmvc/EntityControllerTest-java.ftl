@@ -2,7 +2,6 @@ package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.exception.NotFoundException;
-import ${application.basePackage}.exception.OptimisticLockingException;
 import ${application.basePackage}.service.${entityName}Service;
 import ${application.basePackage}.web.view.${entityName}EditForm;
 import ${application.basePackage}.web.view.${entityName}ListForm;
@@ -107,7 +106,7 @@ public class ${entityName}ControllerTest {
                     .param("id", "1"))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/${entityName?uncap_first}List"))
-                .andExpect(flash().attribute("errorMessage","${entityName} not found."));
+                .andExpect(flash().attribute("errorMessage","${singular} not found."));
         // @formatter:on
     }
 
@@ -159,7 +158,7 @@ public class ${entityName}ControllerTest {
 </#list>
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/${entityName?uncap_first}?id=1"))
-                .andExpect(flash().attribute("successMessage","${entityName} successfully added."));
+                .andExpect(flash().attribute("successMessage","${singular} successfully added."));
         // @formatter:on
         verify(service).save(any(${entityName}.class));
     }

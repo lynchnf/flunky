@@ -72,8 +72,9 @@ public class FakeDataUtil {
                 printInsert(record, mainFieldMap, writer);
             }
             if (!${entity.entityName?uncap_first}List.isEmpty()) {
-                String msg = String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}List.size(),
-                        tableName);
+                String msg =
+                        String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}List.size(),
+                                tableName);
                 LOGGER.info(msg);
             }
 </#list>

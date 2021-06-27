@@ -34,7 +34,8 @@ public class ${entityName}Controller {
     private ${entityName}Service service;
 
     @GetMapping("/${entityName?uncap_first}List")
-    public String load${entityName}List(@RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
+    public String load${entityName}List(
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
             @RequestParam(value = "pageSize", required = false, defaultValue = "${defaultPage}") int pageSize,
             @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainField}") String sortColumn,
             @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
@@ -92,8 +93,8 @@ public class ${entityName}Controller {
     }
     
     @PostMapping("/${entityName?uncap_first}Edit")
-    public String process${entityName}Edit(@Valid @ModelAttribute("editForm") ${entityName}EditForm editForm, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+    public String process${entityName}Edit(@Valid @ModelAttribute("editForm") ${entityName}EditForm editForm,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "${entityName?uncap_first}Edit";
         }
