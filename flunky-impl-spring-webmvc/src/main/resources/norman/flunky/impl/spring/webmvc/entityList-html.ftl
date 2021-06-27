@@ -81,10 +81,22 @@
             </tr>
             <tr th:each="row:${r"${"}listForm.rows}">
 <#list fields?filter(f -> !f.listDisplay?? || f.listDisplay != "hide") as field>
-                    <#if field.fieldName == mainField>
+    <#if field.fieldName == mainField>
+        <#if field.type == "BigDecimal">
+                <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#numbers.formatCurrency(row.${field.fieldName})}"></a></td>
+        <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
+                <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#numbers.formatInteger(row.${field.fieldName},1,'DEFAULT')}"></a></td>
+        <#else>
                 <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}row.${field.fieldName}}"></a></td>
+        </#if>
     <#else>
+        <#if field.type == "BigDecimal">
+                <td th:text="${r"${"}#numbers.formatCurrency(row.${field.fieldName})}"></td>
+        <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
+                <td th:text="${r"${"}#numbers.formatInteger(row.${field.fieldName},1,'DEFAULT')}"></td>
+        <#else>
                 <td th:text="${r"${"}row.${field.fieldName}}"></td>
+        </#if>
     </#if>
 </#list>
             </tr>

@@ -33,7 +33,13 @@
 <#list fields?filter(f -> !f.viewDisplay?? || f.viewDisplay != "hide") as field>
         <tr>
             <th>${field.label}</th>
+    <#if field.type == "BigDecimal">
+            <td th:text="${r"${"}#numbers.formatCurrency(view.${field.fieldName})}"></td>
+    <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
+            <td th:text="${r"${"}#numbers.formatInteger(view.${field.fieldName},1,'DEFAULT')}"></td>
+    <#else>
             <td th:text="${r"${"}view.${field.fieldName}}"></td>
+    </#if>
         </tr>
 </#list>
     </table>

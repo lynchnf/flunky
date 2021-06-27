@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Version;
+import java.math.BigDecimal;
 
 @Entity
 public class ${entityName} {
@@ -17,7 +18,9 @@ public class ${entityName} {
 <#list fields as field>
     <#assign myParms = [] />
     <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
-    <#if field.nullable?? && field.nullable == "false"><#assign myParms = myParms + [ "nullable = false" ] /></#if>
+    <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
+    <#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
+    <#if field.nullable??><#assign myParms = myParms + [ "nullable = ${field.nullable}" ] /></#if>
     <#list myParms>
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
     </#list>

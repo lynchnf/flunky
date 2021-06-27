@@ -42,12 +42,26 @@
     <#if field.editDisplay?? && field.editDisplay == "edit">
             <tr>
                 <th>${field.label}</th>
+        <#if field.type = "Boolean">
+                <td><select th:field="*{booleanField}" th:errorclass="is-invalid">
+                        <option value="">Please select ...</option>
+                        <option value="true">true</option>
+                        <option value="false">false</option>
+                    </select></td>
+        <#else>
                 <td><input type="text" th:field="*{${field.fieldName}}" th:errorclass="field-error"/></td>
+        </#if>
             </tr>
     <#else>
             <tr>
                 <th>${field.label}</th>
+        <#if field.type == "BigDecimal">
+                <td th:text="${r"${"}#numbers.formatCurrency(editForm.${field.fieldName})}"></td>
+        <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
+                <td th:text="${r"${"}#numbers.formatInteger(editForm.${field.fieldName},1,'DEFAULT')}"></td>
+        <#else>
                 <td th:text="${r"${"}editForm.${field.fieldName}}"></td>
+        </#if>
             </tr>
     </#if>
 </#list>

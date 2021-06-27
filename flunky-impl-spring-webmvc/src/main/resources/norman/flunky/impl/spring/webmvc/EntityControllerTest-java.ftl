@@ -154,7 +154,11 @@ public class ${entityName}ControllerTest {
         // @formatter:off
         mockMvc.perform(post("/${entityName?uncap_first}Edit")
 <#list fields as field>
+    <#if field.type == "String">
                     .param("${field.fieldName}", entity.get${field.fieldName?cap_first}())<#if field?is_last>)</#if>
+    <#else>
+                    .param("${field.fieldName}", String.valueOf(entity.get${field.fieldName?cap_first}()))<#if field?is_last>)</#if>
+    </#if>
 </#list>
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/${entityName?uncap_first}?id=1"))
@@ -174,7 +178,7 @@ public class ${entityName}ControllerTest {
                 .get("org.springframework.validation.BindingResult.editForm");
         assertTrue(bindingResult.hasErrors());
 <#list fields as field>
-    <#if field.nullable?? && field.nullable == "false">
+    <#if field.nullable?? && field.nullable == "false" && !field.dftValue??>
         assertNotNull(bindingResult.getFieldError("${field.fieldName}"));
     <#else>
         assertNull(bindingResult.getFieldError("${field.fieldName}"));

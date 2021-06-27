@@ -2,6 +2,8 @@ package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};
 
+import java.math.BigDecimal;
+
 public class ${entityName}View {
     private Long id;
     private Integer version;

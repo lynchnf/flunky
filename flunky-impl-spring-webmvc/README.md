@@ -44,3 +44,11 @@ EDIT
 
     editDisplay - Valid values are show, hide, or edit. If left blank, show is the default.
     dftValue -
+    
+FAKE DATA
+
+    fakeLowValue
+    fakeHighValue
+    fakeRandomBoolean
+    fakeStringType - WORDS, ALPHABETIC, ALPHANUMERIC, NUMERIC
+    fakeStringModifier - LOWER_CASE, UPPER_CASE, CAPITALIZE

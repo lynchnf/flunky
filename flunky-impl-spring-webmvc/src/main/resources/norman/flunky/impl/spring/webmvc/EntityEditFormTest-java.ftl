@@ -4,6 +4,8 @@ import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static ${application.basePackage}.FakeDataUtil.nextRandom${entityName};
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +24,21 @@ public class ${entityName}EditFormTest {
         ${entityName}EditForm editForm = new ${entityName}EditForm();
 <#list fields as field>
     <#if field.dftValue??>
+        <#if field.type == "BigDecimal">
+        assertTrue(editForm.get${field.fieldName?cap_first}().compareTo(new BigDecimal("${field.dftValue}")) == 0);
+        <#elseif field.type == "Boolean">
+        assertEquals(Boolean.valueOf(${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#elseif field.type == "Byte">
+        assertEquals(Byte.valueOf((byte) ${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#elseif field.type == "Short">
+        assertEquals(Short.valueOf((short) ${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#elseif field.type == "Integer">
+        assertEquals(Integer.valueOf(${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#elseif field.type == "Long">
+        assertEquals(Long.valueOf((long) ${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#else>
         assertEquals(${field.dftValue}, editForm.get${field.fieldName?cap_first}());
+        </#if>
     <#else>
         assertNull(editForm.get${field.fieldName?cap_first}());
     </#if>
