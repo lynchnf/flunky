@@ -86,6 +86,14 @@
                 <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#numbers.formatCurrency(row.${field.fieldName})}"></a></td>
         <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
                 <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#numbers.formatInteger(row.${field.fieldName},1,'DEFAULT')}"></a></td>
+        <#elseif field.type == "Date">
+            <#if field.temporalType?? && field.temporalType="DATE">
+                <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy')}"></a></td>
+            <#elseif field.temporalType?? && field.temporalType="TIME">
+                <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#dates.format(row.${field.fieldName},'h:m a')}"></a></td>
+            <#else>
+                <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy h:m a')}"></a></td>
+            </#if>
         <#else>
                 <td><a th:href="@{/${entityName?uncap_first}(id=${r"${"}row.id})}" th:text="${r"${"}row.${field.fieldName}}"></a></td>
         </#if>
@@ -94,6 +102,14 @@
                 <td th:text="${r"${"}#numbers.formatCurrency(row.${field.fieldName})}"></td>
         <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
                 <td th:text="${r"${"}#numbers.formatInteger(row.${field.fieldName},1,'DEFAULT')}"></td>
+        <#elseif field.type == "Date">
+            <#if field.temporalType?? && field.temporalType="DATE">
+                <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy')}"></td>
+            <#elseif field.temporalType?? && field.temporalType="TIME">
+                <td th:text="${r"${"}#dates.format(row.${field.fieldName},'h:m a')}"></td>
+            <#else>
+                <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy h:m a')}"></td>
+            </#if>
         <#else>
                 <td th:text="${r"${"}row.${field.fieldName}}"></td>
         </#if>

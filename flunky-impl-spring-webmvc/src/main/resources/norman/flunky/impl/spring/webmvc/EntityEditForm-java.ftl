@@ -3,6 +3,7 @@ package ${application.basePackage}.web.view;
 import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.exception.NotFoundException;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.Digits;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ${entityName}EditForm {
     private Long id;
@@ -32,6 +34,14 @@ public class ${entityName}EditForm {
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
     @NumberFormat(style = NumberFormat.Style.NUMBER)
+    <#elseif field.type == "Date">
+        <#if field.temporalType?? && field.temporalType="DATE">
+    @DateTimeFormat(pattern = "M/d/yyyy")
+        <#elseif field.temporalType?? && field.temporalType="TIME">
+    @DateTimeFormat(pattern = "h:m a")
+        <#else>
+    @DateTimeFormat(pattern = "M/d/yyyy h:m a")
+        </#if>
     </#if>
     <#if field.dftValue??>
         <#if field.type == "BigDecimal">

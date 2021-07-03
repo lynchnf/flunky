@@ -5,8 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 public class ${entityName} {
@@ -24,6 +27,9 @@ public class ${entityName} {
     <#list myParms>
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
     </#list>
+    <#if field.type == "Date">
+    @Temporal(TemporalType.${(field.temporalType)!"TIMESTAMP"})
+    </#if>
     private ${field.type} ${field.fieldName};
 </#list>
 

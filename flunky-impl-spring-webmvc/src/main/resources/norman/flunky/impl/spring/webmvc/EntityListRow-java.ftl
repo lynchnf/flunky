@@ -3,6 +3,7 @@ package ${application.basePackage}.web.view;
 import ${application.basePackage}.domain.${entityName};
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ${entityName}ListRow {
     private Long id;

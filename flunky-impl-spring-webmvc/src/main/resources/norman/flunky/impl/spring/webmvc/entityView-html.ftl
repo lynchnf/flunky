@@ -37,6 +37,14 @@
             <td th:text="${r"${"}#numbers.formatCurrency(view.${field.fieldName})}"></td>
     <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
             <td th:text="${r"${"}#numbers.formatInteger(view.${field.fieldName},1,'DEFAULT')}"></td>
+    <#elseif field.type == "Date">
+        <#if field.temporalType?? && field.temporalType="DATE">
+            <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy')}"></td>
+        <#elseif field.temporalType?? && field.temporalType="TIME">
+            <td th:text="${r"${"}#dates.format(row.${field.fieldName},'h:m a')}"></td>
+        <#else>
+            <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy h:m a')}"></td>
+        </#if>
     <#else>
             <td th:text="${r"${"}view.${field.fieldName}}"></td>
     </#if>

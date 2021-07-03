@@ -1,18 +1,19 @@
-entityName,fieldName,label,type,length,precision,scale,nullable,listDisplay,viewDisplay,editDisplay,dftValue,fakeLowValue,fakeHighValue,fakeRandomBoolean,fakeStringType,fakeStringModifier
-EntityName,fieldName,Label,String,10,,,false,sort,,edit,,,,,ALPHABETIC,LOWER_CASE
-EntityName,mainField,Main Field,String,5,,,false,sort,,edit,,,,,ALPHANUMERIC,UPPER_CASE
-EntityName,toString,To String,String,50,,,,sort,,edit,,,,,WORDS,CAPITALIZE
-EntityName,number,Number,String,20,,,,sort,,edit,,,,,NUMERIC,
-EntityName,bigDecimalField,Big Decimal Field,BigDecimal,,5,2,,sort,,edit,,-999.99,999.99,,,
-EntityName,booleanField,Boolean Field,Boolean,,,,,sort,,edit,,,,true,,
-EntityName,byteField,Byte Field,Byte,,,,,sort,,edit,,-99,99,,,
-EntityName,shortField,Short Field,Short,,,,,sort,,edit,,-9999,9999,,,
-EntityName,integerField,Integer Field,Integer,,,,,sort,,edit,,-999999,999999,,,
-EntityName,longField,Long Field,Long,,,,,sort,,edit,,-99999999,99999999,,,
-EntityName,stringField2,Read Only String,String,10,,,false,hide,,,"""abcdefghij""",,,,,
-EntityName,bigDecimalField2,Read Only Big Decimal,BigDecimal,,7,2,false,hide,,,-12345.67,,,,,
-EntityName,booleanField2,Read Only Boolean Field,Boolean,,,,false,hide,,,true,,,,,
-EntityName,byteField2,Read Only Byte,Byte,,,,false,hide,,,-12,,,,,
-EntityName,shortField2,Read Only Short,Short,,,,false,hide,,,-1234,,,,,
-EntityName,integerField2,Read Only Integer,Integer,,,,false,hide,,,-123456,,,,,
-EntityName,longField2,Read Only Long,Long,,,,false,hide,,,-12345678,,,,,
+entityName,fieldName,label,type,length,precision,scale,nullable,temporalType,listDisplay,viewDisplay,editDisplay,dftValue,fakeRandomBoolean,fakeLowValue,fakeHighValue,fakeStringType,fakeStringModifier
+EntityName,fieldName,Label,String,10,,,false,,sort,,edit,,,,,ALPHABETIC,LOWER_CASE
+EntityName,mainField,Main Field,String,5,,,false,,sort,,edit,,,,,ALPHANUMERIC,UPPER_CASE
+EntityName,toString,To String,String,50,,,,,sort,,edit,,,,,WORDS,CAPITALIZE
+EntityName,number,Number,String,20,,,,,hide,,edit,,,,,NUMERIC,
+EntityName,bigDecimalField,Big Decimal Field,BigDecimal,,5,2,,,,,edit,,,-999.99,999.99,,
+EntityName,booleanField,Boolean Field,Boolean,,,,,,,,edit,,true,,,,
+EntityName,byteField,Byte Field,Byte,,,,,,,,edit,,,-99,99,,
+EntityName,shortField,Short Field,Short,,,,,,,,edit,,,-9999,9999,,
+EntityName,integerField,Integer Field,Integer,,,,,,,,edit,,,-999999,999999,,
+EntityName,longField,Long Field,Long,,,,,,,,edit,,,-99999999,99999999,,
+EntityName,dateField,Date Field,Date,,,,,DATE,,,edit,,,,,,
+EntityName,stringField2,Read Only String,String,10,,,false,,hide,,,"""abcdefghij""",,,,,
+EntityName,bigDecimalField2,Read Only Big Decimal,BigDecimal,,7,2,false,,hide,,,-12345.67,,,,,
+EntityName,booleanField2,Read Only Boolean Field,Boolean,,,,false,,hide,,,true,,,,,
+EntityName,byteField2,Read Only Byte,Byte,,,,false,,hide,,,-12,,,,,
+EntityName,shortField2,Read Only Short,Short,,,,false,,hide,,,-1234,,,,,
+EntityName,integerField2,Read Only Integer,Integer,,,,false,,hide,,,-123456,,,,,
+EntityName,longField2,Read Only Long,Long,,,,false,,hide,,,-12345678,,,,,
