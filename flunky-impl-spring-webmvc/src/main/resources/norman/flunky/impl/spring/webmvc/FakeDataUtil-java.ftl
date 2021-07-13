@@ -8,14 +8,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.TemporalType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +33,14 @@ import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHABE
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHANUMERIC;
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.NUMERIC;
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.WORDS;
+import static javax.persistence.TemporalType.DATE;
+import static javax.persistence.TemporalType.TIME;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 public class FakeDataUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataUtil.class);
+    private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
     private static final Random RANDOM = new Random();
     private static final String[] NONSENSE_WORDS =
             {"abra", "brok", "cuzze", "dryxa", "edrat", "frato", "grupo", "heon", "ikyss", "jiezz", "kryim", "loymo",
@@ -149,6 +159,12 @@ public class FakeDataUtil {
             <#elseif field.dftValue??>
         entity.set${field.fieldName?cap_first}(Long.valueOf((long) ${field.dftValue}));
             </#if>
+        <#elseif field.type == "Date">
+            <#if field.fakeLowValue?? && field.fakeHighValue??>
+        entity.set${field.fieldName?cap_first}(nextRandomDateTime(${field.temporalType}, ${field.fakeLowValue}, ${field.fakeHighValue}));
+            <#elseif field.dftValue??>
+        entity.set${field.fieldName?cap_first}(${field.dftValue});
+            </#if>
         <#elseif field.type == "String">
             <#if field.fakeStringType??>
         entity.set${field.fieldName?cap_first}(nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length}));
@@ -218,6 +234,30 @@ public class FakeDataUtil {
             }
         } while (!done);
         return randomWords.toString();
+    }
+
+    private static Date nextRandomDateTime(TemporalType temporalType, int lowValue, int highValue) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        if (temporalType == DATE) {
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            int days = RANDOM.nextInt(highValue - lowValue + 1) + lowValue;
+            cal.add(Calendar.DATE, days);
+        } else if (temporalType == TIME) {
+            int minutes = RANDOM.nextInt(highValue - lowValue + 1) + lowValue;
+            cal.add(Calendar.MINUTE, minutes);
+            cal.set(Calendar.DAY_OF_MONTH, 1);
+            cal.set(Calendar.MONTH, Calendar.JANUARY);
+            cal.set(Calendar.YEAR, 1970);
+        } else if (temporalType == TIMESTAMP) {
+            cal.set(Calendar.MINUTE, RANDOM.nextInt(60));
+            cal.set(Calendar.HOUR_OF_DAY, RANDOM.nextInt(24));
+            int days = RANDOM.nextInt(highValue - lowValue + 1) + lowValue;
+            cal.add(Calendar.DATE, days);
+        }
+        return cal.getTime();
     }
 
     private static String camelToSnake(String camelStr) {
@@ -306,6 +346,24 @@ public class FakeDataUtil {
         String columnValue;
         if (value == null) {
             columnValue = "NULL";
+        } else if (Boolean.class.isAssignableFrom(returnType)) {
+            columnValue = String.valueOf(value).toUpperCase();
+        } else if (BigDecimal.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType) ||
+                Short.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType) ||
+                Long.class.isAssignableFrom(returnType)) {
+            columnValue = String.valueOf(value);
+        } else if (Date.class.isAssignableFrom(returnType)) {
+            String datePart = YYMD.format((Date) value);
+            String timePart = HMS.format((Date) value);
+            if (!datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
+                columnValue = "'" + datePart + " " + timePart + "'";
+            } else if (!datePart.equals("1970-01-01") && timePart.equals("00:00:00")) {
+                columnValue = "'" + datePart + "'";
+            } else if (datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
+                columnValue = "'" + timePart + "'";
+            } else {
+                columnValue = "NULL";
+            }
         } else {
             columnValue = "'" + value + "'";
         }
@@ -313,54 +371,6 @@ public class FakeDataUtil {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //    private static BigDecimal nextRandomBigDecimal(int unscaledLow, int unscaledHigh, int scale) {
-    //        return BigDecimal.valueOf(RANDOM.nextInt(unscaledHigh - unscaledLow + 1) + unscaledLow, scale);
-    //    }
-    //
-    //    private static Boolean nextRandomBoolean() {
-    //        return RANDOM.nextInt(2) == 0;
-    //    }
-    //
-    //    private static Date nextRandomDate(int daysLow, int daysHigh) {
-    //        Calendar cal = Calendar.getInstance();
-    //        cal.set(Calendar.MILLISECOND, 0);
-    //        cal.set(Calendar.SECOND, 0);
-    //        cal.set(Calendar.MINUTE, 0);
-    //        cal.set(Calendar.HOUR_OF_DAY, 0);
-    //        int days = RANDOM.nextInt(daysHigh - daysLow + 1) + daysLow;
-    //        cal.add(Calendar.DATE, days);
-    //        return cal.getTime();
-    //    }
-    //
-    //    private static Date nextRandomTime(int hoursLow, int hoursHigh) {
-    //        Calendar cal = Calendar.getInstance();
-    //        cal.set(Calendar.MILLISECOND, 0);
-    //        cal.set(Calendar.SECOND, RANDOM.nextInt(60));
-    //        cal.set(Calendar.MINUTE, RANDOM.nextInt(60));
-    //        int hours = RANDOM.nextInt(hoursHigh - hoursLow + 1) + hoursLow;
-    //        cal.set(Calendar.HOUR_OF_DAY, hours);
-    //        cal.set(Calendar.DAY_OF_MONTH, 1);
-    //        cal.set(Calendar.MONTH, Calendar.JANUARY);
-    //        cal.set(Calendar.YEAR, 1970);
-    //        return cal.getTime();
-    //    }
-    //
-    //    private static Date nextRandomTimestamp(int daysLow, int daysHigh) {
-    //        Calendar cal = Calendar.getInstance();
-    //        cal.set(Calendar.MILLISECOND, 0);
-    //        cal.set(Calendar.SECOND, RANDOM.nextInt(60));
-    //        cal.set(Calendar.MINUTE, RANDOM.nextInt(60));
-    //        cal.set(Calendar.HOUR_OF_DAY, RANDOM.nextInt(24));
-    //        int days = RANDOM.nextInt(daysHigh - daysLow + 1) + daysLow;
-    //        cal.add(Calendar.DATE, days);
-    //        return cal.getTime();
-    //    }
-    //
-    //    private static int nextRandomInteger(int low, int high) {
-    //        return RANDOM.nextInt(high - low + 1) + low;
-    //    }
-    //
     //
     //    private static <T> T nextRandomEnum(T[] values) {
     //        return values[RANDOM.nextInt(values.length)];

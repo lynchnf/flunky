@@ -28,7 +28,7 @@ public class ${entityName} {
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
     </#list>
     <#if field.type == "Date">
-    @Temporal(TemporalType.${(field.temporalType)!"TIMESTAMP"})
+    @Temporal(TemporalType.${field.temporalType})
     </#if>
     private ${field.type} ${field.fieldName};
 </#list>

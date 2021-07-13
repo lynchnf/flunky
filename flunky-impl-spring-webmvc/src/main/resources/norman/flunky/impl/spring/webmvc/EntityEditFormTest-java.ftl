@@ -1,15 +1,20 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};
-import ${application.basePackage}.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import static ${application.basePackage}.FakeDataUtil.nextRandom${entityName};
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ${entityName}EditFormTest {
+    private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
+    private static final DateFormat YYMD_HMS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     @Test
     public void gettersForExistingEntity() {
         ${entityName} entity = nextRandom${entityName}();
@@ -20,7 +25,7 @@ public class ${entityName}EditFormTest {
     }
 
     @Test
-    public void gettersForNewEntity() {
+    public void gettersForNewEntity() throws Exception {
         ${entityName}EditForm editForm = new ${entityName}EditForm();
 <#list fields as field>
     <#if field.dftValue??>
@@ -36,8 +41,16 @@ public class ${entityName}EditFormTest {
         assertEquals(Integer.valueOf(${field.dftValue}), editForm.get${field.fieldName?cap_first}());
         <#elseif field.type == "Long">
         assertEquals(Long.valueOf((long) ${field.dftValue}), editForm.get${field.fieldName?cap_first}());
+        <#elseif field.type == "Date">
+            <#if field.temporalType?? && field.temporalType="DATE">
+        assertEquals(YYMD.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+            <#elseif field.temporalType?? && field.temporalType="TIME">
+        assertEquals(HMS.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+            <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
+        assertEquals(YYMD_HMS.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+            </#if>
         <#else>
-        assertEquals(${field.dftValue}, editForm.get${field.fieldName?cap_first}());
+        assertEquals("${field.dftValue}", editForm.get${field.fieldName?cap_first}());
         </#if>
     <#else>
         assertNull(editForm.get${field.fieldName?cap_first}());
@@ -46,7 +59,7 @@ public class ${entityName}EditFormTest {
     }
 
     @Test
-    public void toEntity() throws NotFoundException {
+    public void toEntity() throws Exception {
         ${entityName} entity1 = nextRandom${entityName}();
         ${entityName}EditForm editForm = new ${entityName}EditForm(entity1);
         ${entityName} entity2 = editForm.toEntity();
