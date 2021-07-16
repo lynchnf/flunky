@@ -1,7 +1,11 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};
+<#list fields?filter(f -> f.enumType??) as field>
+import ${application.basePackage}.domain.${field.type};
+</#list>
 import ${application.basePackage}.exception.NotFoundException;
+import com.mycompany.example.my.app.util.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,16 +17,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ${entityName}EditForm {
     private static final Logger LOGGER = LoggerFactory.getLogger(${entityName}EditForm.class);
-    private static final SimpleDateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat HMS = new SimpleDateFormat("HH:mm:ss");
-    private static final SimpleDateFormat YYMD_HMS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private Long id;
     private Integer version = 0;
 <#list fields as field>
@@ -56,35 +54,33 @@ public class ${entityName}EditForm {
 </#list>
 
     public ${entityName}EditForm() {
-        try {
 <#list fields?filter(f -> f.dftValue??) as field>
     <#if field.type == "BigDecimal">
-            ${field.fieldName} = new BigDecimal("${field.dftValue}");
+        ${field.fieldName} = new BigDecimal("${field.dftValue}");
     <#elseif field.type == "Boolean">
-            ${field.fieldName} = Boolean.valueOf(${field.dftValue});
+        ${field.fieldName} = Boolean.valueOf(${field.dftValue});
     <#elseif field.type == "Byte">
-            ${field.fieldName} = Byte.valueOf((byte) ${field.dftValue});
+        ${field.fieldName} = Byte.valueOf((byte) ${field.dftValue});
     <#elseif field.type == "Short">
-            ${field.fieldName} = Short.valueOf((short) ${field.dftValue});
+        ${field.fieldName} = Short.valueOf((short) ${field.dftValue});
     <#elseif field.type == "Integer">
-            ${field.fieldName} = Integer.valueOf(${field.dftValue});
+        ${field.fieldName} = Integer.valueOf(${field.dftValue});
     <#elseif field.type == "Long">
-            ${field.fieldName} = Long.valueOf((long) ${field.dftValue});
+        ${field.fieldName} = Long.valueOf((long) ${field.dftValue});
     <#elseif field.type == "Date">
         <#if field.temporalType?? && field.temporalType="DATE">
-            ${field.fieldName} = YYMD.parse("${field.dftValue}");
+        ${field.fieldName} = MiscUtils.parseDate("${field.dftValue}");
         <#elseif field.temporalType?? && field.temporalType="TIME">
-            ${field.fieldName} = HMS.parse("${field.dftValue}");
+        ${field.fieldName} = MiscUtils.parseTime("${field.dftValue}");
         <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
-            ${field.fieldName} = YYMD_HMS.parse("${field.dftValue}");
+        ${field.fieldName} = MiscUtils.parseDateTime("${field.dftValue}");
         </#if>
+    <#elseif field.enumType??>
+        ${field.fieldName} = ${field.type}.${field.dftValue};
     <#else>
-            ${field.fieldName} = "${field.dftValue}";
+        ${field.fieldName} = "${field.dftValue}";
     </#if>
 </#list>
-        } catch (ParseException e) {
-            LOGGER.warn(String.format("Unable to populate %s with initial values.", this.getClass().getSimpleName()), e);
-        }
     }
 
     public ${entityName}EditForm(${entityName} entity) {

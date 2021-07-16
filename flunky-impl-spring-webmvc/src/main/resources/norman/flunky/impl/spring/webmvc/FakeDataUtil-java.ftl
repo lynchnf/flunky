@@ -3,20 +3,25 @@ package ${basePackage};
 <#list entities as entity>
 import ${basePackage}.domain.${entity.entityName};
 </#list>
+<#list enums as enum>
+import ${basePackage}.domain.${enum.enumName};
+</#list>
+import com.mycompany.example.my.app.exception.LoggingException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.TemporalType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,14 +38,14 @@ import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHABE
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHANUMERIC;
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.NUMERIC;
 import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.WORDS;
+import static com.mycompany.example.my.app.util.MiscUtils.HMS;
+import static com.mycompany.example.my.app.util.MiscUtils.YYMD;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIME;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
 public class FakeDataUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataUtil.class);
-    private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
     private static final Random RANDOM = new Random();
     private static final String[] NONSENSE_WORDS =
             {"abra", "brok", "cuzze", "dryxa", "edrat", "frato", "grupo", "heon", "ikyss", "jiezz", "kryim", "loymo",
@@ -55,13 +60,47 @@ public class FakeDataUtil {
         LOWER_CASE, UPPER_CASE, CAPITALIZE
     }
 
-    public static class ReturnTypeAndValue {
+    public static class FieldValueInfo {
+        private String methodName;
+        private String fieldName;
         private Class<?> returnType;
         private Object value;
+        private boolean ordinalEnum = false;
 
-        public ReturnTypeAndValue(Class<?> returnType, Object value) {
-            this.returnType = returnType;
-            this.value = value;
+        public FieldValueInfo(String methodName, Object bean) {
+            this.methodName = methodName;
+            if (methodName.startsWith("is")) {
+                fieldName = methodName.substring(2);
+            } else {
+                fieldName = methodName.substring(3);
+            }
+            fieldName = StringUtils.uncapitalize(fieldName);
+            Class<?> beanClass = bean.getClass();
+            try {
+                Method method = beanClass.getDeclaredMethod(methodName);
+                returnType = method.getReturnType();
+                value = method.invoke(bean);
+                Field field = beanClass.getDeclaredField(fieldName);
+                if (field.isAnnotationPresent(Enumerated.class)) {
+                    Enumerated annotation = field.getAnnotation(Enumerated.class);
+                    EnumType enumType = annotation.value();
+                    if (enumType == EnumType.ORDINAL) {
+                        ordinalEnum = true;
+                    }
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
+                throw new LoggingException(LOGGER,
+                        String.format("Unable to get field value info for method %s in class %s.", methodName,
+                                beanClass.getName()), e);
+            }
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+
+        public String getFieldName() {
+            return fieldName;
         }
 
         public Class<?> getReturnType() {
@@ -70,6 +109,10 @@ public class FakeDataUtil {
 
         public Object getValue() {
             return value;
+        }
+
+        public boolean isOrdinalEnum() {
+            return ordinalEnum;
         }
     }
 
@@ -92,17 +135,15 @@ public class FakeDataUtil {
             throw new RuntimeException(msg);
         }
         try (PrintWriter writer = new PrintWriter(file)) {
-            String tableName = null;
 <#list entities as entity>
 
             for (${entity.entityName} record : ${entity.entityName?uncap_first}List) {
-                tableName = camelToSnake(record.getClass().getSimpleName());
                 printInsert(record, mainFieldMap, writer);
             }
             if (!${entity.entityName?uncap_first}List.isEmpty()) {
                 String msg =
                         String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}List.size(),
-                                tableName);
+                                camelToSnake(${entity.entityName}.class.getSimpleName()));
                 LOGGER.info(msg);
             }
 </#list>
@@ -170,6 +211,12 @@ public class FakeDataUtil {
         entity.set${field.fieldName?cap_first}(nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length}));
             <#elseif field.dftValue??>
         entity.set${field.fieldName?cap_first}(${field.dftValue});
+            </#if>
+        <#elseif field.enumType??>
+            <#if field.fakeRandomEnum?? && field.fakeRandomEnum == "true">
+        entity.set${field.fieldName?cap_first}(nextRandomEnum(${field.type}.values()));
+            <#elseif field.dftValue??>
+        entity.set${field.fieldName?cap_first}(${field.type}.${field.dftValue});
             </#if>
         </#if>
     </#list>
@@ -260,6 +307,10 @@ public class FakeDataUtil {
         return cal.getTime();
     }
 
+    private static <T> T nextRandomEnum(T[] values) {
+        return values[RANDOM.nextInt(values.length)];
+    }
+
     private static String camelToSnake(String camelStr) {
         String ret = camelStr.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z])([A-Z])", "$1_$2");
         return ret.toLowerCase();
@@ -267,19 +318,12 @@ public class FakeDataUtil {
 
     private static void printInsert(Object bean, Map<String, String> mainFieldMap, PrintWriter writer) {
         String beanName = bean.getClass().getSimpleName();
-        //List<Class<?>> simpleTypes = Arrays.asList(BigDecimal.class, Boolean.class, Date.class, Integer.class, Long.class, String.class);
         List<String> simpleGetterNames = new ArrayList<>();
-        //List<String> otherGetterNames = new ArrayList<>();
         for (Method method : bean.getClass().getDeclaredMethods()) {
             String methodName = method.getName();
             if (method.getParameterCount() == 0 && !methodName.equals("getId") &&
                     (methodName.startsWith("is") || methodName.startsWith("get"))) {
-                //Class<?> returnType = method.getReturnType();
-                //if (simpleTypes.contains(returnType) || returnType.isEnum()) {
                 simpleGetterNames.add(methodName);
-                //} else if (!List.class.isAssignableFrom(returnType)) {
-                //otherGetterNames.add(methodName);
-                //}
             }
         }
 
@@ -289,63 +333,35 @@ public class FakeDataUtil {
 
         Collections.sort(simpleGetterNames);
         for (String methodName : simpleGetterNames) {
-            columnNames = buildColumnNames(columnNames, methodName);
-            columnValues = buildSimpleColumnValues(columnValues, methodName, bean);
+            FieldValueInfo info = new FieldValueInfo(methodName, bean);
+            String columnName = "`" + camelToSnake(info.getFieldName()) + "`";
+            columnNames = appendToStringBuilder(columnNames, columnName);
+            String columnValue = getSimpleColumnValue(info);
+            columnValues = appendToStringBuilder(columnValues, columnValue);
         }
 
-        //Collections.sort(otherGetterNames);
-        //for (String methodName : otherGetterNames) {
-        //columnNames = buildColumnNames(columnNames, methodName + "Id");
-        //columnValues = buildOtherColumnValues(columnValues, methodName, bean, mainFieldMap);
-        //}
         writer.printf("INSERT INTO %s (%s)  VALUES (%s);%n", tableName, columnNames.toString(),
                 columnValues.toString());
     }
 
-    private static StringBuilder buildColumnNames(StringBuilder columnNames, String methodName) {
-        String fieldName;
-        if (methodName.startsWith("is")) {
-            fieldName = methodName.substring(2);
+    private static StringBuilder appendToStringBuilder(StringBuilder stringBuilder, String value) {
+        if (stringBuilder == null) {
+            stringBuilder = new StringBuilder(value);
         } else {
-            fieldName = methodName.substring(3);
+            stringBuilder.append(",").append(value);
         }
-
-        String columnName = "`" + camelToSnake(fieldName) + "`";
-        columnNames = appendToColumnValues(columnNames, columnName);
-        return columnNames;
+        return stringBuilder;
     }
 
-    private static StringBuilder appendToColumnValues(StringBuilder columnValues, String columnValue) {
-        if (columnValues == null) {
-            columnValues = new StringBuilder(columnValue);
-        } else {
-            columnValues.append(",").append(columnValue);
-        }
-        return columnValues;
-    }
-
-    private static StringBuilder buildSimpleColumnValues(StringBuilder columnValues, String methodName, Object bean) {
-        ReturnTypeAndValue returnTypeAndValue = getReturnTypeAndValue(methodName, bean);
-        String columnValue = getSimpleColumnValue(returnTypeAndValue.getReturnType(), returnTypeAndValue.getValue());
-        return appendToColumnValues(columnValues, columnValue);
-    }
-
-    private static ReturnTypeAndValue getReturnTypeAndValue(String methodName, Object bean) {
-        Class<?> returnType = null;
-        Object value = null;
-        try {
-            Method method = bean.getClass().getDeclaredMethod(methodName);
-            returnType = method.getReturnType();
-            value = method.invoke(bean);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-        }
-        return new ReturnTypeAndValue(returnType, value);
-    }
-
-    private static String getSimpleColumnValue(Class<?> returnType, Object value) {
+    private static String getSimpleColumnValue(FieldValueInfo info) {
         String columnValue;
+        Class<?> returnType = info.getReturnType();
+        Object value = info.getValue();
         if (value == null) {
             columnValue = "NULL";
+        } else if (info.isOrdinalEnum()) {
+            Enum enumValue = (Enum) value;
+            columnValue = String.valueOf(enumValue.ordinal());
         } else if (Boolean.class.isAssignableFrom(returnType)) {
             columnValue = String.valueOf(value).toUpperCase();
         } else if (BigDecimal.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType) ||
@@ -369,56 +385,4 @@ public class FakeDataUtil {
         }
         return columnValue;
     }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    //    private static <T> T nextRandomEnum(T[] values) {
-    //        return values[RANDOM.nextInt(values.length)];
-    //    }
-    //
-    //    private static <T> T nextRandomEntity(List<T> entityList) {
-    //        return entityList.get(RANDOM.nextInt(entityList.size()));
-    //    }
-    //
-    //
-    //
-    //
-    //    private static StringBuilder buildOtherColumnValues(StringBuilder columnValues, String methodName, Object bean,
-    //            Map<String, String> mainFieldMap) {
-    //        ReturnTypeAndValue returnTypeAndValue = getReturnTypeAndValue(methodName, bean);
-    //        Class<?> returnType = returnTypeAndValue.getReturnType();
-    //        Object value = returnTypeAndValue.getValue();
-    //
-    //        String columnValue;
-    //        if (value == null) {
-    //            columnValue = "NULL";
-    //        } else {
-    //            String entityName = returnType.getSimpleName();
-    //            String tableName = camelToSnake(entityName);
-    //            String mainField = mainFieldMap.get(entityName);
-    //            String mainColumn = camelToSnake(mainField);
-    //            String mainMethodName = "get" + StringUtils.capitalize(mainField);
-    //            ReturnTypeAndValue mainReturnTypeAndValue = getReturnTypeAndValue(mainMethodName, value);
-    //            String mainValue =
-    //                    getSimpleColumnValue(mainReturnTypeAndValue.getReturnType(), mainReturnTypeAndValue.getValue());
-    //            columnValue = "(SELECT `id` FROM `" + tableName + "` WHERE `" + mainColumn + "`=" + mainValue + ")";
-    //        }
-    //
-    //        return appendToColumnValues(columnValues, columnValue);
-    //    }
-    //
-    //    private static ReturnTypeAndValue getReturnTypeAndValue(String methodName, Object bean) {
-    //        Class<?> returnType = null;
-    //        Object value = null;
-    //        try {
-    //            Method method = bean.getClass().getDeclaredMethod(methodName);
-    //            returnType = method.getReturnType();
-    //            value = method.invoke(bean);
-    //        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-    //        }
-    //        return new ReturnTypeAndValue(returnType, value);
-    //    }
-    //
-    //
-    //
 }

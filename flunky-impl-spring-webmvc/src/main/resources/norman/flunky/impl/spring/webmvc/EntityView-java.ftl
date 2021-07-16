@@ -1,6 +1,9 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};
+<#list fields?filter(f -> f.enumType??) as field>
+import ${application.basePackage}.domain.${field.type};
+</#list>
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -2,6 +2,8 @@ package ${application.basePackage}.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +31,9 @@ public class ${entityName} {
     </#list>
     <#if field.type == "Date">
     @Temporal(TemporalType.${field.temporalType})
+    </#if>
+    <#if field.enumType??>
+    @Enumerated(EnumType.${field.enumType})
     </#if>
     private ${field.type} ${field.fieldName};
 </#list>

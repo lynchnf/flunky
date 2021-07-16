@@ -35,14 +35,21 @@ public class SpringWebmvcProjectType implements ProjectType {
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/view/ListForm.java", GENERATE));
         applicationGenerationProperties
                 .add(new GenerationBean("logback-xml.ftl", "/src/main/resources/logback.xml", GENERATE));
+        applicationGenerationProperties.add(new GenerationBean("LoggingException-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/LoggingException.java", GENERATE));
         applicationGenerationProperties
                 .add(new GenerationBean("main.css", "/src/main/resources/static/css/main.css", COPY));
+        applicationGenerationProperties.add(new GenerationBean("MiscUtils-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/util/MiscUtils.java", GENERATE));
         applicationGenerationProperties.add(new GenerationBean("NotFoundException-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/NotFoundException.java", GENERATE));
         applicationGenerationProperties.add(new GenerationBean("OptimisticLockingException-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/OptimisticLockingException.java",
                 GENERATE));
         applicationGenerationProperties.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
+
+        enumGenerationProperties.add(new GenerationBean("Enum-java.ftl",
+                "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${enumName}.java", GENERATE));
 
         entityGenerationProperties.add(new GenerationBean("Entity-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${entityName}.java", GENERATE));

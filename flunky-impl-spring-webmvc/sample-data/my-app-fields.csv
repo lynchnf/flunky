@@ -1,10 +1,18 @@
-entityName,fieldName,label,type,length,precision,scale,nullable,temporalType,listDisplay,viewDisplay,editDisplay,dftValue,fakeRandomBoolean,fakeLowValue,fakeHighValue,fakeStringType,fakeStringModifier
-EntityName,fieldName,Label,String,10,,,false,,sort,,edit,,,,,ALPHABETIC,LOWER_CASE
-EntityName,mainField,Main Field,String,5,,,false,,sort,,edit,,,,,ALPHANUMERIC,UPPER_CASE
-EntityName,toString,To String,String,50,,,false,,sort,,edit,This is a test.,,,,WORDS,CAPITALIZE
-EntityName,booleanField,Boolean Field,Boolean,,,,false,,sort,,edit,false,true,,,,
-EntityName,bigDecimalField,Big Decimal Field,BigDecimal,,9,2,false,,sort,,edit,9.99,,-1234567.89,1234567.89,,
-EntityName,longField,Long Field,Long,,,,false,,sort,,edit,99,,-1234567,1234567,,
-EntityName,dateField,Date Field,Date,,,,false,DATE,sort,,edit,1999-12-25,,-123,123,,
-EntityName,timeField,Time Field,Date,,,,false,TIME,sort,,edit,12:34:56,,-123,123,,
-EntityName,timestampField,Timestamp Field,Date,,,,false,TIMESTAMP,sort,,edit,1999-12-25 12:34:56,,-123,123,,
+entityName,fieldName,label,type,length,precision,scale,nullable,temporalType,enumType,listDisplay,viewDisplay,editDisplay,dftValue,fakeRandomBoolean,fakeLowValue,fakeHighValue,fakeStringType,fakeStringModifier,fakeRandomEnum
+EntityName,fieldName,Label,String,10,,,false,,,sort,,edit,,,,,ALPHABETIC,LOWER_CASE,
+EntityName,mainField,Main Field,String,5,,,false,,,sort,,edit,,,,,ALPHANUMERIC,UPPER_CASE,
+EntityName,toString,To String,String,50,,,false,,,sort,,edit,This is a test.,,,,WORDS,CAPITALIZE,
+EntityName,booleanField,Boolean Field,Boolean,,,,false,,,sort,,edit,false,true,,,,,
+EntityName,bigDecimalField,Big Decimal Field,BigDecimal,,9,2,false,,,sort,,edit,9.99,,-1234567.89,1234567.89,,,
+EntityName,longField,Long Field,Long,,,,false,,,sort,,edit,99,,-1234567,1234567,,,
+EntityName,dateField,Date Field,Date,,,,false,DATE,,sort,,edit,1999-12-25,,-123,123,,,
+EntityName,timeField,Time Field,Date,,,,false,TIME,,sort,,edit,12:34:56,,-123,123,,,
+EntityName,timestampField,Timestamp Field,Date,,,,false,TIMESTAMP,,sort,,edit,1999-12-25 12:34:56,,-123,123,,,
+EntityName,stringEnum,String Enum,StringEnum,,,,false,,STRING,sort,,edit,BAR,,,,,,true
+EntityName,ordinalEnum,Ordinal Enum,OrdinalEnum,,,,false,,ORDINAL,sort,,edit,TWO,,,,,,true
+Customer,number,Account Number,String,10,,,false,,,sort,,edit,,,,,NUMERIC,,
+Customer,name,Customer Name,String,50,,,false,,,sort,,edit,,,,,WORDS,CAPITALIZE,
+Customer,creditLimit,Credit Limit,BigDecimal,,9,2,false,,,sort,,edit,,,1,1000000,,,
+Item,sku,SKU,String,10,,,false,,,sort,,edit,,,,,NUMERIC,,
+Item,description,Item Description,String,100,,,false,,,sort,,edit,,,,,WORDS,CAPITALIZE,
+Item,price,Price,BigDecimal,,7,2,false,,,sort,,edit,,,0.01,999.99,,,
