@@ -43,13 +43,13 @@
             <tr>
                 <th>${field.label}</th>
         <#if field.type = "Boolean">
-                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error"/>
+                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
                         <option value="true">true</option>
                         <option value="false">false</option>
                     </select></td>
         <#elseif field.enumType??>
-                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error"/>
+                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
                         <option th:each="value:${r"${"}T(${application.basePackage}.domain.${field.type}).values()}" th:value="${r"${"}value}" th:text="${r"${"}value}"></option>
                     </select></td>
