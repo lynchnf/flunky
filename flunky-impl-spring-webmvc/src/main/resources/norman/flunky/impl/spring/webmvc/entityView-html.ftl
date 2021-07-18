@@ -51,6 +51,11 @@
         </tr>
 </#list>
     </table>
+    <form action="#" method="post" th:action="@{/${entityName?uncap_first}Delete}">
+        <input type="hidden" th:field="${r"${"}view.id}"/>
+        <input type="hidden" th:field="${r"${"}view.version}"/>
+        <input type="submit" value="Delete" onclick="return confirm('Are you sure?')">
+    </form>
 </main>
 <footer>
     <script src="js/jquery-3.5.1.min.js"></script>

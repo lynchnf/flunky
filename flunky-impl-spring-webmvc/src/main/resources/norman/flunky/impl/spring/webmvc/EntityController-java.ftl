@@ -121,4 +121,27 @@ public class ${entityName}Controller {
             return "redirect:/${entityName?uncap_first}List";
         }
     }
+
+    @PostMapping("/${entityName?uncap_first}Delete")
+    public String process${entityName}Delete(@RequestParam("id") Long id, @RequestParam("version") Integer version,
+            RedirectAttributes redirectAttributes) {
+        try {
+            ${entityName} entity = service.findById(id);
+            if (entity.getVersion() == version) {
+                service.delete(entity);
+                String successMessage = "${singular} successfully deleted.";
+                redirectAttributes.addFlashAttribute("successMessage", successMessage);
+                return "redirect:/${entityName?uncap_first}List";
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
+                return "redirect:/${entityName?uncap_first}List";
+            }
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} not found.");
+            return "redirect:/${entityName?uncap_first}List";
+        } catch (OptimisticLockingException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
+            return "redirect:/${entityName?uncap_first}List";
+        }
+    }
 }
