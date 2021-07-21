@@ -1,5 +1,6 @@
 package ${application.basePackage}.web.view;
 
+import com.mycompany.example.my.app.FakeDataUtil;
 import ${application.basePackage}.domain.${entityName};
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +8,6 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import static ${application.basePackage}.FakeDataUtil.nextRandom${entityName};
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ${entityName}EditFormTest {
@@ -17,7 +17,8 @@ public class ${entityName}EditFormTest {
 
     @Test
     public void gettersForExistingEntity() {
-        ${entityName} entity = nextRandom${entityName}();
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
+        ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
         ${entityName}EditForm editForm = new ${entityName}EditForm(entity);
 <#list fields as field>
         assertEquals(entity.get${field.fieldName?cap_first}(), editForm.get${field.fieldName?cap_first}());
@@ -60,7 +61,8 @@ public class ${entityName}EditFormTest {
 
     @Test
     public void toEntity() throws Exception {
-        ${entityName} entity1 = nextRandom${entityName}();
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
+        ${entityName} entity1 = fakeDataUtil.nextRandom${entityName}();
         ${entityName}EditForm editForm = new ${entityName}EditForm(entity1);
         ${entityName} entity2 = editForm.toEntity();
 <#list fields as field>

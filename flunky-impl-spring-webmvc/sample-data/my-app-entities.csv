@@ -1,4 +1,5 @@
 entityName,singular,plural,toString,mainField,defaultSort,defaultPage,nbrOfFakeRecords
-EntityName,Singular,Plural,toString,mainField,ASC,10,123
 Customer,Customer,Customers,name,number,ASC,10,12
 Item,Item,Items,description,sku,ASC,10,123
+OrderHeader,Order,Orders,orderNumber,orderNumber,ASC,10,5
+OrderDetail,Line,Lines,"orderHeader.getOrderNumber() + ""-"" + String.valueOf(lineNumber)",lineNumber,ASC,10,25

@@ -1,7 +1,7 @@
 package ${application.basePackage}.web.view;
 
 import ${application.basePackage}.domain.${entityName};
-<#list fields?filter(f -> f.enumType??) as field>
+<#list fields?filter(f -> f.enumType?? || f.joinColumn??) as field>
 import ${application.basePackage}.domain.${field.type};
 </#list>
 

@@ -32,7 +32,7 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
         </dependency>
-        <!-- TODO Remove this dependency when development for this implementation is complete. -->
+        <!-- TODO Remove these dependencies when development for these implementation are complete. -->
         <dependency>
             <groupId>norman</groupId>
             <artifactId>flunky-ref-impl</artifactId>

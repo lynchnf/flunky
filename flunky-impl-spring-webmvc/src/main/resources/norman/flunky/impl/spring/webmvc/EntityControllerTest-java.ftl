@@ -1,5 +1,6 @@
 package ${application.basePackage}.web;
 
+import com.mycompany.example.my.app.FakeDataUtil;
 import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.service.${entityName}Service;
@@ -24,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.mycompany.example.my.app.FakeDataUtil.nextRandom${entityName};
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,9 +47,10 @@ public class ${entityName}ControllerTest {
         String[] sortColumns = {"${mainField}", "id"};
 
         // Generate a sorted list of records.
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
         List<${entityName}> entities = new ArrayList<>();
         for (int i = 0; i < pageSize; i++) {
-            ${entityName} entity = nextRandom${entityName}();
+            ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
             entity.setId((long) (i + 1));
             entities.add(entity);
         }
@@ -80,7 +81,8 @@ public class ${entityName}ControllerTest {
     @Test
     public void load${entityName}View() throws Exception {
         // Mock the service response.
-        ${entityName} entity = nextRandom${entityName}();
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
+        ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
         entity.setId(1L);
         when(service.findById(anyLong())).thenReturn(entity);
 
@@ -113,7 +115,8 @@ public class ${entityName}ControllerTest {
     @Test
     public void load${entityName}EditExistingEntity() throws Exception {
         // Mock the service response.
-        ${entityName} entity = nextRandom${entityName}();
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
+        ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
         entity.setId(1L);
         entity.setVersion(2);
         when(service.findById(anyLong())).thenReturn(entity);
@@ -146,7 +149,8 @@ public class ${entityName}ControllerTest {
     @Test
     public void process${entityName}Edit() throws Exception {
         // Mock the service response.
-        ${entityName} entity = nextRandom${entityName}();
+        FakeDataUtil fakeDataUtil = new FakeDataUtil();
+        ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
         entity.setId(1L);
         entity.setVersion(2);
         when(service.save(any(${entityName}.class))).thenReturn(entity);

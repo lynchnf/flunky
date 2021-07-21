@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class FakeDataUtil {
         LOWER_CASE, UPPER_CASE, CAPITALIZE
     }
 
-    public static class FieldValueInfo {
+    public class FieldValueInfo {
         private String methodName;
         private String fieldName;
         private Class<?> returnType;
@@ -116,15 +117,25 @@ public class FakeDataUtil {
         }
     }
 
+<#list entities as entity>
+    <#list entity.fields?filter(f -> f.fieldName == entity.mainField) as field>
+    private Map<${field.type}, ${entity.entityName}> ${entity.entityName?uncap_first}Map = new HashMap<>();
+    </#list>
+</#list>
+
     public static void main(String[] args) {
+        FakeDataUtil me = new FakeDataUtil();
+        me.doIt();
+    }
+
+    public void doIt() {
         Map<String, String> mainFieldMap = new HashMap<>();
 <#list entities as entity>
 
         mainFieldMap.put("${entity.entityName}", "${entity.mainField}");
-        List<${entity.entityName}> ${entity.entityName?uncap_first}List = new ArrayList<>();
         for (int i = 0; i < ${entity.nbrOfFakeRecords}; i++) {
             ${entity.entityName} entity = nextRandom${entity.entityName}();
-            ${entity.entityName?uncap_first}List.add(entity);
+            ${entity.entityName?uncap_first}Map.put(entity.get${entity.mainField?cap_first}(), entity);
         }
 </#list>
 
@@ -137,12 +148,12 @@ public class FakeDataUtil {
         try (PrintWriter writer = new PrintWriter(file)) {
 <#list entities as entity>
 
-            for (${entity.entityName} record : ${entity.entityName?uncap_first}List) {
+            for (${entity.entityName} record : ${entity.entityName?uncap_first}Map.values()) {
                 printInsert(record, mainFieldMap, writer);
             }
-            if (!${entity.entityName?uncap_first}List.isEmpty()) {
+            if (!${entity.entityName?uncap_first}Map.isEmpty()) {
                 String msg =
-                        String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}List.size(),
+                        String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}Map.size(),
                                 camelToSnake(${entity.entityName}.class.getSimpleName()));
                 LOGGER.info(msg);
             }
@@ -161,10 +172,37 @@ public class FakeDataUtil {
     }
 <#list entities as entity>
 
-    public static ${entity.entityName} nextRandom${entity.entityName}() {
+    public ${entity.entityName} nextRandom${entity.entityName}() {
         ${entity.entityName} entity = new ${entity.entityName}();
-    <#list entity.fields as field>
+    <#list entity.fields?filter(f -> f.fieldName == entity.mainField) as field>
+        ${field.type} mainField;
+        do {
         <#if field.type == "BigDecimal">
+            mainField = nextRandomBigDecimal("${field.fakeLowValue}", "${field.fakeHighValue}", ${field.scale});
+        <#elseif field.type == "Boolean">
+            mainField = Boolean.valueOf(nextRandomBoolean());
+        <#elseif field.type == "Byte">
+            mainField = Byte.valueOf((byte) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
+        <#elseif field.type == "Short">
+            mainField = Short.valueOf((short) ${field.dftValue});
+        <#elseif field.type == "Integer">
+            mainField = Integer.valueOf(nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
+        <#elseif field.type == "Long">
+            mainField = Long.valueOf((long) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
+        <#elseif field.type == "Date">
+            mainField = nextRandomDateTime(${field.temporalType}, ${field.fakeLowValue}, ${field.fakeHighValue});
+        <#elseif field.type == "String">
+            mainField = nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length});
+        <#elseif field.enumType??>
+            mainField = nextRandomEnum(${field.type}.values());
+        </#if>
+        } while (${entity.entityName?uncap_first}Map.containsKey(mainField));
+        entity.set${field.fieldName?cap_first}(mainField);
+    </#list>
+    <#list entity.fields?filter(f -> f.fieldName != entity.mainField) as field>
+        <#if field.joinColumn??>
+        entity.set${field.fieldName?cap_first}(nextRandomEntity(${field.type?uncap_first}Map.values()));
+        <#elseif field.type == "BigDecimal">
             <#if field.fakeLowValue?? && field.fakeHighValue??>
         entity.set${field.fieldName?cap_first}(nextRandomBigDecimal("${field.fakeLowValue}", "${field.fakeHighValue}", ${field.scale}));
             <#elseif field.dftValue??>
@@ -224,7 +262,7 @@ public class FakeDataUtil {
     }
 </#list>
 
-    private static BigDecimal nextRandomBigDecimal(String lowValue, String highValue, int scale) {
+    private BigDecimal nextRandomBigDecimal(String lowValue, String highValue, int scale) {
         BigDecimal low = new BigDecimal(lowValue);
         BigDecimal high = new BigDecimal(highValue);
         int lowInt = low.movePointRight(scale).intValueExact();
@@ -233,15 +271,15 @@ public class FakeDataUtil {
         return BigDecimal.valueOf(unscaledVal, scale);
     }
 
-    private static boolean nextRandomBoolean() {
+    private boolean nextRandomBoolean() {
         return RANDOM.nextInt(2) == 1;
     }
 
-    private static int nextRandomInteger(int lowValue, int highValue) {
+    private int nextRandomInteger(int lowValue, int highValue) {
         return RANDOM.nextInt(highValue - lowValue + 1) + lowValue;
     }
 
-    private static String nextRandomString(RandomStringType type, RandomStringModifier modifier, int limit) {
+    private String nextRandomString(RandomStringType type, RandomStringModifier modifier, int limit) {
         String randomString = null;
         if (type == ALPHABETIC) {
             randomString = RandomStringUtils.randomAlphabetic(limit);
@@ -263,7 +301,7 @@ public class FakeDataUtil {
         return randomString;
     }
 
-    private static String nextRandomWords(int limit) {
+    private String nextRandomWords(int limit) {
         StringBuilder randomWords = null;
         boolean done = false;
         do {
@@ -283,7 +321,7 @@ public class FakeDataUtil {
         return randomWords.toString();
     }
 
-    private static Date nextRandomDateTime(TemporalType temporalType, int lowValue, int highValue) {
+    private Date nextRandomDateTime(TemporalType temporalType, int lowValue, int highValue) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
@@ -307,16 +345,21 @@ public class FakeDataUtil {
         return cal.getTime();
     }
 
-    private static <T> T nextRandomEnum(T[] values) {
+    private <T> T nextRandomEnum(T[] values) {
         return values[RANDOM.nextInt(values.length)];
     }
 
-    private static String camelToSnake(String camelStr) {
+    private <T> T nextRandomEntity(Collection<T> entities) {
+        List<T> list = new ArrayList<>(entities);
+        return list.get(RANDOM.nextInt(entities.size()));
+    }
+
+    private String camelToSnake(String camelStr) {
         String ret = camelStr.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z])([A-Z])", "$1_$2");
         return ret.toLowerCase();
     }
 
-    private static void printInsert(Object bean, Map<String, String> mainFieldMap, PrintWriter writer) {
+    private void printInsert(Object bean, Map<String, String> mainFieldMap, PrintWriter writer) {
         String beanName = bean.getClass().getSimpleName();
         List<String> simpleGetterNames = new ArrayList<>();
         for (Method method : bean.getClass().getDeclaredMethods()) {
@@ -344,7 +387,7 @@ public class FakeDataUtil {
                 columnValues.toString());
     }
 
-    private static StringBuilder appendToStringBuilder(StringBuilder stringBuilder, String value) {
+    private StringBuilder appendToStringBuilder(StringBuilder stringBuilder, String value) {
         if (stringBuilder == null) {
             stringBuilder = new StringBuilder(value);
         } else {
@@ -353,7 +396,7 @@ public class FakeDataUtil {
         return stringBuilder;
     }
 
-    private static String getSimpleColumnValue(FieldValueInfo info) {
+    private String getSimpleColumnValue(FieldValueInfo info) {
         String columnValue;
         Class<?> returnType = info.getReturnType();
         Object value = info.getValue();

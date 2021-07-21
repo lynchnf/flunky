@@ -1,3 +1,2 @@
 enumName,values
-StringEnum,FOO BAR BAZ
-OrdinalEnum,ONE TWO THREE
+OrderStatus,ORDERED SHIPPED
