@@ -7,46 +7,39 @@ import ${basePackage}.domain.${entity.entityName};
 import ${basePackage}.domain.${enum.enumName};
 </#list>
 import com.mycompany.example.my.app.exception.LoggingException;
+import com.mycompany.example.my.app.util.MiscUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.TemporalType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringModifier.CAPITALIZE;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringModifier.LOWER_CASE;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringModifier.UPPER_CASE;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHABETIC;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.ALPHANUMERIC;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.NUMERIC;
-import static com.mycompany.example.my.app.FakeDataUtil.RandomStringType.WORDS;
-import static com.mycompany.example.my.app.util.MiscUtils.HMS;
-import static com.mycompany.example.my.app.util.MiscUtils.YYMD;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.CAPITALIZE;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.LOWER_CASE;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.UPPER_CASE;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.ALPHABETIC;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.ALPHANUMERIC;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.NUMERIC;
+import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.WORDS;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIME;
 import static javax.persistence.TemporalType.TIMESTAMP;
 
-public class FakeDataUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataUtil.class);
+public class FakeDataFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FakeDataFactory.class);
     private static final Random RANDOM = new Random();
     private static final String[] NONSENSE_WORDS =
             {"abra", "brok", "cuzze", "dryxa", "edrat", "frato", "grupo", "heon", "ikyss", "jiezz", "kryim", "loymo",
@@ -61,62 +54,6 @@ public class FakeDataUtil {
         LOWER_CASE, UPPER_CASE, CAPITALIZE
     }
 
-    public class FieldValueInfo {
-        private String methodName;
-        private String fieldName;
-        private Class<?> returnType;
-        private Object value;
-        private boolean ordinalEnum = false;
-
-        public FieldValueInfo(String methodName, Object bean) {
-            this.methodName = methodName;
-            if (methodName.startsWith("is")) {
-                fieldName = methodName.substring(2);
-            } else {
-                fieldName = methodName.substring(3);
-            }
-            fieldName = StringUtils.uncapitalize(fieldName);
-            Class<?> beanClass = bean.getClass();
-            try {
-                Method method = beanClass.getDeclaredMethod(methodName);
-                returnType = method.getReturnType();
-                value = method.invoke(bean);
-                Field field = beanClass.getDeclaredField(fieldName);
-                if (field.isAnnotationPresent(Enumerated.class)) {
-                    Enumerated annotation = field.getAnnotation(Enumerated.class);
-                    EnumType enumType = annotation.value();
-                    if (enumType == EnumType.ORDINAL) {
-                        ordinalEnum = true;
-                    }
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-                throw new LoggingException(LOGGER,
-                        String.format("Unable to get field value info for method %s in class %s.", methodName,
-                                beanClass.getName()), e);
-            }
-        }
-
-        public String getMethodName() {
-            return methodName;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public Class<?> getReturnType() {
-            return returnType;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public boolean isOrdinalEnum() {
-            return ordinalEnum;
-        }
-    }
-
 <#list entities as entity>
     <#list entity.fields?filter(f -> f.fieldName == entity.mainField) as field>
     private Map<${field.type}, ${entity.entityName}> ${entity.entityName?uncap_first}Map = new HashMap<>();
@@ -124,7 +61,7 @@ public class FakeDataUtil {
 </#list>
 
     public static void main(String[] args) {
-        FakeDataUtil me = new FakeDataUtil();
+        FakeDataFactory me = new FakeDataFactory();
         me.doIt();
     }
 
@@ -152,10 +89,8 @@ public class FakeDataUtil {
                 printInsert(record, mainFieldMap, writer);
             }
             if (!${entity.entityName?uncap_first}Map.isEmpty()) {
-                String msg =
-                        String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}Map.size(),
-                                camelToSnake(${entity.entityName}.class.getSimpleName()));
-                LOGGER.info(msg);
+                LOGGER.info(String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}Map.size(),
+                        MiscUtils.camelToSnake(${entity.entityName}.class.getSimpleName())));
             }
 </#list>
 
@@ -354,78 +289,12 @@ public class FakeDataUtil {
         return list.get(RANDOM.nextInt(entities.size()));
     }
 
-    private String camelToSnake(String camelStr) {
-        String ret = camelStr.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z])([A-Z])", "$1_$2");
-        return ret.toLowerCase();
-    }
-
     private void printInsert(Object bean, Map<String, String> mainFieldMap, PrintWriter writer) {
-        String beanName = bean.getClass().getSimpleName();
-        List<String> simpleGetterNames = new ArrayList<>();
-        for (Method method : bean.getClass().getDeclaredMethods()) {
-            String methodName = method.getName();
-            if (method.getParameterCount() == 0 && !methodName.equals("getId") &&
-                    (methodName.startsWith("is") || methodName.startsWith("get"))) {
-                simpleGetterNames.add(methodName);
-            }
-        }
+        EntityToSqlConverter converter = new EntityToSqlConverter(bean, mainFieldMap);
+        String tableName = converter.getTableName();
+        String columnNames = "`" + StringUtils.join(converter.getColumnNames(), "`,`") + "`";
+        String columnValues = StringUtils.join(converter.getColumnValues(), ",");
 
-        String tableName = "`" + camelToSnake(beanName) + "`";
-        StringBuilder columnNames = null;
-        StringBuilder columnValues = null;
-
-        Collections.sort(simpleGetterNames);
-        for (String methodName : simpleGetterNames) {
-            FieldValueInfo info = new FieldValueInfo(methodName, bean);
-            String columnName = "`" + camelToSnake(info.getFieldName()) + "`";
-            columnNames = appendToStringBuilder(columnNames, columnName);
-            String columnValue = getSimpleColumnValue(info);
-            columnValues = appendToStringBuilder(columnValues, columnValue);
-        }
-
-        writer.printf("INSERT INTO %s (%s)  VALUES (%s);%n", tableName, columnNames.toString(),
-                columnValues.toString());
-    }
-
-    private StringBuilder appendToStringBuilder(StringBuilder stringBuilder, String value) {
-        if (stringBuilder == null) {
-            stringBuilder = new StringBuilder(value);
-        } else {
-            stringBuilder.append(",").append(value);
-        }
-        return stringBuilder;
-    }
-
-    private String getSimpleColumnValue(FieldValueInfo info) {
-        String columnValue;
-        Class<?> returnType = info.getReturnType();
-        Object value = info.getValue();
-        if (value == null) {
-            columnValue = "NULL";
-        } else if (info.isOrdinalEnum()) {
-            Enum enumValue = (Enum) value;
-            columnValue = String.valueOf(enumValue.ordinal());
-        } else if (Boolean.class.isAssignableFrom(returnType)) {
-            columnValue = String.valueOf(value).toUpperCase();
-        } else if (BigDecimal.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType) ||
-                Short.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType) ||
-                Long.class.isAssignableFrom(returnType)) {
-            columnValue = String.valueOf(value);
-        } else if (Date.class.isAssignableFrom(returnType)) {
-            String datePart = YYMD.format((Date) value);
-            String timePart = HMS.format((Date) value);
-            if (!datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
-                columnValue = "'" + datePart + " " + timePart + "'";
-            } else if (!datePart.equals("1970-01-01") && timePart.equals("00:00:00")) {
-                columnValue = "'" + datePart + "'";
-            } else if (datePart.equals("1970-01-01") && !timePart.equals("00:00:00")) {
-                columnValue = "'" + timePart + "'";
-            } else {
-                columnValue = "NULL";
-            }
-        } else {
-            columnValue = "'" + value + "'";
-        }
-        return columnValue;
+        writer.printf("INSERT INTO `%s` (%s)  VALUES (%s);%n", tableName, columnNames, columnValues);
     }
 }

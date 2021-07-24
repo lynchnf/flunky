@@ -1,7 +1,8 @@
 package ${application.basePackage}.web.view;
 
-import com.mycompany.example.my.app.FakeDataUtil;
+import com.mycompany.example.my.app.FakeDataFactory;
 import ${application.basePackage}.domain.${entityName};
+import com.mycompany.example.my.app.util.MiscUtils;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -11,14 +12,10 @@ import java.text.SimpleDateFormat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ${entityName}EditFormTest {
-    private static final DateFormat YYMD = new SimpleDateFormat("yyyy-MM-dd");
-    private static final DateFormat HMS = new SimpleDateFormat("HH:mm:ss");
-    private static final DateFormat YYMD_HMS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     @Test
     public void gettersForExistingEntity() {
-        FakeDataUtil fakeDataUtil = new FakeDataUtil();
-        ${entityName} entity = fakeDataUtil.nextRandom${entityName}();
+        FakeDataFactory factory = new FakeDataFactory();
+        ${entityName} entity = factory.nextRandom${entityName}();
         ${entityName}EditForm editForm = new ${entityName}EditForm(entity);
 <#list fields as field>
         assertEquals(entity.get${field.fieldName?cap_first}(), editForm.get${field.fieldName?cap_first}());
@@ -44,11 +41,11 @@ public class ${entityName}EditFormTest {
         assertEquals(Long.valueOf((long) ${field.dftValue}), editForm.get${field.fieldName?cap_first}());
         <#elseif field.type == "Date">
             <#if field.temporalType?? && field.temporalType="DATE">
-        assertEquals(YYMD.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+        assertEquals(MiscUtils.parseDate("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
             <#elseif field.temporalType?? && field.temporalType="TIME">
-        assertEquals(HMS.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+        assertEquals(MiscUtils.parseTime("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
             <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
-        assertEquals(YYMD_HMS.parse("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
+        assertEquals(MiscUtils.parseDateTime("${field.dftValue}"), editForm.get${field.fieldName?cap_first}());
             </#if>
         <#else>
         assertEquals("${field.dftValue}", editForm.get${field.fieldName?cap_first}());
@@ -61,8 +58,8 @@ public class ${entityName}EditFormTest {
 
     @Test
     public void toEntity() throws Exception {
-        FakeDataUtil fakeDataUtil = new FakeDataUtil();
-        ${entityName} entity1 = fakeDataUtil.nextRandom${entityName}();
+        FakeDataFactory factory = new FakeDataFactory();
+        ${entityName} entity1 = factory.nextRandom${entityName}();
         ${entityName}EditForm editForm = new ${entityName}EditForm(entity1);
         ${entityName} entity2 = editForm.toEntity();
 <#list fields as field>

@@ -6,7 +6,7 @@ Item,description,Item Description,String,100,,,false,,,,sort,,edit,,,,,WORDS,CAP
 Item,price,Price,BigDecimal,,7,2,false,,,,sort,,edit,,,0.01,999.99,,,
 OrderHeader,orderNumber,Order Number,String,10,,,false,,,,sort,,edit,,,,,NUMERIC,,
 OrderHeader,customer,Customer,Customer,,,,false,,,customer_id,sort,,edit,,,,,,,
-OrderHeader,orderDate,Order Date,Date,,,,false,DATE,,,sort,,edit,new Date,,-30,0,,,
+OrderHeader,orderDate,Order Date,Date,,,,false,DATE,,,sort,,edit,2021-12-25,,-30,0,,,
 OrderHeader,shipDate,Ship Date,Date,,,,,DATE,,,sort,,edit,,,,,,,
 OrderHeader,status,Status,OrderStatus,,,,false,,STRING,,sort,,edit,ORDERED,,,,,,
 OrderDetail,orderHeader,Order,OrderHeader,,,,false,,,order_header_id,sort,,edit,,,,,,,
