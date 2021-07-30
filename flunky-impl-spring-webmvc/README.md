@@ -1,55 +1,54 @@
 # Flunky Spring Web MVC Implementation
 
-### Entities File
+## Entities File
 
 A CSV file that contains information about entities to be created for your generated project.
 
-    entityName - Java class name for an entity.
-    singular - A descriptive name for a singular instance of this entity. It is recommended that this name be capitalized.
-    plural - A descriptive name for multiple instances of this entity. It is recommended that this name be capitalized.
-    toString - A Java expression which is used to override the toString() method for this entity.
+    entityName - (required) Java class name for an entity.
+    singular - (required) A descriptive name for a singular instance of this entity. It is recommended that this name be capitalized.
+    plural - (required) A descriptive name for multiple instances of this entity. It is recommended that this name be capitalized.
+    toString - (required) A Java expression which is used to override the toString() method for this entity. 
     
-LIST
+### LIST
     
-    mainField - The main field for this entity. On a list page, this will be the default sort field. 
-    defaultSort - The default sort direction on a list page. Valid values are ASC or DESC.
-    defaultPage - The default number of records shown on a list page.
+    mainField - (required) This should be a natural key for this table, although that is not srictly required. On a list page, this will be the default sort field and it will be the link to take uers to the view page.
+    defaultSort - (required) The default sort direction on a list page. Valid values are ASC or DESC.
+    defaultPage - (required) The default number of records shown on a list page. Valid values are 5, 10, 20, or 50.
     
-FAKE DATA
+### FAKE DATA
     
-    nbrOfFakeRecords - The number of records for this entity created when the FakeDataUtil is executed.
+    nbrOfFakeRecords - (required) The number of records for this entity created when the FakeDataFactory is executed.
 
-### Fields File
+## Fields File
 
 A CSV file that contains information about entity fields to be created for your generated project.
 
-    entityName - Java class name for an entity.
-    fieldName - Variable name for a field in the named entity.
-    label - A descriptive label for this entity name. It is recommended that this label be capitalized.
-    type - Valid values are BigDecimal, Boolean, Byte, Short, Integer, Long, Date, or String
-    length - If type is String, this is the length of the field.
-    precision - If type is BigDecimal, this is the total number of digits in the field.
-    scale - If type is BigDecimal, this is the number of digits to the right of the decimal.
-    nullable - Valid values are true or false. If left blank, true is the default.
-    temporalType - If type is Date, this is required. Valid values are DATE, TIME, or TIMESTAMP.
+    entityName - (required) Java class name for an entity.
+    fieldName - (required) Variable name for a field in the named entity.
+    label - (required) A descriptive label for this entity name. It is recommended that this label be capitalized.
+    type - (required) Valid standard Java values are BigDecimal, Boolean, Byte, Short, Integer, Long, Date, or String; but may also be an entity type or an enum type.
+    length - (required if type is String) This is the length of the field.
+    precision - (required if type is BigDecimal) This is the total number of digits in the field.
+    scale - (required if type is BigDecimal) This is the number of digits to the right of the decimal.
+    nullable - (optional) Valid values are true or false. If left blank, true is the default. May not be true if this is this the main field for this entity.
+    temporalType - (required if type is Date) Valid values are DATE, TIME, or TIMESTAMP.
+    enumType - (required if type is an enum) Valid values are STRING or ORDINAL.
+    joinColumn - (required if type is an entity) The SQL column name which is used as the foreign key from this entity to the other. 
 
-LIST
+### LIST
 
-    listDisplay - Whether or not this field appears on a list page. Valid values are show, hide, or sort. If left blank,
-        show is the default.
+    listDisplay - (optional) Whether or not this field appears on a list page. Valid values are show, hide, or sort. If left blank, show is the default.
     
-VIEW
+### VIEW
 
-    viewDisplay - Whether or not this field appears on a view page. Valid values are show or hide. If left blank, show
-        is the default.
+    viewDisplay - (optional) Whether or not this field appears on a view page. Valid values are show or hide. If left blank, show is the default.
     
-EDIT
+### EDIT
 
-    editDisplay - Whether or not this field appears on a edit page. Valid values are show, hide, or edit. If left blank,
-        show is the default.
-    dftValue - The default value for this field in a new entity.
+    editDisplay - (optional) Whether or not this field appears on a edit page. Valid values are show, hide, or edit. If left blank, show is the default.
+    dftValue - (optional) The default value for this field in a new entity.
     
-FAKE DATA
+### FAKE DATA
 
     fakeRandomBoolean - If this is true and type is Boolean, then FakeDataUtil will generate a random value (TRUE or
         FALSE) for this field.
@@ -60,3 +59,24 @@ FAKE DATA
         represent number of minutes off from the current time.
     fakeStringType - If type is String, valid values are WORDS, ALPHABETIC, ALPHANUMERIC or NUMERIC.
     fakeStringModifier - If type is String, valid values are LOWER_CASE, UPPER_CASE, or CAPITALIZE.
+    
+## TODO
+
+|  x  | Pts | Task
+| --- | --- | ---
+|     |  3  | Add parent entity to entity csv.
+|     |  1  | Make entity.plural optional. Default to ${entity.singular}s |
+|     |  1  | Make entity.toString optional. Do not generate a toString() method if left blank.
+|     |  1  | Import StringUtils and MiscUtils into entity class so static methods from those utility classes can be used in the toString expression.
+|     |  1  | Make entity.defaultSort optional. Default to ASC.
+|     |  1  | Make entity.defaultPage optional. Default to 10.
+|     |  1  | Make entity.nbrOfFakeRecords optional. Default to 0.
+|     |  2  | Make field.dftValue a Java expression.
+|     |  3  | Add a boolean field.fakeData to say whether or not we generate fake data for this field.
+|     |  2  | Add a number field (between 0 and 100) to say what percentage of the time a nullable field should have a null value.
+|     |  5  | Add simple date & time pickers on edit pages.
+|     |  8  | Add filters on list pages.
+|     |  13 | Add list of entities as a field type for entities.
+|     |  3  | Controller Unit tests.
+|     |  2  | View Unit tests.
+|     |  1  | Service Unit tests.

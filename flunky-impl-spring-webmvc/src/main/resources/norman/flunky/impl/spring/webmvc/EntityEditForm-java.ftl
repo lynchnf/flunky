@@ -5,7 +5,10 @@ import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.domain.${field.type};
 </#list>
 import ${application.basePackage}.exception.NotFoundException;
-import com.mycompany.example.my.app.util.MiscUtils;
+<#list fields?filter(f -> f.joinColumn??) as field>
+import ${application.basePackage}.service.${field.type}Service;
+</#list>
+import ${application.basePackage}.util.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,9 @@ import java.util.Date;
 
 public class ${entityName}EditForm {
     private static final Logger LOGGER = LoggerFactory.getLogger(${entityName}EditForm.class);
+<#list fields?filter(f -> f.joinColumn??) as field>
+    private ${field.type}Service ${field.fieldName}Service;
+</#list>
     private Long id;
     private Integer version = 0;
 <#list fields as field>
@@ -37,20 +43,24 @@ public class ${entityName}EditForm {
     <#if field.precision?? && field.scale??>
     @Digits(integer = ${field.precision?number-field.scale?number}, fraction = ${field.scale}, message = "${field.label} value out of bounds. (<{integer} digits>.<{fraction} digits> expected)")
     </#if>
-    <#if field.type == "BigDecimal">
+    <#if field.joinColumn??>
+    private Long ${field.fieldName}Id;
+    <#else>
+        <#if field.type == "BigDecimal">
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
     @NumberFormat(style = NumberFormat.Style.NUMBER)
-    <#elseif field.type == "Date">
-        <#if field.temporalType?? && field.temporalType="DATE">
+        <#elseif field.type == "Date">
+            <#if field.temporalType?? && field.temporalType="DATE">
     @DateTimeFormat(pattern = "M/d/yyyy")
-        <#elseif field.temporalType?? && field.temporalType="TIME">
+            <#elseif field.temporalType?? && field.temporalType="TIME">
     @DateTimeFormat(pattern = "h:m a")
-        <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
+            <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
     @DateTimeFormat(pattern = "M/d/yyyy h:m a")
+            </#if>
         </#if>
-    </#if>
     private ${field.type} ${field.fieldName};
+    </#if>
 </#list>
 
     public ${entityName}EditForm() {
@@ -87,7 +97,13 @@ public class ${entityName}EditForm {
         id = entity.getId();
         version = entity.getVersion();
 <#list fields as field>
+    <#if field.joinColumn??>
+        if (entity.get${field.fieldName?cap_first}() != null) {
+            ${field.fieldName}Id = entity.get${field.fieldName?cap_first}().getId();
+        }
+    <#else>
         ${field.fieldName} = entity.get${field.fieldName?cap_first}();
+    </#if>
 </#list>
     }
 
@@ -96,14 +112,27 @@ public class ${entityName}EditForm {
         entity.setId(id);
         entity.setVersion(version);
 <#list fields as field>
-    <#if field.type == "String">
-        entity.set${field.fieldName?cap_first}(StringUtils.trimToNull(${field.fieldName}));
+    <#if field.joinColumn??>
+        if (${field.fieldName}Id != null) {
+            ${field.type} ${field.fieldName} = ${field.fieldName}Service.findById(${field.fieldName}Id);
+            entity.set${field.fieldName?cap_first}(${field.fieldName});
+        }
     <#else>
+        <#if field.type == "String">
+        entity.set${field.fieldName?cap_first}(StringUtils.trimToNull(${field.fieldName}));
+        <#else>
         entity.set${field.fieldName?cap_first}(${field.fieldName});
+        </#if>
     </#if>
 </#list>
         return entity;
     }
+<#list fields?filter(f -> f.joinColumn??) as field>
+
+    public void set${field.fieldName?cap_first}Service(${field.type}Service ${field.fieldName}Service) {
+        this.${field.fieldName}Service = ${field.fieldName}Service;
+    }
+</#list>
 
     public Long getId() {
         return id;
@@ -121,6 +150,16 @@ public class ${entityName}EditForm {
         this.version = version;
     }
 <#list fields as field>
+    <#if field.joinColumn??>
+
+    public Long get${field.fieldName?cap_first}Id() {
+        return ${field.fieldName}Id;
+    }
+
+    public void set${field.fieldName?cap_first}Id(Long ${field.fieldName}Id) {
+        this.${field.fieldName}Id = ${field.fieldName}Id;
+    }
+    <#else>
 
     public ${field.type} get${field.fieldName?cap_first}() {
         return ${field.fieldName};
@@ -129,5 +168,6 @@ public class ${entityName}EditForm {
     public void set${field.fieldName?cap_first}(${field.type} ${field.fieldName}) {
         this.${field.fieldName} = ${field.fieldName};
     }
+    </#if>
 </#list>
 }

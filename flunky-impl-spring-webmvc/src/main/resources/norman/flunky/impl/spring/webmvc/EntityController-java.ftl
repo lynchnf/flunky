@@ -1,9 +1,15 @@
 package ${application.basePackage}.web;
 
 import ${application.basePackage}.domain.${entityName};
+<#list fields?filter(f -> f.joinColumn??) as field>
+import ${application.basePackage}.domain.${field.type};
+</#list>
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.exception.OptimisticLockingException;
 import ${application.basePackage}.service.${entityName}Service;
+<#list fields?filter(f -> f.joinColumn??) as field>
+import ${application.basePackage}.service.${field.type}Service;
+</#list>
 import ${application.basePackage}.web.view.${entityName}EditForm;
 import ${application.basePackage}.web.view.${entityName}ListForm;
 import ${application.basePackage}.web.view.${entityName}View;
@@ -32,6 +38,10 @@ public class ${entityName}Controller {
     private static final String[] sortableColumns = {<#list fields?filter(f -> f.listDisplay?? && f.listDisplay == "sort") as field>"${field.fieldName}"<#sep>, </#sep></#list>};
     @Autowired
     private ${entityName}Service service;
+<#list fields?filter(f -> f.joinColumn??) as field>
+    @Autowired
+    private ${field.type}Service ${field.fieldName}Service;
+</#list>
 
     @GetMapping("/${entityName?uncap_first}List")
     public String load${entityName}List(
@@ -65,7 +75,7 @@ public class ${entityName}Controller {
             model.addAttribute("view", view);
             return "${entityName?uncap_first}View";
         } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "${singular} not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
             return "redirect:/${entityName?uncap_first}List";
         }
     }
@@ -87,7 +97,7 @@ public class ${entityName}Controller {
             model.addAttribute("editForm", editForm);
             return "${entityName?uncap_first}Edit";
         } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "${singular} not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
             return "redirect:/${entityName?uncap_first}List";
         }
     }
@@ -102,6 +112,9 @@ public class ${entityName}Controller {
         // Convert form to entity.
         Long id = editForm.getId();
         try {
+<#list fields?filter(f -> f.joinColumn??) as field>
+            editForm.set${field.fieldName?cap_first}Service(${field.fieldName}Service);
+</#list>
             ${entityName} entity = editForm.toEntity();
 
             // Save entity.
@@ -114,7 +127,7 @@ public class ${entityName}Controller {
             redirectAttributes.addAttribute("id", save.getId());
             return "redirect:/${entityName?uncap_first}?id={id}";
         } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getEntityName() + " not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
             return "redirect:/${entityName?uncap_first}List";
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
@@ -137,11 +150,18 @@ public class ${entityName}Controller {
                 return "redirect:/${entityName?uncap_first}List";
             }
         } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "${singular} not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
             return "redirect:/${entityName?uncap_first}List";
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
             return "redirect:/${entityName?uncap_first}List";
         }
     }
+<#list fields?filter(f -> f.joinColumn??) as field>
+
+    @ModelAttribute("all${field.fieldName?cap_first}")
+    public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown() {
+        return ${field.fieldName}Service.findAll();
+    }
+</#list>
 }

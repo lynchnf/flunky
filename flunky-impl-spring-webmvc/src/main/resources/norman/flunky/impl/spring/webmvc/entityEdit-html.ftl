@@ -42,7 +42,12 @@
     <#if field.editDisplay?? && field.editDisplay == "edit">
             <tr>
                 <th>${field.label}</th>
-        <#if field.type = "Boolean">
+        <#if field.joinColumn?? >
+                <td><select th:field="*{${field.fieldName}Id}" th:errorclass="field-error">
+                        <option value="">Please select ...</option>
+                        <option th:each="${field.fieldName}:${r"${"}all${field.fieldName?cap_first}}" th:value="${r"${"}${field.fieldName}.id}" th:text="${r"${"}${field.fieldName}}"></option>
+                    </select></td>
+        <#elseif field.type = "Boolean">
                 <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
                         <option value="true">true</option>

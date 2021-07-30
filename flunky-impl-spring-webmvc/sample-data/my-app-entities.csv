@@ -2,4 +2,4 @@ entityName,singular,plural,toString,mainField,defaultSort,defaultPage,nbrOfFakeR
 Customer,Customer,Customers,name,number,ASC,10,12
 Item,Item,Items,description,sku,ASC,10,123
 OrderHeader,Order,Orders,orderNumber,orderNumber,ASC,10,5
-OrderDetail,Line,Lines,"orderHeader.getOrderNumber() + ""-"" + String.valueOf(lineNumber)",lineNumber,ASC,10,25
+OrderDetail,Line,Lines,"order.getOrderNumber() + ""-"" + String.valueOf(line)",line,ASC,10,25

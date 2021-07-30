@@ -1,7 +1,7 @@
 package ${basePackage};
 
-import com.mycompany.example.my.app.exception.LoggingException;
-import com.mycompany.example.my.app.util.MiscUtils;
+import ${basePackage}.exception.LoggingException;
+import ${basePackage}.util.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static com.mycompany.example.my.app.util.MiscUtils.HMS;
-import static com.mycompany.example.my.app.util.MiscUtils.YYMD;
+import static ${basePackage}.util.MiscUtils.HMS;
+import static ${basePackage}.util.MiscUtils.YYMD;
 
 public class EntityToSqlConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityToSqlConverter.class);

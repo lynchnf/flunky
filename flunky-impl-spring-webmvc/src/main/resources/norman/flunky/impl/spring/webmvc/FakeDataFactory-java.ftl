@@ -6,8 +6,8 @@ import ${basePackage}.domain.${entity.entityName};
 <#list enums as enum>
 import ${basePackage}.domain.${enum.enumName};
 </#list>
-import com.mycompany.example.my.app.exception.LoggingException;
-import com.mycompany.example.my.app.util.MiscUtils;
+import ${basePackage}.exception.LoggingException;
+import ${basePackage}.util.MiscUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.CAPITALIZE;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.LOWER_CASE;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringModifier.UPPER_CASE;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.ALPHABETIC;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.ALPHANUMERIC;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.NUMERIC;
-import static com.mycompany.example.my.app.FakeDataFactory.RandomStringType.WORDS;
+import static ${basePackage}.FakeDataFactory.RandomStringModifier.CAPITALIZE;
+import static ${basePackage}.FakeDataFactory.RandomStringModifier.LOWER_CASE;
+import static ${basePackage}.FakeDataFactory.RandomStringModifier.UPPER_CASE;
+import static ${basePackage}.FakeDataFactory.RandomStringType.ALPHABETIC;
+import static ${basePackage}.FakeDataFactory.RandomStringType.ALPHANUMERIC;
+import static ${basePackage}.FakeDataFactory.RandomStringType.NUMERIC;
+import static ${basePackage}.FakeDataFactory.RandomStringType.WORDS;
 import static javax.persistence.TemporalType.DATE;
 import static javax.persistence.TemporalType.TIME;
 import static javax.persistence.TemporalType.TIMESTAMP;

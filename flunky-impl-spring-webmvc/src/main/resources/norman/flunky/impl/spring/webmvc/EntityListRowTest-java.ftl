@@ -1,6 +1,6 @@
 package ${application.basePackage}.web.view;
 
-import com.mycompany.example.my.app.FakeDataFactory;
+import ${application.basePackage}.FakeDataFactory;
 import ${application.basePackage}.domain.${entityName};
 import org.junit.jupiter.api.Test;
 

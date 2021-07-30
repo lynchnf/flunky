@@ -1,8 +1,8 @@
 package ${application.basePackage}.web.view;
 
-import com.mycompany.example.my.app.FakeDataFactory;
+import ${application.basePackage}.FakeDataFactory;
 import ${application.basePackage}.domain.${entityName};
-import com.mycompany.example.my.app.util.MiscUtils;
+import ${application.basePackage}.util.MiscUtils;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

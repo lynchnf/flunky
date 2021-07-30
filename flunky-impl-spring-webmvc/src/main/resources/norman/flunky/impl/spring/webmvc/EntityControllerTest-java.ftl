@@ -1,6 +1,6 @@
 package ${application.basePackage}.web;
 
-import com.mycompany.example.my.app.FakeDataFactory;
+import ${application.basePackage}.FakeDataFactory;
 import ${application.basePackage}.domain.${entityName};
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.service.${entityName}Service;
