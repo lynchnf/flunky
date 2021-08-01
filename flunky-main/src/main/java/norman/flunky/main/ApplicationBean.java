@@ -26,7 +26,11 @@ public class ApplicationBean {
     private List<Map<String, Object>> entityModels = new ArrayList<>();
     private List<Map<String, Object>> enumModels = new ArrayList<>();
 
-    public ApplicationBean(String appPropsPath) {
+    public static ApplicationBean instance(String appPropsPath) {
+        return new ApplicationBean(appPropsPath);
+    }
+
+    private ApplicationBean(String appPropsPath) {
         Reader reader = null;
 
         try {

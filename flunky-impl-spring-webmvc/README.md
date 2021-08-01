@@ -10,7 +10,7 @@ A CSV file that contains information about entities to be created for your gener
     toString - (required) A Java expression which is used to override the toString() method for this entity. 
     
 ### LIST
-    
+    parentEntity - (optional) 
     mainField - (required) This should be a natural key for this table, although that is not srictly required. On a list page, this will be the default sort field and it will be the link to take uers to the view page.
     defaultSort - (required) The default sort direction on a list page. Valid values are ASC or DESC.
     defaultPage - (required) The default number of records shown on a list page. Valid values are 5, 10, 20, or 50.

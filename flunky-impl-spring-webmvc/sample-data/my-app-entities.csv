@@ -1,5 +1,5 @@
-entityName,singular,plural,toString,mainField,defaultSort,defaultPage,nbrOfFakeRecords
-Customer,Customer,Customers,name,number,ASC,10,12
-Item,Item,Items,description,sku,ASC,10,123
-OrderHeader,Order,Orders,orderNumber,orderNumber,ASC,10,5
-OrderDetail,Line,Lines,"order.getOrderNumber() + ""-"" + String.valueOf(line)",line,ASC,10,25
+entityName,singular,plural,toString,parentEntity,mainField,defaultSort,defaultPage,nbrOfFakeRecords
+Customer,Customer,Customers,name,,number,ASC,10,12
+Item,Item,Items,description,,sku,ASC,10,123
+OrderHeader,Order,Orders,orderNumber,,orderNumber,ASC,10,5
+OrderDetail,Line,Lines,"order.getOrderNumber() + ""-"" + String.valueOf(line)",OrderHeader,line,ASC,10,25

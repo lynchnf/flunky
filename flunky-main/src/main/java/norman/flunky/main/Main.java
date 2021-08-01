@@ -30,7 +30,8 @@ public class Main {
         validateArgs(args);
 
         // Convert applications properties file to a bean.
-        ApplicationBean appBean = new ApplicationBean(args[0]);
+        //ApplicationBean appBean = new ApplicationBean(args[0]);
+        ApplicationBean appBean = ApplicationBean.instance(args[0]);
         ProjectType type = appBean.getProjectType();
         String tmpPrefix = type.getTemplatePrefix();
 
