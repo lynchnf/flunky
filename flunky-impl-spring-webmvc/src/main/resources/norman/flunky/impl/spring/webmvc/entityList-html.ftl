@@ -35,6 +35,9 @@
         <input type="hidden" class="sortDirection" name="sortDirection" th:value="${r"${"}listForm.sortDirection}"/>
         <input type="hidden" class="currentPage" th:value="${r"${"}listForm.number}"/>
         <input type="hidden" class="totalPages" th:value="${r"${"}listForm.totalPages}"/>
+<#if parentField??>
+        <input type="hidden" th:value="${r"${"}listForm.parentId}"/>
+</#if>
 
         <span th:if="${r"${"}listForm.hasPrevious()}">
             <a class="goToFirstPage" data-list-form="listForm" href="#">&lt;&lt;</a>

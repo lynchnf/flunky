@@ -79,16 +79,44 @@ class ApplicationBeanTest {
         assertEquals("Fake application.", applicationModel.get("description"));
         assertNotNull(applicationModel.get("enums"));
         assertNotNull(applicationModel.get("entities"));
+
         // TODO 8/1/2021 Check for elephants all the way down.
+        //        List<Map<String, Object>> entitiesModel = (List<Map<String, Object>>) applicationModel.get("entities");
+        //        assertNotNull(entitiesModel.get(0).get("application"));
+        //        Map<String, Object> applicationModel2 = (Map<String, Object>) entitiesModel.get(0).get("application");
+        //        assertNotNull(applicationModel2.get("entities"));
+        //        List<Map<String, Object>> entitiesModel2 = (List<Map<String, Object>>) applicationModel2.get("entities");
     }
 
     @Test
     void getEntityModels() {
         List<Map<String, Object>> entityModels = bean.getEntityModels();
-        System.out.println(entityModels);
         assertEquals(2, entityModels.size());
+
         assertEquals("Customer", entityModels.get(0).get("entityName"));
+        assertNotNull(entityModels.get(0).get("fields"));
+        List<Map<String, Object>> customerFields = (List<Map<String, Object>>) entityModels.get(0).get("fields");
+        assertEquals(1, customerFields.size());
+        assertEquals("name", customerFields.get(0).get("fieldName"));
+        assertEquals("Customer Name", customerFields.get(0).get("label"));
+        assertEquals("String", customerFields.get(0).get("type"));
+        assertNotNull(entityModels.get(0).get("application"));
+        Map<String, Object> applicationModel1 = (Map<String, Object>) entityModels.get(0).get("application");
+        assertEquals("com.mycompany.fake.app", applicationModel1.get("basePackage"));
+
         assertEquals("Order", entityModels.get(1).get("entityName"));
+        List<Map<String, Object>> orderFields = (List<Map<String, Object>>) entityModels.get(1).get("fields");
+        assertEquals(2, orderFields.size());
+        assertEquals("number", orderFields.get(0).get("fieldName"));
+        assertEquals("Order Number", orderFields.get(0).get("label"));
+        assertEquals("Integer", orderFields.get(0).get("type"));
+        assertEquals("status", orderFields.get(1).get("fieldName"));
+        assertEquals("Order Status", orderFields.get(1).get("label"));
+        assertEquals("Status", orderFields.get(1).get("type"));
+        assertNotNull(entityModels.get(1).get("application"));
+        Map<String, Object> applicationModel2 = (Map<String, Object>) entityModels.get(0).get("application");
+        assertEquals("com.mycompany.fake.app", applicationModel2.get("basePackage"));
+
         // TODO 8/1/2021 Check for elephants all the way down.
     }
 

@@ -49,7 +49,7 @@ public class ${entityName}Controller {
             @RequestParam(value = "pageSize", required = false, defaultValue = "${defaultPage}") int pageSize,
             @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainField}") String sortColumn,
             @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
-            Model model) {
+            <#if parentField??>@RequestParam(value = "parentId") Long parentId, </#if>Model model) {
         
         // Convert sort column from string to an array of strings.
         String[] sortColumns = {defaultSortColumn};
@@ -59,10 +59,13 @@ public class ${entityName}Controller {
         
         // Get a page of records.
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, sortDirection, sortColumns);
-        Page<${entityName}> page = service.findAll(pageable);
+        Page<${entityName}> page = service.findAll(<#if parentField??>parentId, </#if>pageable);
         
         // Display the page of records.
         ${entityName}ListForm listForm = new ${entityName}ListForm(page);
+<#if parentField??>
+        listForm.setParentId(parentId);
+</#if>
         model.addAttribute("listForm", listForm);
         return "${entityName?uncap_first}List";
     }

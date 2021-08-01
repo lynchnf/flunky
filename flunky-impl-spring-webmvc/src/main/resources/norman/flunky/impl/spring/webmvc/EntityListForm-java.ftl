@@ -8,6 +8,9 @@ import java.util.List;
 
 public class ${entityName}ListForm extends ListForm<${entityName}> {
     private List<${entityName}ListRow> rows = new ArrayList<>();
+<#if parentField??>
+    private Long parentId;
+</#if>
 
     public ${entityName}ListForm(Page<${entityName}> innerPage) {
         super(innerPage);
@@ -20,4 +23,14 @@ public class ${entityName}ListForm extends ListForm<${entityName}> {
     public List<${entityName}ListRow> getRows() {
         return rows;
     }
+<#if parentField??>
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+</#if>
 }

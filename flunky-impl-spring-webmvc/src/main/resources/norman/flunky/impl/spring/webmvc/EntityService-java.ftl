@@ -21,13 +21,21 @@ public class ${entityName}Service {
     @Autowired
     private ${entityName}Repository repository;
 
-    public Iterable<${entityName}> findAll() {
+    public Iterable<${entityName}> findAll(<#if parentField??>Long parentId</#if>) {
         Sort sort = Sort.by(Sort.Direction.${defaultSort}, "${mainField}", "id");
+<#if parentField??>
+        return repository.findBy${parentField?cap_first}_Id(parentId, sort);
+<#else>
         return repository.findAll(sort);
+</#if>
     }
 
-    public Page<${entityName}> findAll(Pageable pageable) {
+    public Page<${entityName}> findAll(<#if parentField??>Long parentId, </#if>Pageable pageable) {
+<#if parentField??>
+        return repository.findBy${parentField?cap_first}_Id(parentId, pageable);
+<#else>
         return repository.findAll(pageable);
+</#if>
     }
 
     public ${entityName} findById(Long id) throws NotFoundException {
