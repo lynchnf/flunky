@@ -64,10 +64,10 @@ A CSV file that contains information about entity fields to be created for your 
 
 |  x  | Pts | Task
 | --- | --- | ---
-|     |  3  | Add parent entity to entity csv.
+|  x  |  3  | Add parent entity to entity csv.
 |     |  1  | Make entity.plural optional. Default to ${entity.singular}s |
 |     |  1  | Make entity.toString optional. Do not generate a toString() method if left blank.
-|     |  1  | Import StringUtils and MiscUtils into entity class so static methods from those utility classes can be used in the toString expression.
+|  x  |  1  | Import StringUtils and MiscUtils into entity class so static methods from those utility classes can be used in the toString expression.
 |     |  1  | Make entity.defaultSort optional. Default to ASC.
 |     |  1  | Make entity.defaultPage optional. Default to 10.
 |     |  1  | Make entity.nbrOfFakeRecords optional. Default to 0.
@@ -80,3 +80,4 @@ A CSV file that contains information about entity fields to be created for your 
 |     |  3  | Controller Unit tests.
 |     |  2  | View Unit tests.
 |     |  1  | Service Unit tests.
+|     |  3  | Elephants all the way down.
