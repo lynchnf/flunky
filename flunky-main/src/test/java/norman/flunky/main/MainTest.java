@@ -23,16 +23,17 @@ class MainTest {
 
     @Test
     void main() {
-        MockedStatic<ApplicationBean> mockStatic = mockStatic(ApplicationBean.class);
-        ApplicationBean appBean = mock(ApplicationBean.class);
-        mockStatic.when(() -> ApplicationBean.instance(anyString())).thenReturn(appBean);
-        ProjectType type = mock(ProjectType.class);
-        when(appBean.getProjectType()).thenReturn(type);
-        File projectDirectory = mock(File.class);
-        when(appBean.getProjectDirectory()).thenReturn(projectDirectory);
-        when(projectDirectory.mkdirs()).thenReturn(true);
+        try (MockedStatic<ApplicationBean> mockStatic = mockStatic(ApplicationBean.class)) {
+            ApplicationBean appBean = mock(ApplicationBean.class);
+            mockStatic.when(() -> ApplicationBean.instance(anyString())).thenReturn(appBean);
+            ProjectType type = mock(ProjectType.class);
+            when(appBean.getProjectType()).thenReturn(type);
+            File projectDirectory = mock(File.class);
+            when(appBean.getProjectDirectory()).thenReturn(projectDirectory);
+            when(projectDirectory.mkdirs()).thenReturn(true);
 
-        Main.main(new String[]{"path-to=properties-file"});
+            Main.main(new String[]{"path-to=properties-file"});
+        }
     }
 
     @Test

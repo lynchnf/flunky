@@ -22,9 +22,9 @@ public class ApplicationBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBean.class);
     private ProjectType projectType;
     private File projectDirectory;
-    private Map<String, Object> applicationModel = new LinkedHashMap<>();
-    private List<Map<String, Object>> entityModels = new ArrayList<>();
-    private List<Map<String, Object>> enumModels = new ArrayList<>();
+    private Map<String, Object> applicationModel;
+    private List<Map<String, Object>> entityModels;
+    private List<Map<String, Object>> enumModels;
 
     public static ApplicationBean instance(String appPropsPath) {
         return new ApplicationBean(appPropsPath);
@@ -32,7 +32,6 @@ public class ApplicationBean {
 
     private ApplicationBean(String appPropsPath) {
         Reader reader = null;
-
         try {
             File appPropsFile = new File(appPropsPath);
             File appPropsDir = appPropsFile.getParentFile();
@@ -44,81 +43,33 @@ public class ApplicationBean {
                     .newInstance();
             projectDirectory = new File(properties.getProperty("project.directory"));
 
-            // Get field rows and group them by entity names.
-            String fieldsFileName = properties.getProperty("fields.file");
-            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
-            Map<String, List<Map<String, String>>> entityFieldListMap = buildEntityFieldListMap(fieldRowList);
-
             // Get entity rows.
             String entitiesFileName = properties.getProperty("entities.file");
             List<Map<String, String>> entityRowList = buildListOfMapsFromCsvFile(entitiesFileName, appPropsDir);
+
+            // Get field rows.
+            String fieldsFileName = properties.getProperty("fields.file");
+            List<Map<String, String>> fieldRowList = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
 
             // Get enum rows.
             String enumsFileName = properties.getProperty("enums.file");
             List<Map<String, String>> enumRowList = buildListOfMapsFromCsvFile(enumsFileName, appPropsDir);
 
-            // Use enum rows to create enums models.
-            List<Map<String, Object>> applicationEnums = new ArrayList<>();
-            applicationModel.put("enums", applicationEnums);
-            for (Map<String, String> enumRow : enumRowList) {
-                Map<String, Object> enumModel1 = new LinkedHashMap<>(enumRow);
-                Map<String, Object> enumModel2 = new LinkedHashMap<>(enumRow);
-                enumModels.add(enumModel1);
-                applicationEnums.add(enumModel2);
+            // Build application model.
+            applicationModel = buildApplicationModel(properties, entityRowList, fieldRowList, enumRowList);
 
-                // Add application properties to enum models.
-                Map<String, Object> applicationModel1 = new LinkedHashMap<>();
-                enumModel1.put("application", applicationModel1);
-                applicationModel1.put("groupId", properties.getProperty("group.id"));
-                applicationModel1.put("artifactId", properties.getProperty("artifact.id"));
-                applicationModel1.put("version", properties.getProperty("version"));
-                applicationModel1.put("basePackage", properties.getProperty("base.package"));
-                applicationModel1.put("description", properties.getProperty("description"));
-            }
+            // Build entity models.
+            entityModels = buildEntityModels(properties, entityRowList, fieldRowList, enumRowList);
 
-            // Use entity rows to create standalone entity models and application entity models.
-            List<Map<String, Object>> applicationEntities = new ArrayList<>();
-            applicationModel.put("entities", applicationEntities);
-            for (Map<String, String> entityRow : entityRowList) {
-                Map<String, Object> entityModel1 = new LinkedHashMap<>(entityRow);
-                Map<String, Object> entityModel2 = new LinkedHashMap<>(entityRow);
-                entityModels.add(entityModel1);
-                applicationEntities.add(entityModel2);
-
-                // Get field rows for this entity and use them to create field models for standalone entity models and application models.
-                List<Map<String, Object>> entityFields1 = new ArrayList<>();
-                List<Map<String, Object>> entityFields2 = new ArrayList<>();
-                entityModel1.put("fields", entityFields1);
-                entityModel2.put("fields", entityFields2);
-                for (Map<String, String> fieldRow : entityFieldListMap.get(entityRow.get("entityName"))) {
-                    Map<String, Object> fieldModel1 = new LinkedHashMap<>(fieldRow);
-                    Map<String, Object> fieldModel2 = new LinkedHashMap<>(fieldRow);
-                    entityFields1.add(fieldModel1);
-                    entityFields2.add(fieldModel2);
-                }
-
-                // Add application properties to standalone entity models.
-                Map<String, Object> applicationModel1 = new LinkedHashMap<>();
-                entityModel1.put("application", applicationModel1);
-                applicationModel1.put("groupId", properties.getProperty("group.id"));
-                applicationModel1.put("artifactId", properties.getProperty("artifact.id"));
-                applicationModel1.put("version", properties.getProperty("version"));
-                applicationModel1.put("basePackage", properties.getProperty("base.package"));
-                applicationModel1.put("description", properties.getProperty("description"));
-            }
-
-            // Add application properties to application model.
-            applicationModel.put("groupId", properties.getProperty("group.id"));
-            applicationModel.put("artifactId", properties.getProperty("artifact.id"));
-            applicationModel.put("version", properties.getProperty("version"));
-            applicationModel.put("basePackage", properties.getProperty("base.package"));
-            applicationModel.put("description", properties.getProperty("description"));
+            // Build enum models.
+            enumModels = buildEnumModels(properties, entityRowList, fieldRowList, enumRowList);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | InvocationTargetException e) {
             throw new LoggingException(LOGGER, "Unable to load properties from file " + appPropsPath + ".", e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
+                    LOGGER.info("Successfully loaded properties from file " + appPropsPath + ".");
                 } catch (IOException e) {
                     LOGGER.warn("Unable to close reader for file " + appPropsPath + ".", e);
                 }
@@ -135,7 +86,7 @@ public class ApplicationBean {
             try {
                 reader = new CSVReader(new FileReader(file));
                 List<String[]> rows = reader.readAll();
-                String headingRow[] = null;
+                String[] headingRow = null;
                 for (String[] row : rows) {
                     if (headingRow == null) {
                         headingRow = row;
@@ -166,18 +117,143 @@ public class ApplicationBean {
         return dataMaps;
     }
 
-    private Map<String, List<Map<String, String>>> buildEntityFieldListMap(List<Map<String, String>> fieldRowList) {
-        Map<String, List<Map<String, String>>> entityFieldListMap = new LinkedHashMap<>();
-        for (Map<String, String> fieldRow : fieldRowList) {
-            String entityName = fieldRow.get("entityName");
-            List<Map<String, String>> entityFieldList = entityFieldListMap.get(entityName);
-            if (entityFieldList == null) {
-                entityFieldList = new ArrayList<>();
-                entityFieldListMap.put(entityName, entityFieldList);
+    private void foo(Properties properties, List<Map<String, String>> entityRowList,
+            List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
+
+    }
+
+    private Map<String, Object> buildApplicationModel(Properties properties, List<Map<String, String>> entityRowList,
+            List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
+        // Create application model.
+        Map<String, Object> applicationModel = new LinkedHashMap<>();
+        applicationModel.put("groupId", properties.getProperty("group.id"));
+        applicationModel.put("artifactId", properties.getProperty("artifact.id"));
+        applicationModel.put("version", properties.getProperty("version"));
+        applicationModel.put("basePackage", properties.getProperty("base.package"));
+        applicationModel.put("description", properties.getProperty("description"));
+
+        // Add entity models to the application.
+        List<Map<String, Object>> entityModels = new ArrayList<>();
+        applicationModel.put("entities", entityModels);
+        for (Map<String, String> entityRow : entityRowList) {
+            Map<String, Object> entityModel = new LinkedHashMap<>(entityRow);
+            entityModels.add(entityModel);
+
+            // Add field models to the entities.
+            List<Map<String, Object>> fieldModels = new ArrayList<>();
+            entityModel.put("fields", fieldModels);
+            for (Map<String, String> fieldRow : fieldRowList) {
+                if (entityRow.get("entityName").equals(fieldRow.get("entityName"))) {
+                    Map<String, Object> fieldModel = new LinkedHashMap<>(fieldRow);
+                    fieldModels.add(fieldModel);
+                }
             }
-            entityFieldList.add(fieldRow);
         }
-        return entityFieldListMap;
+
+        // Add enum models to the application.
+        List<Map<String, Object>> enumModels = new ArrayList<>();
+        applicationModel.put("enums", enumModels);
+        for (Map<String, String> enumRow : enumRowList) {
+            Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
+            enumModels.add(enumModel);
+        }
+
+        return applicationModel;
+    }
+
+    private List<Map<String, Object>> buildEntityModels(Properties properties, List<Map<String, String>> entityRowList,
+            List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
+        // Create entity models.
+        List<Map<String, Object>> entityModels = new ArrayList<>();
+        for (Map<String, String> entityRow : entityRowList) {
+            Map<String, Object> entityModel = new LinkedHashMap<>(entityRow);
+            entityModels.add(entityModel);
+
+            // Add field models to the entities.
+            List<Map<String, Object>> fieldModels = new ArrayList<>();
+            entityModel.put("fields", fieldModels);
+            for (Map<String, String> fieldRow : fieldRowList) {
+                if (entityRow.get("entityName").equals(fieldRow.get("entityName"))) {
+                    Map<String, Object> fieldModel = new LinkedHashMap<>(fieldRow);
+                    fieldModels.add(fieldModel);
+                }
+            }
+
+            // Add application mode to the entities.
+            Map<String, Object> applicationModel = new LinkedHashMap<>();
+            entityModel.put("application", applicationModel);
+            applicationModel.put("groupId", properties.getProperty("group.id"));
+            applicationModel.put("artifactId", properties.getProperty("artifact.id"));
+            applicationModel.put("version", properties.getProperty("version"));
+            applicationModel.put("basePackage", properties.getProperty("base.package"));
+            applicationModel.put("description", properties.getProperty("description"));
+
+            // Add other entity models to the application.
+            List<Map<String, Object>> otherEntityModels = new ArrayList<>();
+            applicationModel.put("entities", otherEntityModels);
+            for (Map<String, String> otherEntityRow : entityRowList) {
+                if (!entityRow.get("entityName").equals(otherEntityRow.get("entityName"))) {
+                    Map<String, Object> otherEntityModel = new LinkedHashMap<>(otherEntityRow);
+                    otherEntityModels.add(otherEntityModel);
+
+                    // Add other field models to the other entities.
+                    List<Map<String, Object>> otherFieldModels = new ArrayList<>();
+                    otherEntityModel.put("fields", otherFieldModels);
+                    for (Map<String, String> otherFieldRow : fieldRowList) {
+                        if (otherEntityRow.get("entityName").equals(otherFieldRow.get("entityName"))) {
+                            Map<String, Object> otherFieldModel = new LinkedHashMap<>(otherFieldRow);
+                            otherFieldModels.add(otherFieldModel);
+                        }
+                    }
+                }
+            }
+
+            // Add enum models to the application.
+            List<Map<String, Object>> enumModels = new ArrayList<>();
+            applicationModel.put("enums", enumModels);
+            for (Map<String, String> enumRow : enumRowList) {
+                Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
+                enumModels.add(enumModel);
+            }
+        }
+        return entityModels;
+    }
+
+    private List<Map<String, Object>> buildEnumModels(Properties properties, List<Map<String, String>> entityRowList,
+            List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
+        // Create enum models.
+        List<Map<String, Object>> enumModels = new ArrayList<>();
+        for (Map<String, String> enumRow : enumRowList) {
+            Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
+            enumModels.add(enumModel);
+
+            Map<String, Object> applicationModel = new LinkedHashMap<>();
+            enumModel.put("application", applicationModel);
+            applicationModel.put("groupId", properties.getProperty("group.id"));
+            applicationModel.put("artifactId", properties.getProperty("artifact.id"));
+            applicationModel.put("version", properties.getProperty("version"));
+            applicationModel.put("basePackage", properties.getProperty("base.package"));
+            applicationModel.put("description", properties.getProperty("description"));
+
+            // Add entity models to the application.
+            List<Map<String, Object>> entityModels = new ArrayList<>();
+            applicationModel.put("entities", entityModels);
+            for (Map<String, String> entityRow : entityRowList) {
+                Map<String, Object> entityModel = new LinkedHashMap<>(entityRow);
+                entityModels.add(entityModel);
+
+                // Add field models to the entities.
+                List<Map<String, Object>> fieldModels = new ArrayList<>();
+                entityModel.put("fields", fieldModels);
+                for (Map<String, String> fieldRow : fieldRowList) {
+                    if (entityRow.get("entityName").equals(fieldRow.get("entityName"))) {
+                        Map<String, Object> fieldModel = new LinkedHashMap<>(fieldRow);
+                        fieldModels.add(fieldModel);
+                    }
+                }
+            }
+        }
+        return enumModels;
     }
 
     public ProjectType getProjectType() {
