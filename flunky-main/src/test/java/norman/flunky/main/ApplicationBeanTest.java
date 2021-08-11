@@ -28,7 +28,7 @@ class ApplicationBeanTest {
     @BeforeAll
     static void oneTimeSetUp() throws Exception {
         // Get temp directory.
-        String tempDirPath = Files.createTempDirectory("flunky-main-test-data").toFile().getAbsolutePath();
+        String tempDirPath = Files.createTempDirectory("flunky-main-test-data-").toFile().getAbsolutePath();
 
         // Write application properties file.
         Properties fakeAppProps = buildAppProps(tempDirPath);

@@ -117,11 +117,6 @@ public class ApplicationBean {
         return dataMaps;
     }
 
-    private void foo(Properties properties, List<Map<String, String>> entityRowList,
-            List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
-
-    }
-
     private Map<String, Object> buildApplicationModel(Properties properties, List<Map<String, String>> entityRowList,
             List<Map<String, String>> fieldRowList, List<Map<String, String>> enumRowList) {
         // Create application model.
