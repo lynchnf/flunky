@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,36 +21,39 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ApplicationBeanTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBeanTest.class);
     static File propsFile;
     ApplicationBean bean;
 
     @BeforeAll
     static void oneTimeSetUp() throws Exception {
         // Get temp directory.
-        String tempDirPath = Files.createTempDirectory("flunky-main-test-data").toFile().getAbsolutePath();
+        String tempDirPath = Files.createTempDirectory("flunky-main-test-data-").toFile().getAbsolutePath();
 
         // Write application properties file.
         Properties fakeAppProps = buildAppProps(tempDirPath);
-        File propsFile = writeAppProps(tempDirPath, "fake-app.properties", fakeAppProps);
-        ApplicationBeanTest.propsFile = propsFile;
+        ApplicationBeanTest.propsFile = writeAppProps(tempDirPath, "fake-app.properties", fakeAppProps);
 
-        // Write enums csv file.
-        String[] enumsLines = {"enumName, values", "Status, NEW OLD"};
-        writeCsvFile(tempDirPath, "fake-app-enums.csv", enumsLines);
-
-        // Write entities csv file.
+        // Write entities csv file. (2 entities)
         String[] entityLines = {"entityName", "Customer", "Order"};
         writeCsvFile(tempDirPath, "fake-app-entities.csv", entityLines);
 
-        // Write fields csv file.
-        String[] fielcLines = {"entityName,fieldName,label,type", "Customer,name,Customer Name,String",
+        // Write fields csv file. (3 fields)
+        String[] fieldLines = {"entityName,fieldName,label,type", "Customer,name,Customer Name,String",
                 "Order,number,Order Number,Integer", "Order,status,Order Status,Status"};
-        writeCsvFile(tempDirPath, "fake-app-fields.csv", fielcLines);
+        writeCsvFile(tempDirPath, "fake-app-fields.csv", fieldLines);
+
+        // Write enums csv file. (1 enum)
+        String[] enumsLines = {"enumName,values", "Status,NEW OLD"};
+        writeCsvFile(tempDirPath, "fake-app-enums.csv", enumsLines);
+        LOGGER.info("TEST Successfully completed one-time setup for ApplicationBeanTest.");
     }
 
     @BeforeEach
     void setUp() {
-        bean = ApplicationBean.instance(propsFile.getAbsolutePath());
+        String absolutePath = propsFile.getAbsolutePath();
+        LOGGER.info(String.format("TEST Creating ApplicationBean from file %s.", absolutePath));
+        bean = ApplicationBean.instance(absolutePath);
     }
 
     @AfterEach
@@ -77,55 +82,172 @@ class ApplicationBeanTest {
         assertEquals("1.2.3-SNAPSHOT", applicationModel.get("version"));
         assertEquals("com.mycompany.fake.app", applicationModel.get("basePackage"));
         assertEquals("Fake application.", applicationModel.get("description"));
-        assertNotNull(applicationModel.get("enums"));
-        assertNotNull(applicationModel.get("entities"));
 
-        // TODO 8/1/2021 Check for elephants all the way down.
-        //        List<Map<String, Object>> entitiesModel = (List<Map<String, Object>>) applicationModel.get("entities");
-        //        assertNotNull(entitiesModel.get(0).get("application"));
-        //        Map<String, Object> applicationModel2 = (Map<String, Object>) entitiesModel.get(0).get("application");
-        //        assertNotNull(applicationModel2.get("entities"));
-        //        List<Map<String, Object>> entitiesModel2 = (List<Map<String, Object>>) applicationModel2.get("entities");
+        // application -> (customer & order)
+        assertNotNull(applicationModel.get("entities"));
+        List<Map<String, Object>> entityModels = (List<Map<String, Object>>) applicationModel.get("entities");
+        assertEquals(2, entityModels.size());
+        assertEquals("Customer", entityModels.get(0).get("entityName"));
+        assertEquals("Order", entityModels.get(1).get("entityName"));
+
+        // application -> customer -> fields
+        assertNotNull(entityModels.get(0).get("fields"));
+        List<Map<String, Object>> customerFieldModels = (List<Map<String, Object>>) entityModels.get(0).get("fields");
+        assertEquals(1, customerFieldModels.size());
+        assertEquals("name", customerFieldModels.get(0).get("fieldName"));
+        assertEquals("Customer Name", customerFieldModels.get(0).get("label"));
+        assertEquals("String", customerFieldModels.get(0).get("type"));
+
+        // application -> order -> fields
+        assertNotNull(entityModels.get(1).get("fields"));
+        List<Map<String, Object>> orderFieldModels = (List<Map<String, Object>>) entityModels.get(1).get("fields");
+        assertEquals(2, orderFieldModels.size());
+        assertEquals("number", orderFieldModels.get(0).get("fieldName"));
+        assertEquals("Order Number", orderFieldModels.get(0).get("label"));
+        assertEquals("Integer", orderFieldModels.get(0).get("type"));
+        assertEquals("status", orderFieldModels.get(1).get("fieldName"));
+        assertEquals("Order Status", orderFieldModels.get(1).get("label"));
+        assertEquals("Status", orderFieldModels.get(1).get("type"));
+
+        // application -> enums
+        assertNotNull(applicationModel.get("enums"));
+        List<Map<String, Object>> enumModels = (List<Map<String, Object>>) applicationModel.get("enums");
+        assertEquals(1, enumModels.size());
+        assertEquals("Status", enumModels.get(0).get("enumName"));
+        assertEquals("NEW OLD", enumModels.get(0).get("values"));
     }
 
     @Test
     void getEntityModels() {
         List<Map<String, Object>> entityModels = bean.getEntityModels();
         assertEquals(2, entityModels.size());
-
         assertEquals("Customer", entityModels.get(0).get("entityName"));
-        assertNotNull(entityModels.get(0).get("fields"));
-        List<Map<String, Object>> customerFields = (List<Map<String, Object>>) entityModels.get(0).get("fields");
-        assertEquals(1, customerFields.size());
-        assertEquals("name", customerFields.get(0).get("fieldName"));
-        assertEquals("Customer Name", customerFields.get(0).get("label"));
-        assertEquals("String", customerFields.get(0).get("type"));
-        assertNotNull(entityModels.get(0).get("application"));
-        Map<String, Object> applicationModel1 = (Map<String, Object>) entityModels.get(0).get("application");
-        assertEquals("com.mycompany.fake.app", applicationModel1.get("basePackage"));
-
         assertEquals("Order", entityModels.get(1).get("entityName"));
-        List<Map<String, Object>> orderFields = (List<Map<String, Object>>) entityModels.get(1).get("fields");
-        assertEquals(2, orderFields.size());
-        assertEquals("number", orderFields.get(0).get("fieldName"));
-        assertEquals("Order Number", orderFields.get(0).get("label"));
-        assertEquals("Integer", orderFields.get(0).get("type"));
-        assertEquals("status", orderFields.get(1).get("fieldName"));
-        assertEquals("Order Status", orderFields.get(1).get("label"));
-        assertEquals("Status", orderFields.get(1).get("type"));
-        assertNotNull(entityModels.get(1).get("application"));
-        Map<String, Object> applicationModel2 = (Map<String, Object>) entityModels.get(0).get("application");
-        assertEquals("com.mycompany.fake.app", applicationModel2.get("basePackage"));
 
-        // TODO 8/1/2021 Check for elephants all the way down.
+        // customer -> fields
+        assertNotNull(entityModels.get(0).get("fields"));
+        List<Map<String, Object>> customerFieldModels = (List<Map<String, Object>>) entityModels.get(0).get("fields");
+        assertEquals(1, customerFieldModels.size());
+        assertEquals("name", customerFieldModels.get(0).get("fieldName"));
+        assertEquals("Customer Name", customerFieldModels.get(0).get("label"));
+        assertEquals("String", customerFieldModels.get(0).get("type"));
+
+        // order -> fields
+        assertNotNull(entityModels.get(1).get("fields"));
+        List<Map<String, Object>> orderFieldModels = (List<Map<String, Object>>) entityModels.get(1).get("fields");
+        assertEquals(2, orderFieldModels.size());
+        assertEquals("number", orderFieldModels.get(0).get("fieldName"));
+        assertEquals("Order Number", orderFieldModels.get(0).get("label"));
+        assertEquals("Integer", orderFieldModels.get(0).get("type"));
+        assertEquals("status", orderFieldModels.get(1).get("fieldName"));
+        assertEquals("Order Status", orderFieldModels.get(1).get("label"));
+        assertEquals("Status", orderFieldModels.get(1).get("type"));
+
+        // customer -> application
+        assertNotNull(entityModels.get(0).get("application"));
+        Map<String, Object> custAppModel = (Map<String, Object>) entityModels.get(0).get("application");
+        assertEquals("com.mycompany.fake", custAppModel.get("groupId"));
+        assertEquals("fake-app", custAppModel.get("artifactId"));
+        assertEquals("1.2.3-SNAPSHOT", custAppModel.get("version"));
+        assertEquals("com.mycompany.fake.app", custAppModel.get("basePackage"));
+        assertEquals("Fake application.", custAppModel.get("description"));
+
+        // order -> application
+        assertNotNull(entityModels.get(1).get("application"));
+        Map<String, Object> ordrAppModel = (Map<String, Object>) entityModels.get(1).get("application");
+        assertEquals("com.mycompany.fake", ordrAppModel.get("groupId"));
+        assertEquals("fake-app", ordrAppModel.get("artifactId"));
+        assertEquals("1.2.3-SNAPSHOT", ordrAppModel.get("version"));
+        assertEquals("com.mycompany.fake.app", ordrAppModel.get("basePackage"));
+        assertEquals("Fake application.", ordrAppModel.get("description"));
+
+        // customer -> application -> order
+        assertNotNull(custAppModel.get("entities"));
+        List<Map<String, Object>> custAppEntModels = (List<Map<String, Object>>) custAppModel.get("entities");
+        assertEquals(1, custAppEntModels.size());
+        assertEquals("Order", custAppEntModels.get(0).get("entityName"));
+
+        // order -> application -> customer
+        assertNotNull(ordrAppModel.get("entities"));
+        List<Map<String, Object>> ordrAppEntModels = (List<Map<String, Object>>) ordrAppModel.get("entities");
+        assertEquals(1, ordrAppEntModels.size());
+        assertEquals("Customer", ordrAppEntModels.get(0).get("entityName"));
+
+        // customer -> application -> order -> fields
+        assertNotNull(custAppEntModels.get(0).get("fields"));
+        List<Map<String, Object>> custAppEntFieldsModels =
+                (List<Map<String, Object>>) custAppEntModels.get(0).get("fields");
+        assertEquals("number", custAppEntFieldsModels.get(0).get("fieldName"));
+        assertEquals("Order Number", custAppEntFieldsModels.get(0).get("label"));
+        assertEquals("Integer", custAppEntFieldsModels.get(0).get("type"));
+        assertEquals("status", custAppEntFieldsModels.get(1).get("fieldName"));
+        assertEquals("Order Status", custAppEntFieldsModels.get(1).get("label"));
+        assertEquals("Status", custAppEntFieldsModels.get(1).get("type"));
+
+        // order -> application -> customer -> fields
+        assertNotNull(ordrAppEntModels.get(0).get("fields"));
+        List<Map<String, Object>> ordrAppEntFieldsModels =
+                (List<Map<String, Object>>) ordrAppEntModels.get(0).get("fields");
+        assertEquals("name", ordrAppEntFieldsModels.get(0).get("fieldName"));
+        assertEquals("Customer Name", ordrAppEntFieldsModels.get(0).get("label"));
+        assertEquals("String", ordrAppEntFieldsModels.get(0).get("type"));
+
+        // customer -> application -> enums
+        assertNotNull(custAppModel.get("enums"));
+        List<Map<String, Object>> custAppEnumModel = (List<Map<String, Object>>) custAppModel.get("enums");
+        assertEquals(1, custAppEnumModel.size());
+        assertEquals("Status", custAppEnumModel.get(0).get("enumName"));
+        assertEquals("NEW OLD", custAppEnumModel.get(0).get("values"));
+
+        // order -> application -> enums
+        assertNotNull(ordrAppModel.get("enums"));
+        List<Map<String, Object>> ordrAppEnumModel = (List<Map<String, Object>>) ordrAppModel.get("enums");
+        assertEquals(1, ordrAppEnumModel.size());
+        assertEquals("Status", ordrAppEnumModel.get(0).get("enumName"));
+        assertEquals("NEW OLD", ordrAppEnumModel.get(0).get("values"));
     }
 
     @Test
     void getEnumModels() {
         List<Map<String, Object>> enumModels = bean.getEnumModels();
-        System.out.println(enumModels);
         assertEquals(1, enumModels.size());
         assertEquals("Status", enumModels.get(0).get("enumName"));
+        assertEquals("NEW OLD", enumModels.get(0).get("values"));
+
+        // enum -> application
+        assertNotNull(enumModels.get(0).get("application"));
+        Map<String, Object> applicationModel = (Map<String, Object>) enumModels.get(0).get("application");
+        assertEquals("com.mycompany.fake", applicationModel.get("groupId"));
+        assertEquals("fake-app", applicationModel.get("artifactId"));
+        assertEquals("1.2.3-SNAPSHOT", applicationModel.get("version"));
+        assertEquals("com.mycompany.fake.app", applicationModel.get("basePackage"));
+        assertEquals("Fake application.", applicationModel.get("description"));
+
+        // enum -> application -> (customer & order)
+        assertNotNull(applicationModel.get("entities"));
+        List<Map<String, Object>> entityModels = (List<Map<String, Object>>) applicationModel.get("entities");
+        assertEquals(2, entityModels.size());
+        assertEquals("Customer", entityModels.get(0).get("entityName"));
+        assertEquals("Order", entityModels.get(1).get("entityName"));
+
+        // enum -> application -> customer -> fields
+        assertNotNull(entityModels.get(0).get("fields"));
+        List<Map<String, Object>> customerFieldModels = (List<Map<String, Object>>) entityModels.get(0).get("fields");
+        assertEquals(1, customerFieldModels.size());
+        assertEquals("name", customerFieldModels.get(0).get("fieldName"));
+        assertEquals("Customer Name", customerFieldModels.get(0).get("label"));
+        assertEquals("String", customerFieldModels.get(0).get("type"));
+
+        // enum -> application -> customer -> fields
+        assertNotNull(entityModels.get(1).get("fields"));
+        List<Map<String, Object>> orderFieldModels = (List<Map<String, Object>>) entityModels.get(1).get("fields");
+        assertEquals(2, orderFieldModels.size());
+        assertEquals("number", orderFieldModels.get(0).get("fieldName"));
+        assertEquals("Order Number", orderFieldModels.get(0).get("label"));
+        assertEquals("Integer", orderFieldModels.get(0).get("type"));
+        assertEquals("status", orderFieldModels.get(1).get("fieldName"));
+        assertEquals("Order Status", orderFieldModels.get(1).get("label"));
+        assertEquals("Status", orderFieldModels.get(1).get("type"));
     }
 
     private static Properties buildAppProps(String tempDirPath) {
@@ -150,12 +272,16 @@ class ApplicationBeanTest {
             outputStream = new FileOutputStream(propsFile);
             fakeAppProps.store(outputStream, "data for unit tests");
         } catch (IOException e) {
-            throw new Exception("Unable to write to file " + fileName + " in directory " + dirPath + ".", e);
+            throw new Exception(String.format("Unable to write to file %s in directory %s.", fileName, dirPath), e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
-                } catch (IOException ignored) {
+                    LOGGER.info(
+                            String.format("TEST: Successfully wrote properties to file %s in directory %s.", fileName,
+                                    dirPath));
+                } catch (IOException e) {
+                    LOGGER.warn(String.format("Unable to close file %s in directory %s.", fileName, dirPath), e);
                 }
             }
         }
@@ -176,6 +302,8 @@ class ApplicationBeanTest {
         } finally {
             if (writer != null) {
                 writer.close();
+                LOGGER.info(String.format("TEST: Successfully wrote CSV data to file %s in directory %s.", fileName,
+                        dirPath));
             }
         }
     }
