@@ -64,16 +64,16 @@ A CSV file that contains information about entity fields to be created for your 
 
 |  x  | Pts | Task
 | --- | --- | ---
-|  x  |  3  | Add parent entity to entity csv.
+|  o  |  3  | Add parent entity to entity csv.
 |     |  1  | Make entity.plural optional. Default to ${entity.singular}s |
 |     |  1  | Make entity.toString optional. Do not generate a toString() method if left blank.
 |  x  |  1  | Import StringUtils and MiscUtils into entity class so static methods from those utility classes can be used in the toString expression.
 |     |  1  | Make entity.defaultSort optional. Default to ASC.
 |     |  1  | Make entity.defaultPage optional. Default to 10.
 |     |  1  | Make entity.nbrOfFakeRecords optional. Default to 0.
-|     |  2  | Make field.dftValue a Java expression.
-|     |  3  | Add a boolean field.fakeData to say whether or not we generate fake data for this field.
-|     |  2  | Add a number field (between 0 and 100) to say what percentage of the time a nullable field should have a null value.
+|  x  |  2  | Make field.dftValue a Java expression.
+|  x  |  3  | Add a boolean field.fakeData to say whether or not we generate fake data for this field.
+|  x  |  2  | Add a number field (between 0 and 100) to say what percentage of the time a nullable field should have a null value.
 |     |  5  | Add simple date & time pickers on edit pages.
 |     |  8  | Add filters on list pages.
 |     |  13 | Add list of entities as a field type for entities.

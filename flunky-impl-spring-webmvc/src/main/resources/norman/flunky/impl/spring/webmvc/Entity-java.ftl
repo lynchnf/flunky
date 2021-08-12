@@ -1,6 +1,6 @@
 package ${application.basePackage}.domain;
 
-import norman.dough.util.MiscUtils;
+import ${application.basePackage}.util.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;

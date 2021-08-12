@@ -109,88 +109,33 @@ public class FakeDataFactory {
 
     public ${entity.entityName} nextRandom${entity.entityName}() {
         ${entity.entityName} entity = new ${entity.entityName}();
-    <#list entity.fields?filter(f -> f.fieldName == entity.mainField) as field>
-        ${field.type} mainField;
-        do {
-        <#if field.type == "BigDecimal">
-            mainField = nextRandomBigDecimal("${field.fakeLowValue}", "${field.fakeHighValue}", ${field.scale});
-        <#elseif field.type == "Boolean">
-            mainField = Boolean.valueOf(nextRandomBoolean());
-        <#elseif field.type == "Byte">
-            mainField = Byte.valueOf((byte) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
-        <#elseif field.type == "Short">
-            mainField = Short.valueOf((short) ${field.dftValue});
-        <#elseif field.type == "Integer">
-            mainField = Integer.valueOf(nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
-        <#elseif field.type == "Long">
-            mainField = Long.valueOf((long) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue}));
-        <#elseif field.type == "Date">
-            mainField = nextRandomDateTime(${field.temporalType}, ${field.fakeLowValue}, ${field.fakeHighValue});
-        <#elseif field.type == "String">
-            mainField = nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length});
-        <#elseif field.enumType??>
-            mainField = nextRandomEnum(${field.type}.values());
-        </#if>
-        } while (${entity.entityName?uncap_first}Map.containsKey(mainField));
-        entity.set${field.fieldName?cap_first}(mainField);
-    </#list>
-    <#list entity.fields?filter(f -> f.fieldName != entity.mainField) as field>
-        <#if field.joinColumn??>
-        entity.set${field.fieldName?cap_first}(nextRandomEntity(${field.type?uncap_first}Map.values()));
-        <#elseif field.type == "BigDecimal">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(nextRandomBigDecimal("${field.fakeLowValue}", "${field.fakeHighValue}", ${field.scale}));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(new BigDecimal("${field.dftValue}"));
+    <#list entity.fields as field>
+        <#if field.fakeData?? && field.fakeData == "true">
+        if (RANDOM.nextInt(100) >= ${field.fakeNullPercent!0}) {
+            <#if field.joinColumn??>
+            entity.set${field.fieldName?cap_first}(nextRandomEntity(${field.type?uncap_first}Map.values()));
+            <#elseif field.type == "BigDecimal">
+            entity.set${field.fieldName?cap_first}(nextRandomBigDecimal("${field.fakeLowValue}", "${field.fakeHighValue}", ${field.scale}));
+            <#elseif field.type == "Boolean">
+            entity.set${field.fieldName?cap_first}(Boolean.valueOf(nextRandomBoolean()));
+            <#elseif field.type == "Byte">
+            entity.set${field.fieldName?cap_first}(Byte.valueOf((byte) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
+            <#elseif field.type == "Short">
+            entity.set${field.fieldName?cap_first}(Short.valueOf((short) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
+            <#elseif field.type == "Integer">
+            entity.set${field.fieldName?cap_first}(Integer.valueOf(nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
+            <#elseif field.type == "Long">
+            entity.set${field.fieldName?cap_first}(Long.valueOf((long) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
+            <#elseif field.type == "Date">
+            entity.set${field.fieldName?cap_first}(nextRandomDateTime(${field.temporalType}, ${field.fakeLowValue}, ${field.fakeHighValue}));
+            <#elseif field.type == "String">
+            entity.set${field.fieldName?cap_first}(nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length}));
+            <#elseif field.enumType??>
+            entity.set${field.fieldName?cap_first}(nextRandomEnum(${field.type}.values()));
             </#if>
-        <#elseif field.type == "Boolean">
-            <#if field.fakeRandomBoolean?? && field.fakeRandomBoolean == "true">
-        entity.set${field.fieldName?cap_first}(Boolean.valueOf(nextRandomBoolean()));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(Boolean.valueOf(${field.dftValue}));
-            </#if>
-        <#elseif field.type == "Byte">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(Byte.valueOf((byte) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(Byte.valueOf((byte) ${field.dftValue}));
-            </#if>
-        <#elseif field.type == "Short">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(Short.valueOf((short) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(Short.valueOf((short) ${field.dftValue}));
-            </#if>
-        <#elseif field.type == "Integer">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(Integer.valueOf(nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(Integer.valueOf(${field.dftValue}));
-            </#if>
-        <#elseif field.type == "Long">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(Long.valueOf((long) nextRandomInteger(${field.fakeLowValue}, ${field.fakeHighValue})));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(Long.valueOf((long) ${field.dftValue}));
-            </#if>
-        <#elseif field.type == "Date">
-            <#if field.fakeLowValue?? && field.fakeHighValue??>
-        entity.set${field.fieldName?cap_first}(nextRandomDateTime(${field.temporalType}, ${field.fakeLowValue}, ${field.fakeHighValue}));
-            <#elseif field.dftValue??>
+        }
+        <#elseif field.dftValue??>
         entity.set${field.fieldName?cap_first}(${field.dftValue});
-            </#if>
-        <#elseif field.type == "String">
-            <#if field.fakeStringType??>
-        entity.set${field.fieldName?cap_first}(nextRandomString(${field.fakeStringType}, ${(field.fakeStringModifier)!"null"}, ${field.length}));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(${field.dftValue});
-            </#if>
-        <#elseif field.enumType??>
-            <#if field.fakeRandomEnum?? && field.fakeRandomEnum == "true">
-        entity.set${field.fieldName?cap_first}(nextRandomEnum(${field.type}.values()));
-            <#elseif field.dftValue??>
-        entity.set${field.fieldName?cap_first}(${field.type}.${field.dftValue});
-            </#if>
         </#if>
     </#list>
         return entity;

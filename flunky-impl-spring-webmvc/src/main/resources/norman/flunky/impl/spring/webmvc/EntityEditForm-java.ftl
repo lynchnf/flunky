@@ -65,31 +65,7 @@ public class ${entityName}EditForm {
 
     public ${entityName}EditForm() {
 <#list fields?filter(f -> f.dftValue??) as field>
-    <#if field.type == "BigDecimal">
-        ${field.fieldName} = new BigDecimal("${field.dftValue}");
-    <#elseif field.type == "Boolean">
-        ${field.fieldName} = Boolean.valueOf(${field.dftValue});
-    <#elseif field.type == "Byte">
-        ${field.fieldName} = Byte.valueOf((byte) ${field.dftValue});
-    <#elseif field.type == "Short">
-        ${field.fieldName} = Short.valueOf((short) ${field.dftValue});
-    <#elseif field.type == "Integer">
-        ${field.fieldName} = Integer.valueOf(${field.dftValue});
-    <#elseif field.type == "Long">
-        ${field.fieldName} = Long.valueOf((long) ${field.dftValue});
-    <#elseif field.type == "Date">
-        <#if field.temporalType?? && field.temporalType="DATE">
-        ${field.fieldName} = MiscUtils.parseDate("${field.dftValue}");
-        <#elseif field.temporalType?? && field.temporalType="TIME">
-        ${field.fieldName} = MiscUtils.parseTime("${field.dftValue}");
-        <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
-        ${field.fieldName} = MiscUtils.parseDateTime("${field.dftValue}");
-        </#if>
-    <#elseif field.enumType??>
-        ${field.fieldName} = ${field.type}.${field.dftValue};
-    <#else>
-        ${field.fieldName} = "${field.dftValue}";
-    </#if>
+        ${field.fieldName} = ${field.dftValue};
 </#list>
     }
 
