@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+@Deprecated
 public class ApplicationBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBean.class);
     private ProjectType projectType;

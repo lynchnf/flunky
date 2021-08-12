@@ -20,6 +20,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.Map;
 
+@Deprecated
 public class SourceGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceGenerator.class);
     private Configuration cfg;
