@@ -18,7 +18,7 @@ public class Main {
             throw new LoggingException(LOGGER, "Missing program argument.");
         }
 
-        // Ingest specification data.
+        // Ingest app specification data.
         AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(args[0]);
         ProjectType projectType = ingestor.getProjectType();
         Map<String, String> applicationData = ingestor.getApplicationData();
@@ -26,7 +26,7 @@ public class Main {
         List<Map<String, String>> fieldsData = ingestor.getFieldsData();
         List<Map<String, String>> enumsData = ingestor.getEnumsData();
 
-        // Validate specification data.
+        // Validate app specification data.
         List<String> validationErrors = projectType.validate(applicationData, entitiesData, fieldsData, enumsData);
         if (!validationErrors.isEmpty()) {
             for (String validationError : validationErrors) {
@@ -36,20 +36,14 @@ public class Main {
         }
 
         // Create directory to generate project into.
-        File projectDirectory = ingestor.getProjectDirectory();
-        if (!projectDirectory.mkdirs()) {
-            throw new LoggingException(LOGGER,
-                    String.format("Unable to create project directory %s. Please verify it does not already exist.",
-                            projectDirectory.getAbsolutePath()));
-        }
+        String projectDirectoryPath = ingestor.getProjectDirectoryPath();
+        String templatePrefix = projectType.getTemplatePrefix();
+        SourceExcretor excretor = SourceExcretor.instance(projectDirectoryPath, templatePrefix);
+        File projectDirectory = excretor.createProjectDirectory();
         LOGGER.info(String.format("Creating project in directory %s.", projectDirectory.getAbsolutePath()));
 
         // Convert the specification data into data models for FreeMarker.
         DataModelDigestor digestor = DataModelDigestor.instance(applicationData, entitiesData, fieldsData, enumsData);
-
-        // Prepare to generate source files.
-        String templatePrefix = projectType.getTemplatePrefix();
-        SourceExcretor excretor = SourceExcretor.instance(projectDirectory, templatePrefix);
 
         // Create application source files.
         Map<String, Object> applicationModel = digestor.getApplicationModel();

@@ -37,7 +37,7 @@ class MainTest {
             ingestorMockedStatic.when(() -> AppPropertiesIngestor.instance(anyString())).thenReturn(ingestor);
             ProjectType projectType = mock(ProjectType.class);
             when(ingestor.getProjectType()).thenReturn(projectType);
-            when(ingestor.getProjectDirectory()).thenReturn(new File("/test/project/directory"));
+            when(ingestor.getProjectDirectoryPath()).thenReturn("/test/project/directory");
             Map<String, String> data = new LinkedHashMap<>();
             data.put("test-key", "test-value");
             when(ingestor.getApplicationData()).thenReturn(data);
@@ -66,7 +66,9 @@ class MainTest {
 
             // Mock the Source Excretor.
             SourceExcretor excretor = mock(SourceExcretor.class);
-            excretorMockedStatic.when(() -> SourceExcretor.instance(any(File.class), anyString())).thenReturn(excretor);
+
+            excretorMockedStatic.when(() -> SourceExcretor.instance(anyString(), anyString())).thenReturn(excretor);
+            when(excretor.createProjectDirectory()).thenReturn(new File("/test/project/directory"));
             when(excretor.generateSourceFile(anyMap(), any(GenerationBean.class)))
                     .thenReturn(new File("/test/out/file"));
 
@@ -75,7 +77,7 @@ class MainTest {
 
             // Verify the calls.
             verify(ingestor, times(1)).getProjectType();
-            verify(ingestor, times(1)).getProjectDirectory();
+            verify(ingestor, times(1)).getProjectDirectoryPath();
             verify(ingestor, times(1)).getApplicationData();
             verify(ingestor, times(1)).getEntitiesData();
             verify(ingestor, times(1)).getFieldsData();
@@ -91,6 +93,7 @@ class MainTest {
             verify(digestor, times(1)).getEnumModels();
             verify(digestor, times(1)).getEntityModels();
 
+            verify(excretor, times(1)).createProjectDirectory();
             verify(excretor, times(3)).generateSourceFile(anyMap(), any(GenerationBean.class));
         }
     }

@@ -70,9 +70,9 @@ class AppPropertiesIngestorTest {
 
     @Test
     void getProjectDirectory() {
-        File projectDirectory = ingestor.getProjectDirectory();
+        String projectDirectoryPath = ingestor.getProjectDirectoryPath();
         String expected = propertiesFile.getParentFile().getAbsolutePath() + "/fake-app";
-        assertEquals(expected, projectDirectory.getAbsolutePath());
+        assertEquals(expected, projectDirectoryPath);
     }
 
     @Test

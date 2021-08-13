@@ -2,6 +2,7 @@ package norman.flunky.main;
 
 import norman.flunky.api.GenerationBean;
 import norman.flunky.api.TemplateType;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,18 +22,38 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SourceExcretorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceExcretorTest.class);
+    String projectDirectoryPath;
     SourceExcretor excretor;
 
     @BeforeEach
     void setUp() throws IOException {
-        File projectDirectory = Files.createTempDirectory("flunky-main-test-data-").toFile();
+        String tempDirectory = Files.createTempDirectory("flunky-main-test-data-").toFile().getAbsolutePath();
+        projectDirectoryPath =
+                tempDirectory + File.separator + RandomStringUtils.randomAlphabetic(10) + File.separator +
+                        RandomStringUtils.randomAlphabetic(10);
         String templatePrefix = "flunky/main/test/templates";
-        excretor = SourceExcretor.instance(projectDirectory, templatePrefix);
+        excretor = SourceExcretor.instance(projectDirectoryPath, templatePrefix);
     }
 
     @AfterEach
     void tearDown() {
         excretor = null;
+        projectDirectoryPath = null;
+    }
+
+    @Test
+    void createProjectDirectory() throws IOException {
+        // Verify project directory does not exist.
+        assertFalse(new File(projectDirectoryPath).exists());
+        LOGGER.info(String.format("TEST Verifying file %s does not already exist.", projectDirectoryPath));
+
+        // Execute test.
+        File projectDirectory = excretor.createProjectDirectory();
+
+        // Verify directory was created.
+        assertTrue(projectDirectory.exists());
+        assertTrue(projectDirectory.isDirectory());
+        assertSame(projectDirectoryPath, projectDirectory.getAbsolutePath());
     }
 
     @Test

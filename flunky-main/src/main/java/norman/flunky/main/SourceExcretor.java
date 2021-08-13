@@ -22,12 +22,12 @@ import java.util.Map;
 
 public class SourceExcretor {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceExcretor.class);
-    private File projectDirectory;
+    private String projectDirectoryPath;
     private String templatePrefix;
     private Configuration configuration;
     private ClassLoader loader;
 
-    public static SourceExcretor instance(File projectDirectory, String templatePrefix) {
+    public static SourceExcretor instance(String projectDirectoryPath, String templatePrefix) {
 
         // Create Freemarker configuration.
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
@@ -35,15 +35,25 @@ public class SourceExcretor {
         // Get context class loader so we can use it to get resources, i.e. template files that are in a jar file.
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        return new SourceExcretor(projectDirectory, templatePrefix, configuration, loader);
+        return new SourceExcretor(projectDirectoryPath, templatePrefix, configuration, loader);
     }
 
-    private SourceExcretor(File projectDirectory, String templatePrefix, Configuration configuration,
+    private SourceExcretor(String projectDirectoryPath, String templatePrefix, Configuration configuration,
             ClassLoader loader) {
-        this.projectDirectory = projectDirectory;
+        this.projectDirectoryPath = projectDirectoryPath;
         this.templatePrefix = templatePrefix;
         this.configuration = configuration;
         this.loader = loader;
+    }
+
+    public File createProjectDirectory() {
+        File projectDirectory = new File(projectDirectoryPath);
+        if (!projectDirectory.mkdirs()) {
+            throw new LoggingException(LOGGER,
+                    String.format("Unable to create project directory %s. Please verify it does not already exist.",
+                            projectDirectory.getAbsolutePath()));
+        }
+        return projectDirectory;
     }
 
     public File generateSourceFile(Map<String, Object> dataModel, GenerationBean genBean) {
@@ -70,7 +80,7 @@ public class SourceExcretor {
     }
 
     private File createOutputFileAndDirectory(String outPath) {
-        File file = new File(projectDirectory, outPath);
+        File file = new File(projectDirectoryPath, outPath);
         File parentDir = file.getParentFile();
         if (!parentDir.exists() && !parentDir.mkdirs()) {
             throw new LoggingException(LOGGER,

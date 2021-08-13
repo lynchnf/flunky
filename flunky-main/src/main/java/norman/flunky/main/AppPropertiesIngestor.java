@@ -21,7 +21,7 @@ import java.util.Properties;
 public class AppPropertiesIngestor {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppPropertiesIngestor.class);
     private ProjectType projectType;
-    private File projectDirectory;
+    private String projectDirectoryPath;
     private Map<String, String> applicationData;
     private List<Map<String, String>> entitiesData;
     private List<Map<String, String>> fieldsData;
@@ -42,7 +42,7 @@ public class AppPropertiesIngestor {
 
             projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).getDeclaredConstructor()
                     .newInstance();
-            projectDirectory = new File(properties.getProperty("project.directory"));
+            projectDirectoryPath = properties.getProperty("project.directory");
 
             // Get application map.
             applicationData = new LinkedHashMap<>();
@@ -123,8 +123,8 @@ public class AppPropertiesIngestor {
         return projectType;
     }
 
-    public File getProjectDirectory() {
-        return projectDirectory;
+    public String getProjectDirectoryPath() {
+        return projectDirectoryPath;
     }
 
     public Map<String, String> getApplicationData() {
