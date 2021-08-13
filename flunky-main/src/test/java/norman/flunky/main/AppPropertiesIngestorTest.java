@@ -20,10 +20,10 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ApplicationPropertiesIngestorTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationPropertiesIngestorTest.class);
+class AppPropertiesIngestorTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppPropertiesIngestorTest.class);
     static File propertiesFile;
-    ApplicationPropertiesIngestor ingestor;
+    AppPropertiesIngestor ingestor;
 
     @BeforeAll
     static void oneTimeSetUp() throws Exception {
@@ -32,7 +32,7 @@ class ApplicationPropertiesIngestorTest {
 
         // Write application properties file.
         Properties fakeApplicationProperties = buildApplicationProperties(tempDirectoryPath);
-        ApplicationPropertiesIngestorTest.propertiesFile =
+        AppPropertiesIngestorTest.propertiesFile =
                 writeApplicationProperties(tempDirectoryPath, "fake-app.properties", fakeApplicationProperties);
 
         // Write entities csv file. (2 entities)
@@ -54,7 +54,7 @@ class ApplicationPropertiesIngestorTest {
     void setUp() {
         String propertiesFilePath = propertiesFile.getAbsolutePath();
         LOGGER.info(String.format("TEST Creating ApplicationBean from file %s.", propertiesFilePath));
-        ingestor = ApplicationPropertiesIngestor.instance(propertiesFilePath);
+        ingestor = AppPropertiesIngestor.instance(propertiesFilePath);
     }
 
     @AfterEach

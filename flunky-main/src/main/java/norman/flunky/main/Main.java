@@ -19,7 +19,7 @@ public class Main {
         }
 
         // Ingest specification data.
-        ApplicationPropertiesIngestor ingestor = ApplicationPropertiesIngestor.instance(args[0]);
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(args[0]);
         ProjectType projectType = ingestor.getProjectType();
         Map<String, String> applicationData = ingestor.getApplicationData();
         List<Map<String, String>> entitiesData = ingestor.getEntitiesData();

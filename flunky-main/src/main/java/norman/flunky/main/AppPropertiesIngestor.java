@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class ApplicationPropertiesIngestor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationPropertiesIngestor.class);
+public class AppPropertiesIngestor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppPropertiesIngestor.class);
     private ProjectType projectType;
     private File projectDirectory;
     private Map<String, String> applicationData;
@@ -27,11 +27,11 @@ public class ApplicationPropertiesIngestor {
     private List<Map<String, String>> fieldsData;
     private List<Map<String, String>> enumsData;
 
-    public static ApplicationPropertiesIngestor instance(String applicationPropertiesPath) {
-        return new ApplicationPropertiesIngestor(applicationPropertiesPath);
+    public static AppPropertiesIngestor instance(String applicationPropertiesPath) {
+        return new AppPropertiesIngestor(applicationPropertiesPath);
     }
 
-    private ApplicationPropertiesIngestor(String appPropsPath) {
+    private AppPropertiesIngestor(String appPropsPath) {
         File appPropsFile = new File(appPropsPath);
         File appPropsDir = appPropsFile.getParentFile();
         Properties properties = new Properties();
