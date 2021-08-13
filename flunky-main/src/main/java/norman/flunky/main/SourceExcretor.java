@@ -28,6 +28,7 @@ public class SourceExcretor {
     private ClassLoader loader;
 
     public static SourceExcretor instance(File projectDirectory, String templatePrefix) {
+
         // Create Freemarker configuration.
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
 

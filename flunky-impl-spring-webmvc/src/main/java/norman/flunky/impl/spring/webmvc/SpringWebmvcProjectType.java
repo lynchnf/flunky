@@ -1,7 +1,7 @@
 package norman.flunky.impl.spring.webmvc;
 
+import norman.flunky.api.AbstractProjectType;
 import norman.flunky.api.GenerationBean;
-import norman.flunky.api.ProjectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 import static norman.flunky.api.TemplateType.COPY;
 import static norman.flunky.api.TemplateType.GENERATE;
 
-public class SpringWebmvcProjectType implements ProjectType {
+public class SpringWebmvcProjectType extends AbstractProjectType {
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
     private List<GenerationBean> enumGenerationProperties = new ArrayList<>();
     private List<GenerationBean> entityGenerationProperties = new ArrayList<>();

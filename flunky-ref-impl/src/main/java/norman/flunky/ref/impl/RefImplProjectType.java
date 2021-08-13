@@ -1,13 +1,13 @@
 package norman.flunky.ref.impl;
 
+import norman.flunky.api.AbstractProjectType;
 import norman.flunky.api.GenerationBean;
-import norman.flunky.api.ProjectType;
 import norman.flunky.api.TemplateType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RefImplProjectType implements ProjectType {
+public class RefImplProjectType extends AbstractProjectType {
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
     private List<GenerationBean> enumGenerationProperties = new ArrayList<>();
     private List<GenerationBean> entityGenerationProperties = new ArrayList<>();

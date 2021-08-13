@@ -4,10 +4,17 @@ import norman.flunky.api.GenerationBean;
 import norman.flunky.api.ProjectType;
 
 import java.util.List;
+import java.util.Map;
 
 public class FakeProjectType implements ProjectType {
     @Override
     public String getTemplatePrefix() {
+        return null;
+    }
+
+    @Override
+    public List<String> validate(Map<String, String> applicationData, List<Map<String, String>> entitiesData,
+            List<Map<String, String>> fieldsData, List<Map<String, String>> enumsData) {
         return null;
     }
 

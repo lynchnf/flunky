@@ -32,8 +32,14 @@ public class DataModelDigestor {
     private Map<String, Object> buildApplicationModel(Map<String, String> applicationData,
             List<Map<String, String>> entitiesData, List<Map<String, String>> fieldsData,
             List<Map<String, String>> enumsData) {
+
         // Create application model.
-        Map<String, Object> applicationModel = new LinkedHashMap<>(applicationData);
+        Map<String, Object> applicationModel = new LinkedHashMap<>();
+        applicationModel.put("groupId", applicationData.get("group.id"));
+        applicationModel.put("artifactId", applicationData.get("artifact.id"));
+        applicationModel.put("version", applicationData.get("version"));
+        applicationModel.put("basePackage", applicationData.get("base.package"));
+        applicationModel.put("description", applicationData.get("description"));
 
         // Add entity models to the application.
         List<Map<String, Object>> entityModels = new ArrayList<>();
@@ -67,6 +73,7 @@ public class DataModelDigestor {
     private List<Map<String, Object>> buildEntityModels(Map<String, String> applicationData,
             List<Map<String, String>> entitiesData, List<Map<String, String>> fieldsData,
             List<Map<String, String>> enumsData) {
+
         // Create entity models.
         List<Map<String, Object>> entityModels = new ArrayList<>();
         for (Map<String, String> entityRow : entitiesData) {
@@ -84,8 +91,13 @@ public class DataModelDigestor {
             }
 
             // Add application mode to the entities.
-            Map<String, Object> applicationModel = new LinkedHashMap<>(applicationData);
+            Map<String, Object> applicationModel = new LinkedHashMap<>();
             entityModel.put("application", applicationModel);
+            applicationModel.put("groupId", applicationData.get("group.id"));
+            applicationModel.put("artifactId", applicationData.get("artifact.id"));
+            applicationModel.put("version", applicationData.get("version"));
+            applicationModel.put("basePackage", applicationData.get("base.package"));
+            applicationModel.put("description", applicationData.get("description"));
 
             // Add other entity models to the application.
             List<Map<String, Object>> otherEntityModels = new ArrayList<>();
@@ -128,8 +140,13 @@ public class DataModelDigestor {
             Map<String, Object> enumModel = new LinkedHashMap<>(enumRow);
             enumModels.add(enumModel);
 
-            Map<String, Object> applicationModel = new LinkedHashMap<>(applicationData);
+            Map<String, Object> applicationModel = new LinkedHashMap<>();
             enumModel.put("application", applicationModel);
+            applicationModel.put("groupId", applicationData.get("group.id"));
+            applicationModel.put("artifactId", applicationData.get("artifact.id"));
+            applicationModel.put("version", applicationData.get("version"));
+            applicationModel.put("basePackage", applicationData.get("base.package"));
+            applicationModel.put("description", applicationData.get("description"));
 
             // Add entity models to the application.
             List<Map<String, Object>> entityModels = new ArrayList<>();
