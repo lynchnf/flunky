@@ -11,12 +11,29 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import static norman.flunky.main.MessageConstants.ARG_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ARG_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.ARTIFACT_ID_REQUIRED;
+import static norman.flunky.main.MessageConstants.BASE_PACKAGE_REQUIRED;
+import static norman.flunky.main.MessageConstants.ENTITIES_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ENTITIES_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.ENUMS_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ENUMS_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.FIELDS_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.FIELDS_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.GROUP_ID_REQUIRED;
+import static norman.flunky.main.MessageConstants.PROJECT_DIRECTORY_REQUIRED;
+import static norman.flunky.main.MessageConstants.PROJECT_TYPE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.PROJECT_TYPE_REQUIRED;
+import static norman.flunky.main.MessageConstants.VERSION_REQUIRED;
 
 public class AppPropertiesIngestor {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppPropertiesIngestor.class);
@@ -33,6 +50,12 @@ public class AppPropertiesIngestor {
 
     private AppPropertiesIngestor(String appPropsPath) {
         File appPropsFile = new File(appPropsPath);
+        if (!appPropsFile.exists()) {
+            throw new LoggingException(LOGGER, ARG_FILE_NOT_FOUND);
+        }
+        if (!appPropsFile.isFile()) {
+            throw new LoggingException(LOGGER, ARG_FILE_NOT_FILE);
+        }
         File appPropsDir = appPropsFile.getParentFile();
         Properties properties = new Properties();
         Reader reader = null;
@@ -40,30 +63,90 @@ public class AppPropertiesIngestor {
             reader = new FileReader(appPropsFile);
             properties.load(reader);
 
-            projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).getDeclaredConstructor()
-                    .newInstance();
+            String propertyTypeName = properties.getProperty("project.type");
+            if (propertyTypeName == null) {
+                throw new LoggingException(LOGGER, PROJECT_TYPE_REQUIRED);
+            }
+            Class<?> propertyTypeClass;
+            try {
+                propertyTypeClass = Class.forName(propertyTypeName);
+            } catch (ClassNotFoundException e) {
+                throw new LoggingException(LOGGER, PROJECT_TYPE_NOT_FOUND);
+            }
+            Constructor<?> propertyTypeConstructor = propertyTypeClass.getDeclaredConstructor();
+            projectType = (ProjectType) propertyTypeConstructor.newInstance();
             projectDirectoryPath = properties.getProperty("project.directory");
+            if (projectDirectoryPath == null) {
+                throw new LoggingException(LOGGER, PROJECT_DIRECTORY_REQUIRED);
+            }
 
             // Get application map.
             applicationData = new LinkedHashMap<>();
-            applicationData.put("groupId", properties.getProperty("group.id"));
-            applicationData.put("artifactId", properties.getProperty("artifact.id"));
-            applicationData.put("version", properties.getProperty("version"));
-            applicationData.put("basePackage", properties.getProperty("base.package"));
+            String groupId = properties.getProperty("group.id");
+            if (groupId == null) {
+                throw new LoggingException(LOGGER, GROUP_ID_REQUIRED);
+            }
+            applicationData.put("groupId", groupId);
+
+            String artifactId = properties.getProperty("artifact.id");
+            if (artifactId == null) {
+                throw new LoggingException(LOGGER, ARTIFACT_ID_REQUIRED);
+            }
+            applicationData.put("artifactId", artifactId);
+
+            String version = properties.getProperty("version");
+            if (version == null) {
+                throw new LoggingException(LOGGER, VERSION_REQUIRED);
+            }
+            applicationData.put("version", version);
+
+            String basePackage = properties.getProperty("base.package");
+            if (basePackage == null) {
+                throw new LoggingException(LOGGER, BASE_PACKAGE_REQUIRED);
+            }
+            applicationData.put("basePackage", basePackage);
+
             applicationData.put("description", properties.getProperty("description"));
 
             // Get entity rows.
             String entitiesFileName = properties.getProperty("entities.file");
-            entitiesData = buildListOfMapsFromCsvFile(entitiesFileName, appPropsDir);
+            if (entitiesFileName != null) {
+                File entitiesFile = new File(appPropsDir, entitiesFileName);
+                if (!entitiesFile.exists()) {
+                    throw new LoggingException(LOGGER, ENTITIES_FILE_NOT_FOUND);
+                }
+                if (!entitiesFile.isFile()) {
+                    throw new LoggingException(LOGGER, ENTITIES_FILE_NOT_FILE);
+                }
+                entitiesData = buildListOfMapsFromCsvFile(entitiesFileName, appPropsDir);
+            }
 
             // Get field rows.
             String fieldsFileName = properties.getProperty("fields.file");
-            fieldsData = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
+            if (fieldsFileName != null) {
+                File fieldsFile = new File(appPropsDir, fieldsFileName);
+                if (!fieldsFile.exists()) {
+                    throw new LoggingException(LOGGER, FIELDS_FILE_NOT_FOUND);
+                }
+                if (!fieldsFile.isFile()) {
+                    throw new LoggingException(LOGGER, FIELDS_FILE_NOT_FILE);
+                }
+                fieldsData = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
+            }
 
             // Get enum rows.
             String enumsFileName = properties.getProperty("enums.file");
-            enumsData = buildListOfMapsFromCsvFile(enumsFileName, appPropsDir);
-        } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            if (enumsFileName != null) {
+                File enumsFile = new File(appPropsDir, enumsFileName);
+                if (!enumsFile.exists()) {
+                    throw new LoggingException(LOGGER, ENUMS_FILE_NOT_FOUND);
+                }
+                if (!enumsFile.isFile()) {
+                    throw new LoggingException(LOGGER, ENUMS_FILE_NOT_FILE);
+                }
+                enumsData = buildListOfMapsFromCsvFile(enumsFileName, appPropsDir);
+            }
+        } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new LoggingException(LOGGER, String.format("Unable to load properties from file %s.", appPropsPath),
                     e);
         } finally {

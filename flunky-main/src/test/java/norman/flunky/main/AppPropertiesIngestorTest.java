@@ -1,9 +1,8 @@
 package norman.flunky.main;
 
 import norman.flunky.api.ProjectType;
-import org.junit.jupiter.api.AfterEach;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,22 +17,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import static norman.flunky.main.MessageConstants.ARG_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ARG_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.ARTIFACT_ID_REQUIRED;
+import static norman.flunky.main.MessageConstants.BASE_PACKAGE_REQUIRED;
+import static norman.flunky.main.MessageConstants.ENTITIES_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ENTITIES_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.ENUMS_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.ENUMS_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.FIELDS_FILE_NOT_FILE;
+import static norman.flunky.main.MessageConstants.FIELDS_FILE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.GROUP_ID_REQUIRED;
+import static norman.flunky.main.MessageConstants.PROJECT_DIRECTORY_REQUIRED;
+import static norman.flunky.main.MessageConstants.PROJECT_TYPE_NOT_FOUND;
+import static norman.flunky.main.MessageConstants.PROJECT_TYPE_REQUIRED;
+import static norman.flunky.main.MessageConstants.VERSION_REQUIRED;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppPropertiesIngestorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppPropertiesIngestorTest.class);
-    static File propertiesFile;
-    AppPropertiesIngestor ingestor;
+    static String tempDirectoryPath;
+    static File appPropertiesFile;
 
     @BeforeAll
     static void oneTimeSetUp() throws Exception {
         // Get temp directory.
-        String tempDirectoryPath = Files.createTempDirectory("flunky-main-test-data-").toFile().getAbsolutePath();
+        AppPropertiesIngestorTest.tempDirectoryPath =
+                Files.createTempDirectory("flunky-main-test-data-").toFile().getAbsolutePath();
 
         // Write application properties file.
-        Properties fakeApplicationProperties = buildApplicationProperties(tempDirectoryPath);
-        AppPropertiesIngestorTest.propertiesFile =
-                writeApplicationProperties(tempDirectoryPath, "fake-app.properties", fakeApplicationProperties);
+        Properties fakeAppProperties = buildApplicationProperties(tempDirectoryPath);
+        AppPropertiesIngestorTest.appPropertiesFile =
+                writeApplicationProperties(tempDirectoryPath, "fake-app.properties", fakeAppProperties);
 
         // Write entities csv file. (2 entities)
         String[] entityLines = {"entityName", "Customer", "Order"};
@@ -50,34 +65,28 @@ class AppPropertiesIngestorTest {
         LOGGER.info("TEST Successfully completed one-time setup for ApplicationPropertiesIngestorTest.");
     }
 
-    @BeforeEach
-    void setUp() {
-        String propertiesFilePath = propertiesFile.getAbsolutePath();
-        LOGGER.info(String.format("TEST Creating ApplicationBean from file %s.", propertiesFilePath));
-        ingestor = AppPropertiesIngestor.instance(propertiesFilePath);
-    }
-
-    @AfterEach
-    void tearDown() {
-        ingestor = null;
-    }
-
     @Test
     void getProjectType() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         ProjectType projectType = ingestor.getProjectType();
+
         assertEquals("norman.flunky.main.fake.FakeProjectType", projectType.getClass().getName());
     }
 
     @Test
     void getProjectDirectory() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         String projectDirectoryPath = ingestor.getProjectDirectoryPath();
-        String expected = propertiesFile.getParentFile().getAbsolutePath() + "/fake-app";
+
+        String expected = appPropertiesFile.getParentFile().getAbsolutePath() + "/fake-app";
         assertEquals(expected, projectDirectoryPath);
     }
 
     @Test
     void getApplicationData() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         Map<String, String> applicationData = ingestor.getApplicationData();
+
         assertEquals("com.mycompany.fake", applicationData.get("groupId"));
         assertEquals("fake-app", applicationData.get("artifactId"));
         assertEquals("1.2.3-SNAPSHOT", applicationData.get("version"));
@@ -87,7 +96,9 @@ class AppPropertiesIngestorTest {
 
     @Test
     void getEntitiesData() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         List<Map<String, String>> entitiesData = ingestor.getEntitiesData();
+
         assertEquals(2, entitiesData.size());
         assertEquals("Customer", entitiesData.get(0).get("entityName"));
         assertEquals("Order", entitiesData.get(1).get("entityName"));
@@ -95,7 +106,9 @@ class AppPropertiesIngestorTest {
 
     @Test
     void getFieldsData() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         List<Map<String, String>> fieldsData = ingestor.getFieldsData();
+
         assertEquals(3, fieldsData.size());
         assertEquals("Customer", fieldsData.get(0).get("entityName"));
         assertEquals("name", fieldsData.get(0).get("fieldName"));
@@ -113,10 +126,329 @@ class AppPropertiesIngestorTest {
 
     @Test
     void getEnumsData() {
+        AppPropertiesIngestor ingestor = AppPropertiesIngestor.instance(appPropertiesFile.getAbsolutePath());
         List<Map<String, String>> enumsData = ingestor.getEnumsData();
+
         assertEquals(1, enumsData.size());
         assertEquals("Status", enumsData.get(0).get("enumName"));
         assertEquals("NEW OLD", enumsData.get(0).get("values"));
+    }
+
+    @Test
+    void argFileIsNotFound() {
+        String fakePropertiesPath =
+                tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10) + File.separator +
+                        RandomStringUtils.randomAlphabetic(10) + ".properties";
+
+        LoggingException exception =
+                assertThrows(LoggingException.class, () -> AppPropertiesIngestor.instance(fakePropertiesPath));
+
+        assertEquals(ARG_FILE_NOT_FOUND, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void argFileIsNotFile() {
+        String fakeDirectoryPath =
+                tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10) + File.separator +
+                        RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+
+        LoggingException exception =
+                assertThrows(LoggingException.class, () -> AppPropertiesIngestor.instance(fakeDirectoryPath));
+
+        assertEquals(ARG_FILE_NOT_FILE, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void projectTypeNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("project.type");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(PROJECT_TYPE_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void projectTypeClassNotFound() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.setProperty("project.type", "norman.flunky.main.fake.ProjectTypeClassNotFound");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(PROJECT_TYPE_NOT_FOUND, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void projectDirectoryNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("project.directory");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(PROJECT_DIRECTORY_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void groupIdNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("group.id");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(GROUP_ID_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void artifactIdNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("artifact.id");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(ARTIFACT_ID_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void versionNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("version");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(VERSION_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void basePackageNull() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("base.package");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(BASE_PACKAGE_REQUIRED, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void entitiesFileIsNotFound() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.setProperty("entities.file", RandomStringUtils.randomAlphabetic(10) + ".csv");
+        fakeProperties.remove("fields.file");
+        fakeProperties.remove("enums.file");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(ENTITIES_FILE_NOT_FOUND, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void entitiesFileIsNotFile() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        String notAFileName = RandomStringUtils.randomAlphabetic(10);
+        File notAFile = new File(fakeDirectoryPath, notAFileName);
+        if (!notAFile.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        fakeProperties.setProperty("entities.file", notAFileName);
+        fakeProperties.remove("fields.file");
+        fakeProperties.remove("enums.file");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(ENTITIES_FILE_NOT_FILE, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void filesFileIsNotFound() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("entities.file");
+        fakeProperties.setProperty("fields.file", RandomStringUtils.randomAlphabetic(10) + ".csv");
+        fakeProperties.remove("enums.file");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(FIELDS_FILE_NOT_FOUND, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void fieldsFileIsNotFile() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        String notAFileName = RandomStringUtils.randomAlphabetic(10);
+        File notAFile = new File(fakeDirectoryPath, notAFileName);
+        if (!notAFile.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        fakeProperties.remove("entities.file");
+        fakeProperties.setProperty("fields.file", notAFileName);
+        fakeProperties.remove("enums.file");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(FIELDS_FILE_NOT_FILE, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void enumsFileIsNotFound() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        fakeProperties.remove("entities.file");
+        fakeProperties.remove("fields.file");
+        fakeProperties.setProperty("enums.file", RandomStringUtils.randomAlphabetic(10) + ".csv");
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(ENUMS_FILE_NOT_FOUND, exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void enumsFileIsNotFile() throws Exception {
+        String fakeDirectoryPath = tempDirectoryPath + File.separator + RandomStringUtils.randomAlphabetic(10);
+        File fakeDirectory = new File(fakeDirectoryPath);
+        if (!fakeDirectory.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        Properties fakeProperties = buildApplicationProperties(fakeDirectoryPath);
+        String notAFileName = RandomStringUtils.randomAlphabetic(10);
+        File notAFile = new File(fakeDirectoryPath, notAFileName);
+        if (!notAFile.mkdirs()) {
+            fail("Unable to create temporary directory for testing.");
+        }
+        fakeProperties.remove("entities.file");
+        fakeProperties.remove("fields.file");
+        fakeProperties.setProperty("enums.file", notAFileName);
+        File fakePropertiesFile =
+                writeApplicationProperties(fakeDirectoryPath, RandomStringUtils.randomAlphabetic(10) + ".properties",
+                        fakeProperties);
+
+        LoggingException exception = assertThrows(LoggingException.class,
+                () -> AppPropertiesIngestor.instance(fakePropertiesFile.getAbsolutePath()));
+
+        assertEquals(ENUMS_FILE_NOT_FILE, exception.getMessage());
+        assertNull(exception.getCause());
     }
 
     private static Properties buildApplicationProperties(String directoryPath) {

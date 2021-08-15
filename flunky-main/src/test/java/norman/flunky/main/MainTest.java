@@ -3,8 +3,6 @@ package norman.flunky.main;
 import norman.flunky.api.GenerationBean;
 import norman.flunky.api.ProjectType;
 import norman.flunky.api.TemplateType;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -18,14 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MainTest {
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void main() {
         try (MockedStatic<AppPropertiesIngestor> ingestorMockedStatic = mockStatic(AppPropertiesIngestor.class);

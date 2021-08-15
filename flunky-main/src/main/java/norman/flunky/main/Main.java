@@ -9,13 +9,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import static norman.flunky.main.MessageConstants.MISSING_PROGRAM_ARGUMENT;
+
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         // Simple argument validation.
         if (args == null || args.length < 1) {
-            throw new LoggingException(LOGGER, "Missing program argument.");
+            throw new LoggingException(LOGGER, MISSING_PROGRAM_ARGUMENT);
         }
 
         // Ingest app specification data.
