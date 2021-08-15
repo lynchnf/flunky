@@ -1,6 +1,6 @@
 package norman.flunky.main;
 
-public class MessageConstants {
+public final class MessageConstants {
     public static final String MISSING_PROGRAM_ARGUMENT = "Missing program argument.";
     public static final String VALIDATION_ERRORS_FOUND = "Invalid specifications. See logs for details.";
     public static final String ARG_FILE_NOT_FOUND = "Program argument file does not exist.";
