@@ -110,7 +110,9 @@ public class AppPropertiesIngestor {
 
             // Get entity rows.
             String entitiesFileName = properties.getProperty("entities.file");
-            if (entitiesFileName != null) {
+            if (entitiesFileName == null) {
+                entitiesData = new ArrayList<>();
+            } else {
                 File entitiesFile = new File(appPropsDir, entitiesFileName);
                 if (!entitiesFile.exists()) {
                     throw new LoggingException(LOGGER, ENTITIES_FILE_NOT_FOUND);
@@ -123,7 +125,9 @@ public class AppPropertiesIngestor {
 
             // Get field rows.
             String fieldsFileName = properties.getProperty("fields.file");
-            if (fieldsFileName != null) {
+            if (fieldsFileName == null) {
+                fieldsData = new ArrayList<>();
+            } else {
                 File fieldsFile = new File(appPropsDir, fieldsFileName);
                 if (!fieldsFile.exists()) {
                     throw new LoggingException(LOGGER, FIELDS_FILE_NOT_FOUND);
@@ -136,7 +140,9 @@ public class AppPropertiesIngestor {
 
             // Get enum rows.
             String enumsFileName = properties.getProperty("enums.file");
-            if (enumsFileName != null) {
+            if (enumsFileName == null) {
+                enumsData = new ArrayList<>();
+            } else {
                 File enumsFile = new File(appPropsDir, enumsFileName);
                 if (!enumsFile.exists()) {
                     throw new LoggingException(LOGGER, ENUMS_FILE_NOT_FOUND);
