@@ -118,7 +118,7 @@ public class AppPropertiesIngestor {
                 if (!entitiesFile.isFile()) {
                     throw new LoggingException(LOGGER, ENTITIES_FILE_NOT_FILE);
                 }
-                entitiesData = buildListOfMapsFromCsvFile(entitiesFileName, appPropsDir);
+                entitiesData = buildListOfMapsFromCsvFile(entitiesFile);
             }
 
             // Get field rows.
@@ -131,7 +131,7 @@ public class AppPropertiesIngestor {
                 if (!fieldsFile.isFile()) {
                     throw new LoggingException(LOGGER, FIELDS_FILE_NOT_FILE);
                 }
-                fieldsData = buildListOfMapsFromCsvFile(fieldsFileName, appPropsDir);
+                fieldsData = buildListOfMapsFromCsvFile(fieldsFile);
             }
 
             // Get enum rows.
@@ -144,7 +144,7 @@ public class AppPropertiesIngestor {
                 if (!enumsFile.isFile()) {
                     throw new LoggingException(LOGGER, ENUMS_FILE_NOT_FILE);
                 }
-                enumsData = buildListOfMapsFromCsvFile(enumsFileName, appPropsDir);
+                enumsData = buildListOfMapsFromCsvFile(enumsFile);
             }
         } catch (IOException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new LoggingException(LOGGER, String.format("Unable to load properties from file %s.", appPropsPath),
@@ -161,41 +161,37 @@ public class AppPropertiesIngestor {
         }
     }
 
-    private List<Map<String, String>> buildListOfMapsFromCsvFile(String fileName, File dir) {
+    private List<Map<String, String>> buildListOfMapsFromCsvFile(File file) {
         List<Map<String, String>> dataMaps = new ArrayList<>();
-
-        // If file name is null or blank, return an empty list.
-        if (StringUtils.isNotBlank(fileName)) {
-            File file = new File(dir, fileName);
-            CSVReader reader = null;
-            try {
-                reader = new CSVReader(new FileReader(file));
-                List<String[]> rows = reader.readAll();
-                String[] headingRow = null;
-                for (String[] row : rows) {
-                    if (headingRow == null) {
-                        headingRow = row;
-                    } else {
-                        Map<String, String> dataRow = new LinkedHashMap<>();
-                        for (int i = 0; i < headingRow.length; i++) {
-                            if (i < row.length) {
-                                dataRow.put(StringUtils.trimToNull(headingRow[i]), StringUtils.trimToNull(row[i]));
-                            } else {
-                                dataRow.put(StringUtils.trimToNull(headingRow[i]), null);
-                            }
+        CSVReader reader = null;
+        try {
+            reader = new CSVReader(new FileReader(file));
+            List<String[]> rows = reader.readAll();
+            String[] headingRow = null;
+            for (String[] row : rows) {
+                if (headingRow == null) {
+                    headingRow = row;
+                } else {
+                    Map<String, String> dataRow = new LinkedHashMap<>();
+                    for (int i = 0; i < headingRow.length; i++) {
+                        if (i < row.length) {
+                            dataRow.put(StringUtils.trimToNull(headingRow[i]), StringUtils.trimToNull(row[i]));
+                        } else {
+                            dataRow.put(StringUtils.trimToNull(headingRow[i]), null);
                         }
-                        dataMaps.add(dataRow);
                     }
+                    dataMaps.add(dataRow);
                 }
-            } catch (IOException | CsvException e) {
-                throw new LoggingException(LOGGER, String.format("Unable to read CVS data from file %s.", fileName), e);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        LOGGER.warn(String.format("Unable to close CVS reader for file %s.", fileName), e);
-                    }
+            }
+        } catch (IOException | CsvException e) {
+            throw new LoggingException(LOGGER,
+                    String.format("Unable to read CVS data from file %s.", file.getAbsolutePath()), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    LOGGER.warn(String.format("Unable to close CVS reader for file %s.", file.getAbsolutePath()), e);
                 }
             }
         }

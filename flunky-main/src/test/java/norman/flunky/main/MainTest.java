@@ -10,8 +10,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import static norman.flunky.main.MessageConstants.MISSING_PROGRAM_ARGUMENT;
+import static norman.flunky.main.MessageConstants.VALIDATION_ERRORS_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -56,7 +59,6 @@ class MainTest {
 
             // Mock the Source Excretor.
             SourceExcretor excretor = mock(SourceExcretor.class);
-
             excretorMockedStatic.when(() -> SourceExcretor.instance(anyString(), anyString())).thenReturn(excretor);
             when(excretor.createProjectDirectory()).thenReturn(new File("/test/project/directory"));
             when(excretor.generateSourceFile(anyMap(), any(GenerationBean.class)))
@@ -89,7 +91,39 @@ class MainTest {
     }
 
     @Test
+    void mainValidationErrors() {
+        try (MockedStatic<AppPropertiesIngestor> ingestorMockedStatic = mockStatic(AppPropertiesIngestor.class)) {
+
+            // Mock the App Properties Ingestor.
+            AppPropertiesIngestor ingestor = mock(AppPropertiesIngestor.class);
+            ingestorMockedStatic.when(() -> AppPropertiesIngestor.instance(anyString())).thenReturn(ingestor);
+            ProjectType projectType = mock(ProjectType.class);
+            when(ingestor.getProjectType()).thenReturn(projectType);
+            Map<String, String> data = new LinkedHashMap<>();
+            data.put("test-key", "test-value");
+            when(ingestor.getApplicationData()).thenReturn(data);
+            when(ingestor.getEntitiesData()).thenReturn(Arrays.asList(data));
+            when(ingestor.getFieldsData()).thenReturn(Arrays.asList(data));
+            when(ingestor.getEnumsData()).thenReturn(Arrays.asList(data));
+
+            // Mock the Project Type.
+            List<String> validationErrors = new ArrayList<>();
+            validationErrors.add("Something is wrong.");
+            when(projectType.validate(anyMap(), anyList(), anyList(), anyList())).thenReturn(validationErrors);
+
+            LoggingException exception = assertThrows(LoggingException.class,
+                    () -> Main.main(new String[]{"/test/path/to/properties.file"}));
+
+            assertEquals(VALIDATION_ERRORS_FOUND, exception.getMessage());
+            assertNull(exception.getCause());
+        }
+    }
+
+    @Test
     void mainNoArgs() {
-        assertThrows((Class<? extends Throwable>) LoggingException.class, () -> Main.main(new String[]{}));
+        LoggingException exception = assertThrows(LoggingException.class, () -> Main.main(new String[]{}));
+
+        assertEquals(MISSING_PROGRAM_ARGUMENT, exception.getMessage());
+        assertNull(exception.getCause());
     }
 }

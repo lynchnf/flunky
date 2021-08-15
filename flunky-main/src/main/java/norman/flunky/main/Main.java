@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static norman.flunky.main.MessageConstants.MISSING_PROGRAM_ARGUMENT;
+import static norman.flunky.main.MessageConstants.VALIDATION_ERRORS_FOUND;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -34,7 +35,7 @@ public class Main {
             for (String validationError : validationErrors) {
                 LOGGER.error(validationError);
             }
-            throw new LoggingException(LOGGER, "Invalid specifications. See logs for details.");
+            throw new LoggingException(LOGGER, VALIDATION_ERRORS_FOUND);
         }
 
         // Create directory to generate project into.
