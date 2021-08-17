@@ -6,6 +6,7 @@ import norman.flunky.api.TemplateType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RefImplProjectType extends AbstractProjectType {
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
@@ -59,6 +60,12 @@ public class RefImplProjectType extends AbstractProjectType {
     @Override
     public String getTemplatePrefix() {
         return "norman/flunky/ref/impl";
+    }
+
+    @Override
+    public List<String> validate(Map<String, String> applicationData, List<Map<String, String>> entitiesData,
+            List<Map<String, String>> fieldsData, List<Map<String, String>> enumsData) {
+        return super.validate(applicationData, entitiesData, fieldsData, enumsData);
     }
 
     @Override
