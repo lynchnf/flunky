@@ -35,10 +35,10 @@ public class DataModelDigestor {
 
         // Create application model.
         Map<String, Object> applicationModel = new LinkedHashMap<>();
-        applicationModel.put("groupId", applicationData.get("group.id"));
-        applicationModel.put("artifactId", applicationData.get("artifact.id"));
+        applicationModel.put("groupId", applicationData.get("groupId"));
+        applicationModel.put("artifactId", applicationData.get("artifactId"));
         applicationModel.put("version", applicationData.get("version"));
-        applicationModel.put("basePackage", applicationData.get("base.package"));
+        applicationModel.put("basePackage", applicationData.get("basePackage"));
         applicationModel.put("description", applicationData.get("description"));
 
         // Add entity models to the application.
@@ -93,10 +93,10 @@ public class DataModelDigestor {
             // Add application mode to the entities.
             Map<String, Object> applicationModel = new LinkedHashMap<>();
             entityModel.put("application", applicationModel);
-            applicationModel.put("groupId", applicationData.get("group.id"));
-            applicationModel.put("artifactId", applicationData.get("artifact.id"));
+            applicationModel.put("groupId", applicationData.get("groupId"));
+            applicationModel.put("artifactId", applicationData.get("artifactId"));
             applicationModel.put("version", applicationData.get("version"));
-            applicationModel.put("basePackage", applicationData.get("base.package"));
+            applicationModel.put("basePackage", applicationData.get("basePackage"));
             applicationModel.put("description", applicationData.get("description"));
 
             // Add other entity models to the application.
@@ -142,10 +142,10 @@ public class DataModelDigestor {
 
             Map<String, Object> applicationModel = new LinkedHashMap<>();
             enumModel.put("application", applicationModel);
-            applicationModel.put("groupId", applicationData.get("group.id"));
-            applicationModel.put("artifactId", applicationData.get("artifact.id"));
+            applicationModel.put("groupId", applicationData.get("groupId"));
+            applicationModel.put("artifactId", applicationData.get("artifactId"));
             applicationModel.put("version", applicationData.get("version"));
-            applicationModel.put("basePackage", applicationData.get("base.package"));
+            applicationModel.put("basePackage", applicationData.get("basePackage"));
             applicationModel.put("description", applicationData.get("description"));
 
             // Add entity models to the application.

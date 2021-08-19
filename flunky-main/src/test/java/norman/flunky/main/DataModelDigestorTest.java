@@ -17,10 +17,10 @@ class DataModelDigestorTest {
     @BeforeEach
     void setUp() {
         Map<String, String> applicationData = new LinkedHashMap<>();
-        applicationData.put("group.id", "com.mycompany.fake");
-        applicationData.put("artifact.id", "fake-app");
+        applicationData.put("groupId", "com.mycompany.fake");
+        applicationData.put("artifactId", "fake-app");
         applicationData.put("version", "1.2.3-SNAPSHOT");
-        applicationData.put("base.package", "com.mycompany.fake.app");
+        applicationData.put("basePackage", "com.mycompany.fake.app");
         applicationData.put("description", "Fake application.");
 
         List<Map<String, String>> entitiesData = new ArrayList<>();
