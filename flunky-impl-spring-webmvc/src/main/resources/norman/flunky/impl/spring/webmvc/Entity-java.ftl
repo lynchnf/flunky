@@ -30,13 +30,11 @@ public class ${entityName} {
     <#if field.joinColumn??>
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "${field.joinColumn}"<#if field.nullable?? && field.nullable == "false">, nullable = false</#if>)
-    <#else>
-        <#if field.type == "Date">
-    @Temporal(TemporalType.${field.temporalType})
-        </#if>
-        <#if field.enumType??>
+    <#elseif field.enumType??>
     @Enumerated(EnumType.${field.enumType})
-        </#if>
+    <#elseif field.type == "Date">
+    @Temporal(TemporalType.${field.temporalType})
+    <#else>
         <#assign myParms = [] />
         <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
         <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>

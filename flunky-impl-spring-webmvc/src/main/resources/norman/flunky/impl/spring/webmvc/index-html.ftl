@@ -29,7 +29,9 @@
 
     <ul>
 <#list entities as entity>
+    <#if !entity.parentField??>
         <li><a th:href="@{/${entity.entityName?uncap_first}List}">${entity.plural}</a></li>
+    </#if>
 </#list>
     </ul>
 </main>

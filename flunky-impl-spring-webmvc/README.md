@@ -80,4 +80,5 @@ A CSV file that contains information about entity fields to be created for your 
 |     |  3  | Controller Unit tests.
 |     |  2  | View Unit tests.
 |     |  1  | Service Unit tests.
-|     |  3  | Elephants all the way down.
+|  x  |  3  | Elephants all the way down.
+|     |  8  | Refactor Fake Data Generator to correctly write foreign key select in insert statement.

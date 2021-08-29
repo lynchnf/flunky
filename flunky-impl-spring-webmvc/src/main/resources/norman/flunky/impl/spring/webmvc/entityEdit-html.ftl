@@ -35,28 +35,32 @@
         <input type="hidden" th:field="*{id}"/>
         <input type="hidden" th:field="*{version}"/>
 <#list fields?filter(f -> !f.editDisplay?? || f.editDisplay != "edit") as field>
+    <#if field.joinColumn??>
+        <input type="hidden" th:field="*{${field.fieldName}Id}"/>
+    <#else>
         <input type="hidden" th:field="*{${field.fieldName}}"/>
+    </#if>
 </#list>
         <table>
 <#list fields?filter(f -> !f.editDisplay?? || f.editDisplay != "hide") as field>
     <#if field.editDisplay?? && field.editDisplay == "edit">
             <tr>
                 <th>${field.label}</th>
-        <#if field.joinColumn?? >
+        <#if field.joinColumn??>
                 <td><select th:field="*{${field.fieldName}Id}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
                         <option th:each="${field.fieldName}:${r"${"}all${field.fieldName?cap_first}}" th:value="${r"${"}${field.fieldName}.id}" th:text="${r"${"}${field.fieldName}}"></option>
+                    </select></td>
+        <#elseif field.enumType??>
+                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
+                        <option value="">Please select ...</option>
+                        <option th:each="value:${r"${"}T(${application.basePackage}.domain.${field.type}).values()}" th:value="${r"${"}value}" th:text="${r"${"}value}"></option>
                     </select></td>
         <#elseif field.type = "Boolean">
                 <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
                         <option value="true">true</option>
                         <option value="false">false</option>
-                    </select></td>
-        <#elseif field.enumType??>
-                <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">
-                        <option value="">Please select ...</option>
-                        <option th:each="value:${r"${"}T(${application.basePackage}.domain.${field.type}).values()}" th:value="${r"${"}value}" th:text="${r"${"}value}"></option>
                     </select></td>
         <#else>
                 <td><input type="text" th:field="*{${field.fieldName}}" th:errorclass="field-error"/></td>
@@ -69,14 +73,12 @@
                 <td th:text="${r"${"}#numbers.formatCurrency(editForm.${field.fieldName})}"></td>
         <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
                 <td th:text="${r"${"}#numbers.formatInteger(editForm.${field.fieldName},1,'DEFAULT')}"></td>
-        <#elseif field.type == "Date">
-            <#if field.temporalType?? && field.temporalType="DATE">
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="DATE">
                 <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy')}"></td>
-            <#elseif field.temporalType?? && field.temporalType="TIME">
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIME">
                 <td th:text="${r"${"}#dates.format(row.${field.fieldName},'h:m a')}"></td>
-            <#else>
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIMESTAMP">
                 <td th:text="${r"${"}#dates.format(row.${field.fieldName},'M/d/yyyy h:m a')}"></td>
-            </#if>
         <#else>
                 <td th:text="${r"${"}editForm.${field.fieldName}}"></td>
         </#if>

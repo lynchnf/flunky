@@ -6,6 +6,7 @@ import ${application.basePackage}.domain.${field.type};
 </#list>
 import ${application.basePackage}.exception.NotFoundException;
 import ${application.basePackage}.exception.OptimisticLockingException;
+import ${application.basePackage}.exception.ReferentialIntegrityException;
 import ${application.basePackage}.service.${entityName}Service;
 <#list fields?filter(f -> f.joinColumn??) as field>
 import ${application.basePackage}.service.${field.type}Service;
@@ -158,13 +159,29 @@ public class ${entityName}Controller {
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
             return "redirect:/${entityName?uncap_first}List";
+        } catch (ReferentialIntegrityException e) {
+            redirectAttributes
+                    .addFlashAttribute("errorMessage", "${singular} cannot be deleted because other data depends on it.");
+            return "redirect:/categoryList";
         }
     }
 <#list fields?filter(f -> f.joinColumn??) as field>
+    <#assign hasParent = false />
+    <#if entityName == field.type>
+        <#if parentField??>
+            <#assign hasParent = true />
+        </#if>
+    <#else>
+        <#list application.entities?filter(e2 -> e2.entityName == field.type) as entity2>
+            <#if entity2.parentField??>
+                <#assign hasParent = true />
+            </#if>
+        </#list>
+    </#if>
 
     @ModelAttribute("all${field.fieldName?cap_first}")
-    public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown() {
-        return ${field.fieldName}Service.findAll();
+    public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown(<#if hasParent>Long parentId</#if>) {
+        return ${field.fieldName}Service.findAll(<#if hasParent>parentId</#if>);
     }
 </#list>
 }

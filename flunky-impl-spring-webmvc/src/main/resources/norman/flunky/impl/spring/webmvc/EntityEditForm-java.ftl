@@ -48,16 +48,14 @@ public class ${entityName}EditForm {
     <#else>
         <#if field.type == "BigDecimal">
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
-    <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
+        <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
     @NumberFormat(style = NumberFormat.Style.NUMBER)
-        <#elseif field.type == "Date">
-            <#if field.temporalType?? && field.temporalType="DATE">
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="DATE">
     @DateTimeFormat(pattern = "M/d/yyyy")
-            <#elseif field.temporalType?? && field.temporalType="TIME">
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIME">
     @DateTimeFormat(pattern = "h:m a")
-            <#elseif field.temporalType?? && field.temporalType="TIMESTAMP">
+        <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIMESTAMP">
     @DateTimeFormat(pattern = "M/d/yyyy h:m a")
-            </#if>
         </#if>
     private ${field.type} ${field.fieldName};
     </#if>
@@ -93,12 +91,10 @@ public class ${entityName}EditForm {
             ${field.type} ${field.fieldName} = ${field.fieldName}Service.findById(${field.fieldName}Id);
             entity.set${field.fieldName?cap_first}(${field.fieldName});
         }
-    <#else>
-        <#if field.type == "String">
+    <#elseif field.type == "String">
         entity.set${field.fieldName?cap_first}(StringUtils.trimToNull(${field.fieldName}));
-        <#else>
+    <#else>
         entity.set${field.fieldName?cap_first}(${field.fieldName});
-        </#if>
     </#if>
 </#list>
         return entity;

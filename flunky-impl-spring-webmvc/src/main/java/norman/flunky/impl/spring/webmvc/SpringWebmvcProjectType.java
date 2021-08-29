@@ -49,6 +49,9 @@ public class SpringWebmvcProjectType extends AbstractProjectType {
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/OptimisticLockingException.java",
                 GENERATE));
         applicationGenerationProperties.add(new GenerationBean("pom-xml.ftl", "/pom.xml", GENERATE));
+        applicationGenerationProperties.add(new GenerationBean("ReferentialIntegrityException-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/exception/ReferentialIntegrityException.java",
+                GENERATE));
 
         enumGenerationProperties.add(new GenerationBean("Enum-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/domain/${enumName}.java", GENERATE));

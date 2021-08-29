@@ -37,14 +37,12 @@
             <td th:text="${r"${"}#numbers.formatCurrency(view.${field.fieldName})}"></td>
     <#elseif field.type == "Byte" || field.type == "Short" || field.type == "Integer" || field.type == "Long">
             <td th:text="${r"${"}#numbers.formatInteger(view.${field.fieldName},1,'DEFAULT')}"></td>
-    <#elseif field.type == "Date">
-        <#if field.temporalType?? && field.temporalType="DATE">
+    <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="DATE">
             <td th:text="${r"${"}#dates.format(view.${field.fieldName},'M/d/yyyy')}"></td>
-        <#elseif field.temporalType?? && field.temporalType="TIME">
+    <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIME">
             <td th:text="${r"${"}#dates.format(view.${field.fieldName},'h:m a')}"></td>
-        <#else>
+    <#elseif field.type == "Date" && field.temporalType?? && field.temporalType="TIMESTAMP">
             <td th:text="${r"${"}#dates.format(view.${field.fieldName},'M/d/yyyy h:m a')}"></td>
-        </#if>
     <#else>
             <td th:text="${r"${"}view.${field.fieldName}}"></td>
     </#if>
@@ -56,6 +54,13 @@
         <input type="hidden" th:field="${r"${"}view.version}"/>
         <input type="submit" value="Delete" onclick="return confirm('Are you sure?')">
     </form>
+    <ul>
+<#list application.entities?filter(e2 -> e2.parentField??) as entity2>
+    <#list entity2.fields?filter(f2 -> f2.type == entityName && f2.fieldName == entity2.parentField) as field2>
+        <li><a th:href="@{/${entity2.entityName?uncap_first}List(parentId=${r"${"}view.id})}">${entity2.plural}</a></li>
+    </#list>
+</#list>
+    </ul>
 </main>
 <footer>
     <script src="js/jquery-3.5.1.min.js"></script>
