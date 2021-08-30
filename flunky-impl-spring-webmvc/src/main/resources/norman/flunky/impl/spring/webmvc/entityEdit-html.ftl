@@ -9,7 +9,11 @@
     <table>
         <tr>
             <td><a th:href="@{/}">Home</a></td>
+<#if parentField??>
+            <td><a th:href="@{/${entityName?uncap_first}List(parentId=${r"${"}editForm.${parentField}Id})}">${singular} List</a></td>
+<#else>
             <td><a th:href="@{/${entityName?uncap_first}List}">${singular} List</a></td>
+</#if>
             <td>
                 <small>Version</small>
                 <small th:text="${r"#{"}application.version}"></small>

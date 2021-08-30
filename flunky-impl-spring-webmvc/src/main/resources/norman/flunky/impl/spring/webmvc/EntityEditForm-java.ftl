@@ -45,6 +45,7 @@ public class ${entityName}EditForm {
     </#if>
     <#if field.joinColumn??>
     private Long ${field.fieldName}Id;
+    private String ${field.fieldName};
     <#else>
         <#if field.type == "BigDecimal">
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
@@ -74,12 +75,28 @@ public class ${entityName}EditForm {
     <#if field.joinColumn??>
         if (entity.get${field.fieldName?cap_first}() != null) {
             ${field.fieldName}Id = entity.get${field.fieldName?cap_first}().getId();
+            ${field.fieldName} = entity.get${field.fieldName?cap_first}().toString();
         }
     <#else>
         ${field.fieldName} = entity.get${field.fieldName?cap_first}();
     </#if>
 </#list>
     }
+<#if parentField??>
+
+    <#list fields?filter(f -> f.joinColumn?? && f.fieldName == parentField) as field>
+    public ${entityName}EditForm(${field.type} parent) {
+    </#list>
+    <#list fields as field>
+        <#if field.joinColumn?? && field.fieldName == parentField>
+        ${field.fieldName}Id = parent.getId();
+        ${field.fieldName} = parent.toString();
+        <#elseif field.dftValue??>
+        ${field.fieldName} = ${field.dftValue};
+        </#if>
+    </#list>
+    }
+</#if>
 
     public ${entityName} toEntity() throws NotFoundException {
         ${entityName} entity = new ${entityName}();
@@ -130,6 +147,10 @@ public class ${entityName}EditForm {
 
     public void set${field.fieldName?cap_first}Id(Long ${field.fieldName}Id) {
         this.${field.fieldName}Id = ${field.fieldName}Id;
+    }
+
+    public String get${field.fieldName?cap_first}() {
+        return ${field.fieldName};
     }
     <#else>
 

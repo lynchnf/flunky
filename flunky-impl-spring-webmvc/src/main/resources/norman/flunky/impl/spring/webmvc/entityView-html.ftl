@@ -9,7 +9,11 @@
     <table>
         <tr>
             <td><a th:href="@{/}">Home</a></td>
+<#if parentField??>
+            <td><a th:href="@{/${entityName?uncap_first}List(parentId=${r"${"}view.${parentField}Id})}">${singular} List</a></td>
+<#else>
             <td><a th:href="@{/${entityName?uncap_first}List}">${singular} List</a></td>
+</#if>
             <td><a th:href="@{/${entityName?uncap_first}Edit(id=${r"${"}view.id})}">Edit ${singular}</a></td>
             <td>
                 <small>Version</small>

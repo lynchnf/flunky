@@ -9,7 +9,11 @@
     <table>
         <tr>
             <td><a th:href="@{/}">Home</a></td>
+<#if parentField??>
+            <td><a th:href="@{/${entityName?uncap_first}Edit(parentId=${r"${"}listForm.parentId})}">Create ${singular}</a></td>
+<#else>
             <td><a th:href="@{/${entityName?uncap_first}Edit}">Create ${singular}</a></td>
+</#if>
             <td>
                 <small>Version</small>
                 <small th:text="${r"#{"}application.version}"></small>
@@ -36,7 +40,7 @@
         <input type="hidden" class="currentPage" th:value="${r"${"}listForm.number}"/>
         <input type="hidden" class="totalPages" th:value="${r"${"}listForm.totalPages}"/>
 <#if parentField??>
-        <input type="hidden" th:value="${r"${"}listForm.parentId}"/>
+        <input type="hidden" name="parentId" th:value="${r"${"}listForm.parentId}"/>
 </#if>
 
         <span th:if="${r"${"}listForm.hasPrevious()}">

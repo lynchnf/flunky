@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class ${entityName}Controller {
@@ -51,17 +53,17 @@ public class ${entityName}Controller {
             @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainField}") String sortColumn,
             @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
             <#if parentField??>@RequestParam(value = "parentId") Long parentId, </#if>Model model) {
-        
+
         // Convert sort column from string to an array of strings.
         String[] sortColumns = {defaultSortColumn};
         if (Arrays.asList(sortableColumns).contains(sortColumn)) {
             sortColumns = new String[]{sortColumn, defaultSortColumn};
         }
-        
+
         // Get a page of records.
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, sortDirection, sortColumns);
         Page<${entityName}> page = service.findAll(<#if parentField??>parentId, </#if>pageable);
-        
+
         // Display the page of records.
         ${entityName}ListForm listForm = new ${entityName}ListForm(page);
 <#if parentField??>
@@ -70,7 +72,7 @@ public class ${entityName}Controller {
         model.addAttribute("listForm", listForm);
         return "${entityName?uncap_first}List";
     }
-    
+
     @GetMapping("/${entityName?uncap_first}")
     public String load${entityName}View(@RequestParam("id") Long id, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -80,32 +82,53 @@ public class ${entityName}Controller {
             return "${entityName?uncap_first}View";
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
-            return "redirect:/${entityName?uncap_first}List";
+            return "redirect:/";
         }
     }
-    
+
     @GetMapping("/${entityName?uncap_first}Edit")
-    public String load${entityName}Edit(@RequestParam(value = "id", required = false) Long id, Model model,
-            RedirectAttributes redirectAttributes) {
-    
+    public String load${entityName}Edit(@RequestParam(value = "id", required = false) Long id,
+<#if parentField??>
+            @RequestParam(value = "parentId", required = false) Long parentId,
+</#if>
+            Model model, RedirectAttributes redirectAttributes) {
+
+
         // If no id, add new record.
         if (id == null) {
+<#if parentField??>
+    <#list fields?filter(f -> f.joinColumn?? && f.fieldName == parentField) as field>
+            try {
+                ${field.type} parent = ${parentField}Service.findById(parentId);
+                ${entityName}EditForm editForm = new ${entityName}EditForm(parent);
+                model.addAttribute("editForm", editForm);
+                return "${entityName?uncap_first}Edit";
+            } catch (NotFoundException e) {
+        <#list application.entities?filter(e2 -> e2.entityName == field.type) as entity2>
+                redirectAttributes.addFlashAttribute("errorMessage", "${entity2.singular} was not found.");
+        </#list>
+                return "redirect:/";
+            }
+    </#list>
+<#else>
             model.addAttribute("editForm", new ${entityName}EditForm());
             return "${entityName?uncap_first}Edit";
-        }
+</#if>
+        } else {
 
-        // Otherwise, edit existing record.
-        try {
-            ${entityName} entity = service.findById(id);
-            ${entityName}EditForm editForm = new ${entityName}EditForm(entity);
-            model.addAttribute("editForm", editForm);
-            return "${entityName?uncap_first}Edit";
-        } catch (NotFoundException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
-            return "redirect:/${entityName?uncap_first}List";
+            // Otherwise, edit existing record.
+            try {
+                ${entityName} entity = service.findById(id);
+                ${entityName}EditForm editForm = new ${entityName}EditForm(entity);
+                model.addAttribute("editForm", editForm);
+                return "${entityName?uncap_first}Edit";
+            } catch (NotFoundException e) {
+                redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
+                return "redirect:/";
+            }
         }
     }
-    
+
     @PostMapping("/${entityName?uncap_first}Edit")
     public String process${entityName}Edit(@Valid @ModelAttribute("editForm") ${entityName}EditForm editForm,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -132,10 +155,10 @@ public class ${entityName}Controller {
             return "redirect:/${entityName?uncap_first}?id={id}";
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
-            return "redirect:/${entityName?uncap_first}List";
+            return "redirect:/";
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
-            return "redirect:/${entityName?uncap_first}List";
+            return "redirect:/";
         }
     }
 
@@ -151,18 +174,17 @@ public class ${entityName}Controller {
                 return "redirect:/${entityName?uncap_first}List";
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
-                return "redirect:/${entityName?uncap_first}List";
+                return "redirect:/";
             }
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was not found.");
-            return "redirect:/${entityName?uncap_first}List";
+            return "redirect:/";
         } catch (OptimisticLockingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
-            return "redirect:/${entityName?uncap_first}List";
+            return "redirect:/";
         } catch (ReferentialIntegrityException e) {
-            redirectAttributes
-                    .addFlashAttribute("errorMessage", "${singular} cannot be deleted because other data depends on it.");
-            return "redirect:/categoryList";
+            redirectAttributes.addFlashAttribute("errorMessage", "${singular} cannot be deleted because other data depends on it.");
+            return "redirect:/";
         }
     }
 <#list fields?filter(f -> f.joinColumn??) as field>
@@ -180,8 +202,12 @@ public class ${entityName}Controller {
     </#if>
 
     @ModelAttribute("all${field.fieldName?cap_first}")
-    public Iterable<${field.type}> load${field.fieldName?cap_first}DropDown(<#if hasParent>Long parentId</#if>) {
-        return ${field.fieldName}Service.findAll(<#if hasParent>parentId</#if>);
+    public List<String> load${field.fieldName?cap_first}DropDown(<#if hasParent>Long parentId</#if>) {
+        List<String> list = new ArrayList<>();
+        for (${field.type} value : ${field.fieldName}Service.findAll(<#if hasParent>parentId</#if>)) {
+            list.add(value.toString());
+        }
+        return list;
     }
 </#list>
 }
