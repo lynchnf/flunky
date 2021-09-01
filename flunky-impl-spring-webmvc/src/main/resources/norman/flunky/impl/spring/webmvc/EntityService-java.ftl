@@ -24,7 +24,7 @@ public class ${entityName}Service {
     private ${entityName}Repository repository;
 
     public Iterable<${entityName}> findAll(<#if parentField??>Long parentId</#if>) {
-        Sort sort = Sort.by(Sort.Direction.${defaultSort}, "${mainField}", "id");
+        Sort sort = Sort.by(Sort.Direction.${dftSortDirection}, "${dftSortField}", "id");
 <#if parentField??>
         return repository.findBy${parentField?cap_first}_Id(parentId, sort);
 <#else>

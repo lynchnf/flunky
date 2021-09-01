@@ -55,7 +55,7 @@ public class FakeDataFactory {
     }
 
 <#list entities as entity>
-    <#list entity.fields?filter(f -> f.fieldName == entity.mainField) as field>
+    <#list entity.fields?filter(f -> f.fieldName == entity.dftSortField) as field>
     private Map<${field.type}, ${entity.entityName}> ${entity.entityName?uncap_first}Map = new HashMap<>();
     </#list>
 </#list>
@@ -66,13 +66,13 @@ public class FakeDataFactory {
     }
 
     public void doIt() {
-        Map<String, String> mainFieldMap = new HashMap<>();
+        Map<String, String> dftSortFieldMap = new HashMap<>();
 <#list entities as entity>
 
-        mainFieldMap.put("${entity.entityName}", "${entity.mainField}");
+        dftSortFieldMap.put("${entity.entityName}", "${entity.dftSortField}");
         for (int i = 0; i < ${entity.nbrOfFakeRecords}; i++) {
             ${entity.entityName} entity = nextRandom${entity.entityName}();
-            ${entity.entityName?uncap_first}Map.put(entity.get${entity.mainField?cap_first}(), entity);
+            ${entity.entityName?uncap_first}Map.put(entity.get${entity.dftSortField?cap_first}(), entity);
         }
 </#list>
 
@@ -86,7 +86,7 @@ public class FakeDataFactory {
 <#list entities as entity>
 
             for (${entity.entityName} record : ${entity.entityName?uncap_first}Map.values()) {
-                printInsert(record, mainFieldMap, writer);
+                printInsert(record, dftSortFieldMap, writer);
             }
             if (!${entity.entityName?uncap_first}Map.isEmpty()) {
                 LOGGER.info(String.format("Successfully wrote %d insert statements for table %s.", ${entity.entityName?uncap_first}Map.size(),
@@ -234,8 +234,8 @@ public class FakeDataFactory {
         return list.get(RANDOM.nextInt(entities.size()));
     }
 
-    private void printInsert(Object bean, Map<String, String> mainFieldMap, PrintWriter writer) {
-        EntityToSqlConverter converter = new EntityToSqlConverter(bean, mainFieldMap);
+    private void printInsert(Object bean, Map<String, String> dftSortFieldMap, PrintWriter writer) {
+        EntityToSqlConverter converter = new EntityToSqlConverter(bean, dftSortFieldMap);
         String tableName = converter.getTableName();
         String columnNames = "`" + StringUtils.join(converter.getColumnNames(), "`,`") + "`";
         String columnValues = StringUtils.join(converter.getColumnValues(), ",");

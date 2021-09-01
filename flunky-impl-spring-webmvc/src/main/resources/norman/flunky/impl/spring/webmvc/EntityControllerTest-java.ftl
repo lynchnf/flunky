@@ -41,10 +41,10 @@ public class ${entityName}ControllerTest {
     public void load${entityName}List() throws Exception {
         // Lets say we're gonna get the first of two pages of records.
         int pageNumber = 0;
-        int pageSize = ${defaultPage};
+        int pageSize = ${dftPageSize};
         long total = 2 * pageSize;
-        Sort.Direction sortDirection = Sort.Direction.${defaultSort};
-        String[] sortColumns = {"${mainField}", "id"};
+        Sort.Direction sortDirection = Sort.Direction.${dftSortDirection};
+        String[] sortColumns = {"${dftSortField}", "id"};
 
         // Generate a sorted list of records.
         FakeDataFactory factory = new FakeDataFactory();
@@ -54,7 +54,7 @@ public class ${entityName}ControllerTest {
             entity.setId((long) (i + 1));
             entities.add(entity);
         }
-        entities.sort(Comparator.comparing(${entityName}::get${mainField?cap_first}).thenComparing(${entityName}::getId));
+        entities.sort(Comparator.comparing(${entityName}::get${dftSortField?cap_first}).thenComparing(${entityName}::getId));
 
         // Mock the service response.
         PageRequest pageable = PageRequest.of(pageNumber, pageSize, sortDirection, sortColumns);
@@ -74,7 +74,7 @@ public class ${entityName}ControllerTest {
         assertEquals(2, listForm.getTotalPages());
         for (int i = 0; i < pageSize; i++) {
             assertEquals(entities.get(i).getId(), listForm.getRows().get(i).getId());
-            assertEquals(entities.get(i).get${mainField?cap_first}(), listForm.getRows().get(i).get${mainField?cap_first}());
+            assertEquals(entities.get(i).get${dftSortField?cap_first}(), listForm.getRows().get(i).get${dftSortField?cap_first}());
         }
     }
 
@@ -94,7 +94,7 @@ public class ${entityName}ControllerTest {
         // @formatter:on
         ${entityName}View view = (${entityName}View) mvcResult.getModelAndView().getModel().get("view");
         assertEquals(entity.getId(), view.getId());
-        assertEquals(entity.get${mainField?cap_first}(), view.get${mainField?cap_first}());
+        assertEquals(entity.get${dftSortField?cap_first}(), view.get${dftSortField?cap_first}());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ${entityName}ControllerTest {
         ${entityName}EditForm editForm = (${entityName}EditForm) mvcResult.getModelAndView().getModel().get("editForm");
         assertEquals(entity.getId(), editForm.getId());
         assertEquals(entity.getVersion(), editForm.getVersion());
-        assertEquals(entity.get${mainField?cap_first}(), editForm.get${mainField?cap_first}());
+        assertEquals(entity.get${dftSortField?cap_first}(), editForm.get${dftSortField?cap_first}());
     }
 
     @Test
@@ -143,7 +143,7 @@ public class ${entityName}ControllerTest {
         ${entityName}EditForm editForm = (${entityName}EditForm) mvcResult.getModelAndView().getModel().get("editForm");
         assertNull(editForm.getId());
         assertEquals(0, editForm.getVersion());
-        assertNull(editForm.get${mainField?cap_first}());
+        assertNull(editForm.get${dftSortField?cap_first}());
     }
 
     @Test

@@ -82,8 +82,8 @@ A CSV file that contains information about entity fields to be created for your 
 |     |  1  | Service Unit tests.
 |  x  |  3  | Elephants all the way down.
 |     |  8  | Refactor Fake Data Generator to correctly write foreign key select in insert statement.
-|     |  1  | Split mainField into defaultSortField and listLinkField.
+|  x  |  1  | Split mainField into defaultSortField and listLinkField.
 |     |  1  | If listLinkField is blank, show an underscore.  
-|     |  1  | Rename defaultSort to defaultSortDirection.
+|  x  |  1  | Rename defaultSort to defaultSortDirection.
 |     |  3  | Write validation rules for flunky-impl-spring-webmvc.
 |     |  1  | Add links from entity fields to entity view.

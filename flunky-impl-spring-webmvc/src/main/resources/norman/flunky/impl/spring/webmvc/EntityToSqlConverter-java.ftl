@@ -25,13 +25,13 @@ import static ${basePackage}.util.MiscUtils.YYMD;
 
 public class EntityToSqlConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityToSqlConverter.class);
-    private Map<String, String> mainFieldMap;
+    private Map<String, String> dftSortFieldMap;
     private String tableName;
     private SortedMap<String, String> simpleColumns = new TreeMap<>();
     private SortedMap<String, String> joinColumns = new TreeMap<>();
 
-    public EntityToSqlConverter(Object entity, Map<String, String> mainFieldMap) {
-        this.mainFieldMap = mainFieldMap;
+    public EntityToSqlConverter(Object entity, Map<String, String> dftSortFieldMap) {
+        this.dftSortFieldMap = dftSortFieldMap;
         Class<?> entityClass = entity.getClass();
         tableName = MiscUtils.camelToSnake(entityClass.getSimpleName());
 
@@ -98,7 +98,7 @@ public class EntityToSqlConverter {
     private String getJoinColumnExpression(Class<?> relatedClass, Object relatedEntity) {
         String relatedClassName = relatedClass.getSimpleName();
         String relatedTableName = MiscUtils.camelToSnake(relatedClassName);
-        String relatedMainFieldName = mainFieldMap.get(relatedClassName);
+        String relatedMainFieldName = dftSortFieldMap.get(relatedClassName);
         String relatedMainColumn = MiscUtils.camelToSnake(relatedMainFieldName);
         try {
             Field relatedMainField = relatedClass.getDeclaredField(relatedMainFieldName);

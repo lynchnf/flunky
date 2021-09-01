@@ -50,9 +50,9 @@ public class ${entityName}Controller {
     @GetMapping("/${entityName?uncap_first}List")
     public String load${entityName}List(
             @RequestParam(value = "pageNumber", required = false, defaultValue = "0") int pageNumber,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "${defaultPage}") int pageSize,
-            @RequestParam(value = "sortColumn", required = false, defaultValue = "${mainField}") String sortColumn,
-            @RequestParam(value = "sortDirection", required = false, defaultValue = "${defaultSort}") Sort.Direction sortDirection,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "${dftPageSize}") int pageSize,
+            @RequestParam(value = "sortColumn", required = false, defaultValue = "${dftSortField}") String sortColumn,
+            @RequestParam(value = "sortDirection", required = false, defaultValue = "${dftSortDirection}") Sort.Direction sortDirection,
             <#if parentField??>@RequestParam(value = "parentId") Long parentId, </#if>Model model) {
 
         // Convert sort column from string to an array of strings.
