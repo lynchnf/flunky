@@ -14,6 +14,7 @@ import ${application.basePackage}.service.${field.type}Service;
 import ${application.basePackage}.web.view.${entityName}EditForm;
 import ${application.basePackage}.web.view.${entityName}ListForm;
 import ${application.basePackage}.web.view.${entityName}View;
+import ${application.basePackage}.web.view.EntitySelectOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,6 @@ public class ${entityName}Controller {
 </#if>
             Model model, RedirectAttributes redirectAttributes) {
 
-
         // If no id, add new record.
         if (id == null) {
 <#if parentField??>
@@ -168,10 +168,18 @@ public class ${entityName}Controller {
         try {
             ${entityName} entity = service.findById(id);
             if (entity.getVersion() == version) {
+<#if parentField??>
+                Long parentId = entity.get${parentField?cap_first}().getId();
+</#if>
                 service.delete(entity);
                 String successMessage = "${singular} successfully deleted.";
                 redirectAttributes.addFlashAttribute("successMessage", successMessage);
+<#if parentField??>
+                redirectAttributes.addAttribute("parentId", parentId);
+                return "redirect:/${entityName?uncap_first}List?parentId={parentId}";
+<#else>
                 return "redirect:/${entityName?uncap_first}List";
+</#if>
             } else {
                 redirectAttributes.addFlashAttribute("errorMessage", "${singular} was updated by another user.");
                 return "redirect:/";
@@ -202,12 +210,13 @@ public class ${entityName}Controller {
     </#if>
 
     @ModelAttribute("all${field.fieldName?cap_first}")
-    public List<String> load${field.fieldName?cap_first}DropDown(<#if hasParent>Long parentId</#if>) {
-        List<String> list = new ArrayList<>();
-        for (${field.type} value : ${field.fieldName}Service.findAll(<#if hasParent>parentId</#if>)) {
-            list.add(value.toString());
+    public List<EntitySelectOption> load${field.fieldName?cap_first}SelectOptions(<#if hasParent>Long parentId</#if>) {
+        List<EntitySelectOption> options = new ArrayList<>();
+        for (${field.type} entity : ${field.fieldName}Service.findAll(<#if hasParent>parentId</#if>)) {
+            EntitySelectOption option = new EntitySelectOption(entity.getId(), entity.toString());
+            options.add(option);
         }
-        return list;
+        return options;
     }
 </#list>
 }

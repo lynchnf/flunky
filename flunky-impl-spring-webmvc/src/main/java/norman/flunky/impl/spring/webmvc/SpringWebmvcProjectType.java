@@ -22,10 +22,12 @@ public class SpringWebmvcProjectType extends AbstractProjectType {
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/Application.java", GENERATE));
         applicationGenerationProperties
                 .add(new GenerationBean("common.js", "/src/main/resources/static/js/common.js", COPY));
-        applicationGenerationProperties.add(new GenerationBean("EntityToSqlConverter-java.ftl",
-                "/src/test/java/${basePackage?replace(\".\", \"/\")}/EntityToSqlConverter.java", GENERATE));
-        applicationGenerationProperties.add(new GenerationBean("FakeDataFactory-java.ftl",
-                "/src/test/java/${basePackage?replace(\".\", \"/\")}/FakeDataFactory.java", GENERATE));
+        applicationGenerationProperties.add(new GenerationBean("EntitySelectOption-java.ftl",
+                "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/view/EntitySelectOption.java", GENERATE));
+        //applicationGenerationProperties.add(new GenerationBean("EntityToSqlConverter-java.ftl",
+        //        "/src/test/java/${basePackage?replace(\".\", \"/\")}/EntityToSqlConverter.java", GENERATE));
+        //applicationGenerationProperties.add(new GenerationBean("FakeDataFactory-java.ftl",
+        //        "/src/test/java/${basePackage?replace(\".\", \"/\")}/FakeDataFactory.java", GENERATE));
         applicationGenerationProperties.add(new GenerationBean("HomePage-java.ftl",
                 "/src/main/java/${basePackage?replace(\".\", \"/\")}/web/HomePage.java", GENERATE));
         applicationGenerationProperties

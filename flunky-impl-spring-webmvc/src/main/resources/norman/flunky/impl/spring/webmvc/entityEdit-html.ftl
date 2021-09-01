@@ -53,7 +53,7 @@
         <#if field.joinColumn??>
                 <td><select th:field="*{${field.fieldName}Id}" th:errorclass="field-error">
                         <option value="">Please select ...</option>
-                        <option th:each="${field.fieldName}:${r"${"}all${field.fieldName?cap_first}}" th:value="${r"${"}${field.fieldName}.id}" th:text="${r"${"}${field.fieldName}}"></option>
+                        <option th:each="option:${r"${"}all${field.fieldName?cap_first}}" th:value="${r"${"}option.value}" th:text="${r"${"}option.text}"></option>
                     </select></td>
         <#elseif field.enumType??>
                 <td><select th:field="*{${field.fieldName}}" th:errorclass="field-error">

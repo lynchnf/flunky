@@ -64,7 +64,7 @@ A CSV file that contains information about entity fields to be created for your 
 
 |  x  | Pts | Task
 | --- | --- | ---
-|  o  |  3  | Add parent entity to entity csv.
+|  x  |  3  | Add parent entity to entity csv.
 |     |  1  | Make entity.plural optional. Default to ${entity.singular}s |
 |     |  1  | Make entity.toString optional. Do not generate a toString() method if left blank.
 |  x  |  1  | Import StringUtils and MiscUtils into entity class so static methods from those utility classes can be used in the toString expression.
@@ -82,3 +82,8 @@ A CSV file that contains information about entity fields to be created for your 
 |     |  1  | Service Unit tests.
 |  x  |  3  | Elephants all the way down.
 |     |  8  | Refactor Fake Data Generator to correctly write foreign key select in insert statement.
+|     |  1  | Split mainField into defaultSortField and listLinkField.
+|     |  1  | If listLinkField is blank, show an underscore.  
+|     |  1  | Rename defaultSort to defaultSortDirection.
+|     |  3  | Write validation rules for flunky-impl-spring-webmvc.
+|     |  1  | Add links from entity fields to entity view.
