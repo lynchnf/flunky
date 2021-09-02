@@ -87,3 +87,5 @@ A CSV file that contains information about entity fields to be created for your 
 |  x  |  1  | Rename defaultSort to defaultSortDirection.
 |     |  3  | Write validation rules for flunky-impl-spring-webmvc.
 |     |  1  | Add links from entity fields to entity view.
+|     |  2  | Make required boolean a checkbox.
+

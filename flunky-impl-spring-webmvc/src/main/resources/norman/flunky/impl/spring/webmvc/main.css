@@ -9,3 +9,15 @@
 .field-error {
     background-color: #ff7f7f;
 }
+
+table, th, td {
+    border: 1px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    text-align: start;
+}
