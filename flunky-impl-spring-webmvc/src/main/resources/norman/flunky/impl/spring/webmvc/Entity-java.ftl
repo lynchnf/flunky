@@ -34,16 +34,15 @@ public class ${entityName} {
     @Enumerated(EnumType.${field.enumType})
     <#elseif field.type == "Date">
     @Temporal(TemporalType.${field.temporalType})
-    <#else>
-        <#assign myParms = [] />
-        <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
-        <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
-        <#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
-        <#if field.nullable?? && field.nullable == "false"><#assign myParms = myParms + [ "nullable = false" ] /></#if>
-        <#list myParms>
-    @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
-        </#list>
     </#if>
+    <#assign myParms = [] />
+    <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
+    <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
+    <#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
+    <#if field.nullable?? && field.nullable == "false"><#assign myParms = myParms + [ "nullable = false" ] /></#if>
+    <#list myParms>
+    @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
+    </#list>
     private ${field.type} ${field.fieldName};
 </#list>
 
