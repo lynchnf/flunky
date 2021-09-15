@@ -30,19 +30,21 @@ public class ${entityName} {
     <#if field.joinColumn??>
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "${field.joinColumn}"<#if field.nullable?? && field.nullable == "false">, nullable = false</#if>)
-    <#elseif field.enumType??>
+    <#else>
+        <#if field.enumType??>
     @Enumerated(EnumType.${field.enumType})
-    <#elseif field.type == "Date">
+        <#elseif field.type == "Date">
     @Temporal(TemporalType.${field.temporalType})
-    </#if>
-    <#assign myParms = [] />
-    <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
-    <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
-    <#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
-    <#if field.nullable?? && field.nullable == "false"><#assign myParms = myParms + [ "nullable = false" ] /></#if>
-    <#list myParms>
+        </#if>
+        <#assign myParms = [] />
+        <#if field.length??><#assign myParms = myParms + [ "length = ${field.length}" ] /></#if>
+        <#if field.precision??><#assign myParms = myParms + [ "precision = ${field.precision}" ] /></#if>
+        <#if field.scale??><#assign myParms = myParms + [ "scale = ${field.scale}" ] /></#if>
+        <#if field.nullable?? && field.nullable == "false"><#assign myParms = myParms + [ "nullable = false" ] /></#if>
+        <#list myParms>
     @Column(<#items as myParm>${myParm}<#sep>, </#sep></#items>)
-    </#list>
+        </#list>
+    </#if>
     private ${field.type} ${field.fieldName};
 </#list>
 
