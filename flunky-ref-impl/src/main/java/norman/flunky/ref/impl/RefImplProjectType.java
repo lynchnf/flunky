@@ -13,7 +13,9 @@ public class RefImplProjectType implements ProjectType {
     private List<GenerationBean> entityGenerationProperties = new ArrayList<>();
 
     public RefImplProjectType() {
-        applicationGenerationProperties.add(new GenerationBean(".gitignore", "/.gitignore", TemplateType.COPY));
+        // There is some weirdness with Maven not copying the .gitignore resource into the .jar file, so I have
+        // side-stepped this issue by removing the leading dot in the template file's name.
+        applicationGenerationProperties.add(new GenerationBean("gitignore", "/.gitignore", TemplateType.COPY));
         applicationGenerationProperties
                 .add(new GenerationBean("index-jsp.ftl", "/src/main/webapp/index.jsp", TemplateType.GENERATE));
         applicationGenerationProperties.add(new GenerationBean("pom-xml.ftl", "/pom.xml", TemplateType.GENERATE));
