@@ -1,0 +1,6 @@
+entityName,fieldName,label,type,length,temporalType,enumType
+Individual,name,Full Name,String,100,,
+Individual,dob,Date of Birth,Date,,DATE,
+Location,addressLine,Street Address,String,50,,
+Location,name,City Name,String,50,,
+Location,stateCode,State Code,StateCode,,,STRING

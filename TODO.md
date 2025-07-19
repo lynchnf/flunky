@@ -12,6 +12,7 @@
 - [ ] Write unit tests for generated reference implementation.
 - [ ] Update dependencies while keeping Java version 8.
 - [ ] Update pom.xml for generated reference implementation.
+- [ ] Automatically close resources instead of explicit close in finally block.
 - [ ] Tag new master release.
 
 ## Medium Term Goals

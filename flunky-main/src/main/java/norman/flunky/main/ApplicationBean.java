@@ -26,6 +26,33 @@ public class ApplicationBean {
     private List<Map<String, Object>> entityModels = new ArrayList<>();
     private List<Map<String, Object>> enumModels = new ArrayList<>();
 
+    /*
+     * When the ApplicationBean is created, it will contain maps of properties and lists of maps of properties which may
+     * also contain maps of properties and lists of maps of properties. Once it is finished being constructed, it should
+     * have the following structure.
+     *
+     * @formatter:off
+     * application bean
+     *   |
+     *   +-- application model (single)
+     *   |     |
+     *   |     +-- entity models (list)
+     *   |     |     |
+     *   |     |     +-- field models (list)
+     *   |     |
+     *   |     +-- enum models (list
+     *   |
+     *   +-- entity models (list)
+     *   |     |
+     *   |     +-- application model (single)
+     *   |     |
+     *   |     +-- field models (list)
+     *   |
+     *   +-- enum models (list)
+     *         |
+     *         +-- application model (single)
+     * @formatter:on
+     */
     public ApplicationBean(String appPropsPath) {
         Reader reader = null;
 
@@ -81,7 +108,8 @@ public class ApplicationBean {
                 entityModels.add(entityModel1);
                 applicationEntities.add(entityModel2);
 
-                // Get field rows for this entity and use them to create field models for standalone entity models and application models.
+                // Get field rows for this entity and use them to create field models for standalone entity models and
+                // application models.
                 List<Map<String, Object>> entityFields1 = new ArrayList<>();
                 List<Map<String, Object>> entityFields2 = new ArrayList<>();
                 entityModel1.put("fields", entityFields1);
@@ -109,7 +137,8 @@ public class ApplicationBean {
             applicationModel.put("version", properties.getProperty("version"));
             applicationModel.put("basePackage", properties.getProperty("base.package"));
             applicationModel.put("description", properties.getProperty("description"));
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException
+                | NoSuchMethodException | InvocationTargetException e) {
             throw new LoggingException(LOGGER, "Unable to load properties from file " + appPropsPath + ".", e);
         } finally {
             if (reader != null) {
