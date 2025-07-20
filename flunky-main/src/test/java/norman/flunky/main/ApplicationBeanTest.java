@@ -1,25 +1,25 @@
 package norman.flunky.main;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import norman.flunky.api.ProjectType;
 
-class ApplicationBeanTest {
-    ApplicationBean bean;
+public class ApplicationBeanTest {
+    private ApplicationBean bean;
 
-    @BeforeEach
-    void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL resource = loader.getResource("testdata/test-app.properties");
         String path = resource.toURI().getPath();
@@ -27,25 +27,25 @@ class ApplicationBeanTest {
         bean = new ApplicationBean(path);
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         bean = null;
     }
 
     @Test
-    void testGetProjectType() {
+    public void testGetProjectType() {
         Object projectType = bean.getProjectType();
-        assertInstanceOf(ProjectType.class, projectType);
+        assertTrue(projectType instanceof ProjectType);
     }
 
     @Test
-    void testGetProjectDirectory() {
+    public void testGetProjectDirectory() {
         File directory = bean.getProjectDirectory();
         assertEquals("test-dir", directory.getPath());
     }
 
     @Test
-    void testGetApplicationModel() {
+    public void testGetApplicationModel() {
         Map<String, Object> applicationModel = bean.getApplicationModel();
         assertApplicationModel(applicationModel, null, null);
 
@@ -75,7 +75,7 @@ class ApplicationBeanTest {
     }
 
     @Test
-    void testGetEntityModels() {
+    public void testGetEntityModels() {
         List<Map<String, Object>> entityModels = bean.getEntityModels();
         assertNotNull(entityModels);
         for (Map<String, Object> entityModel : entityModels) {
@@ -101,7 +101,7 @@ class ApplicationBeanTest {
     }
 
     @Test
-    void testGetEnumModels() {
+    public void testGetEnumModels() {
         List<Map<String, Object>> enumModels = bean.getEnumModels();
         assertNotNull(enumModels);
         for (Map<String, Object> enumModel : enumModels) {
@@ -125,12 +125,13 @@ class ApplicationBeanTest {
         } else if (enumName != null) {
             message = "Application properties not match for enum name" + enumName + ".";
         }
-        assertNotNull(applicationModel, message);
-        assertEquals("com.mycompany.test", applicationModel.get("groupId"), message);
-        assertEquals("test-app", applicationModel.get("artifactId"), message);
-        assertEquals("0.1.0-SNAPSHOT", applicationModel.get("version"), message);
-        assertEquals("com.mycompany.test.app", applicationModel.get("basePackage"), message);
-        assertEquals("My test application.", applicationModel.get("description"), message);
+
+        assertNotNull(message, applicationModel);
+        assertEquals(message, "com.mycompany.test", applicationModel.get("groupId"));
+        assertEquals(message, "test-app", applicationModel.get("artifactId"));
+        assertEquals(message, "0.1.0-SNAPSHOT", applicationModel.get("version"));
+        assertEquals(message, "com.mycompany.test.app", applicationModel.get("basePackage"));
+        assertEquals(message, "My test application.", applicationModel.get("description"));
     }
 
     private void assertEntityModel(Map<String, Object> entityModel) {
@@ -151,8 +152,8 @@ class ApplicationBeanTest {
             actualPlural = "Home Addresses";
         }
         String message = "Entity properties not match for entity name" + entityName + ".";
-        assertEquals(actualSingular, entityModel.get("singular"), message);
-        assertEquals(actualPlural, entityModel.get("plural"), message);
+        assertEquals(message, actualSingular, entityModel.get("singular"));
+        assertEquals(message, actualPlural, entityModel.get("plural"));
     }
 
     private void assertFieldModel(Map<String, Object> fieldModel, String entityNameFromEntity) {
@@ -200,11 +201,11 @@ class ApplicationBeanTest {
         }
         String message = "Field properties not match for entity name " + entityName + " and field name " + fieldName
                 + ".";
-        assertEquals(actualLabel, fieldModel.get("label"), message);
-        assertEquals(actualType, fieldModel.get("type"), message);
-        assertEquals(actualLength, fieldModel.get("length"), message);
-        assertEquals(actualTemporalType, fieldModel.get("temporalType"), message);
-        assertEquals(actualEnumType, fieldModel.get("enumType"), message);
+        assertEquals(message, actualLabel, fieldModel.get("label"));
+        assertEquals(message, actualType, fieldModel.get("type"));
+        assertEquals(message, actualLength, fieldModel.get("length"));
+        assertEquals(message, actualTemporalType, fieldModel.get("temporalType"));
+        assertEquals(message, actualEnumType, fieldModel.get("enumType"));
     }
 
     private void assertEnumModel(Map<String, Object> enumModel) {
@@ -220,7 +221,6 @@ class ApplicationBeanTest {
             actualValues = "IA IL IN KY MI MO WI";
         }
         String message = "Enum properties not match for enum name" + enumName + ".";
-        assertEquals(actualValues, enumModel.get("values"), message);
+        assertEquals(message, actualValues, enumModel.get("values"));
     }
-
 }

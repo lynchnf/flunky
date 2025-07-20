@@ -1,50 +1,51 @@
 package norman.flunky.ref.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import norman.flunky.api.GenerationBean;
 
-class RefImplProjectTypeTest {
-    RefImplProjectType projectType;
+public class RefImplProjectTypeTest {
+    private RefImplProjectType projectType;
 
-    @BeforeEach
-    void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         projectType = new RefImplProjectType();
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         projectType = null;
     }
 
     @Test
-    void testGetTemplatePrefix() {
+    public void testGetTemplatePrefix() {
         assertEquals("flunky/ref/impl", projectType.getTemplatePrefix());
     }
 
     @Test
-    void testGetApplicationGenerationProperties() {
+    public void testGetApplicationGenerationProperties() {
         List<String> actualTemplateNames = Arrays
                 .asList(new String[] { "gitignore", "index-jsp.ftl", "pom-xml.ftl", "readme-md.ftl", "web-xml.ftl" });
 
         assertEquals(actualTemplateNames.size(), projectType.getApplicationGenerationProperties().size());
 
         for (GenerationBean bean : projectType.getApplicationGenerationProperties()) {
-            assertTrue(actualTemplateNames.contains(bean.getTemplateName()), "Actual template name "
-                    + bean.getTemplateName() + " not found in list of expected template names.");
+            assertTrue(
+                    "Actual template name " + bean.getTemplateName() + " not found in list of expected template names.",
+                    actualTemplateNames.contains(bean.getTemplateName()));
         }
     }
 
     @Test
-    void testGetEntityGenerationProperties() {
+    public void testGetEntityGenerationProperties() {
         List<String> actualTemplateNames = Arrays
                 .asList(new String[] { "Entity-java.ftl", "EntityDeleteProcessor-java.ftl", "entityEdit-jsp.ftl",
                         "EntityEditLoader-java.ftl", "EntityEditProcessor-java.ftl", "EntityForm-java.ftl",
@@ -54,13 +55,14 @@ class RefImplProjectTypeTest {
         assertEquals(actualTemplateNames.size(), projectType.getEntityGenerationProperties().size());
 
         for (GenerationBean bean : projectType.getEntityGenerationProperties()) {
-            assertTrue(actualTemplateNames.contains(bean.getTemplateName()), "Actual template name "
-                    + bean.getTemplateName() + " not found in list of expected template names.");
+            assertTrue(
+                    "Actual template name " + bean.getTemplateName() + " not found in list of expected template names.",
+                    actualTemplateNames.contains(bean.getTemplateName()));
         }
     }
 
     @Test
-    void testGetEnumGenerationProperties() {
+    public void testGetEnumGenerationProperties() {
         assertEquals(0, projectType.getEnumGenerationProperties().size());
     }
 }

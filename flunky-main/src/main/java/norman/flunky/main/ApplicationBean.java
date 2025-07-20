@@ -1,12 +1,5 @@
 package norman.flunky.main;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import norman.flunky.api.ProjectType;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +10,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+
+import norman.flunky.api.ProjectType;
 
 public class ApplicationBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationBean.class);
