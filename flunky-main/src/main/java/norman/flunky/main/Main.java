@@ -1,5 +1,14 @@
 package norman.flunky.main;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import norman.flunky.api.GenerationBean;
+import norman.flunky.api.ProjectType;
+import norman.flunky.api.TemplateType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,16 +20,6 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import norman.flunky.api.GenerationBean;
-import norman.flunky.api.ProjectType;
-import norman.flunky.api.TemplateType;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);

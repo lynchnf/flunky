@@ -1,7 +1,6 @@
 package norman.flunky.main;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +13,8 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.Properties;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class MainTest {
     @Test

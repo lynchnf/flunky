@@ -1,11 +1,11 @@
 package norman.flunky.main.fake;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import norman.flunky.api.GenerationBean;
 import norman.flunky.api.ProjectType;
 import norman.flunky.api.TemplateType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FakeProjectType implements ProjectType {
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
