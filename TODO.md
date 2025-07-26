@@ -12,7 +12,7 @@
 - [x] Write unit tests for generated reference implementation.
 - [x] Update dependencies while keeping Java version 8.
 - [x] Update pom.xml for generated reference implementation.
-- [ ] Automatically close resources instead of explicit close in finally block.
+- [x] Automatically close resources instead of explicit close in finally block.
 - [ ] Set up code formatter git hook.
 - [ ] Tag new master release.
 

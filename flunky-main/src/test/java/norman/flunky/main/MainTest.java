@@ -37,26 +37,26 @@ public class MainTest {
         props.setProperty("entities.file", "test-app-entities.csv");
         props.setProperty("fields.file", "test-app-fields.csv");
         File propsFile = new File(dataDir, "test-app.properties");
-        Writer propsWriter = new FileWriter(propsFile);
-        props.store(propsWriter, "Main Test Properties");
-        propsWriter.close();
+        try (Writer propsWriter = new FileWriter(propsFile)) {
+            props.store(propsWriter, "Main Test Properties");
+        }
 
         // Create entities CSV test file.
         File entitiesFile = new File(dataDir, "test-app-entities.csv");
-        PrintWriter entitiesWriter = new PrintWriter(new FileWriter(entitiesFile));
-        entitiesWriter.println("entityName,otherEntProp");
-        entitiesWriter.println("Foo,ant");
-        entitiesWriter.println("Bar,bee");
-        entitiesWriter.close();
+        try (PrintWriter entitiesWriter = new PrintWriter(new FileWriter(entitiesFile))) {
+            entitiesWriter.println("entityName,otherEntProp");
+            entitiesWriter.println("Foo,ant");
+            entitiesWriter.println("Bar,bee");
+        }
 
         // Create fields CSV test file.
         File fieldsFile = new File(dataDir, "test-app-fields.csv");
-        PrintWriter fieldsWriter = new PrintWriter(new FileWriter(fieldsFile));
-        fieldsWriter.println("entityName,fieldName,otherFieldProp");
-        fieldsWriter.println("Foo,one,alfalfa");
-        fieldsWriter.println("Bar,two,barley");
-        fieldsWriter.println("Bar,three,corn");
-        fieldsWriter.close();
+        try (PrintWriter fieldsWriter = new PrintWriter(new FileWriter(fieldsFile))) {
+            fieldsWriter.println("entityName,fieldName,otherFieldProp");
+            fieldsWriter.println("Foo,one,alfalfa");
+            fieldsWriter.println("Bar,two,barley");
+            fieldsWriter.println("Bar,three,corn");
+        }
 
         // Run Flunky.
         Main.main(new String[] { propsFile.getAbsolutePath() });
@@ -74,22 +74,22 @@ public class MainTest {
 
     private void validateOutputFile(File outputDir, String outputFilePath, String[] expectedLines)
             throws FileNotFoundException, IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(new File(outputDir, outputFilePath)));
-        String line = reader.readLine();
-        int lineNbr = 0;
-        while (line != null) {
-            String message = "Line " + lineNbr + " of file " + outputFilePath + " not match expected value.";
-            if (lineNbr < expectedLines.length) {
-                assertEquals(message, expectedLines[lineNbr], line);
-            } else {
-                fail("Too many lines in file " + outputFilePath + ".");
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File(outputDir, outputFilePath)))) {
+            String line = reader.readLine();
+            int lineNbr = 0;
+            while (line != null) {
+                String message = "Line " + lineNbr + " of file " + outputFilePath + " not match expected value.";
+                if (lineNbr < expectedLines.length) {
+                    assertEquals(message, expectedLines[lineNbr], line);
+                } else {
+                    fail("Too many lines in file " + outputFilePath + ".");
+                }
+                line = reader.readLine();
+                lineNbr++;
             }
-            line = reader.readLine();
-            lineNbr++;
+            if (lineNbr < expectedLines.length) {
+                fail("Not enought lines in file " + outputFilePath + ".");
+            }
         }
-        if (lineNbr < expectedLines.length) {
-            fail("Not enought lines in file " + outputFilePath + ".");
-        }
-        reader.close();
     }
 }

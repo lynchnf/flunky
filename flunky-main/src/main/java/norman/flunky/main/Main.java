@@ -113,49 +113,21 @@ public class Main {
     }
 
     private static void copySourceFile(ClassLoader loader, String tmpPrefix, String tmpName, File outFile) {
-        InputStream template = null;
-        try {
-            template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName);
+        try (InputStream template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName)) {
             Files.copy(template, outFile.toPath());
         } catch (IOException e) {
             throw new LoggingException(LOGGER, "Unable to copy template " + tmpName + " to file " + outFile + ".", e);
-        } finally {
-            if (template != null) {
-                try {
-                    template.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to close input stream for template " + tmpName + ".");
-                }
-            }
         }
     }
 
     private static void generateSourceFile(Configuration cfg, ClassLoader loader, String tmpPrefix, String tmpName,
             File outFile, Map<String, Object> dataModel) {
-        InputStream template = null;
-        Writer writer = null;
-        try {
-            template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName);
-            writer = new FileWriter(outFile);
+        try (InputStream template = loader.getResourceAsStream(tmpPrefix + "/" + tmpName);
+                Writer writer = new FileWriter(outFile)) {
             Template tmp = new Template("name", new InputStreamReader(template), cfg);
             tmp.process(dataModel, writer);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
-        } finally {
-            if (template != null) {
-                try {
-                    template.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to close input stream for template " + tmpName + ".");
-                }
-            }
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to close writer for file " + outFile + ".", e);
-                }
-            }
         }
     }
 }

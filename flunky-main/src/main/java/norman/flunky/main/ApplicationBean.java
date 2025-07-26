@@ -54,15 +54,11 @@ public class ApplicationBean {
      * @formatter:on
      */
     public ApplicationBean(String appPropsPath) {
-        Reader reader = null;
-
-        try {
-            File appPropsFile = new File(appPropsPath);
-            File appPropsDir = appPropsFile.getParentFile();
-            reader = new FileReader(appPropsFile);
+        File appPropsFile = new File(appPropsPath);
+        File appPropsDir = appPropsFile.getParentFile();
+        try (Reader reader = new FileReader(appPropsFile)) {
             Properties properties = new Properties();
             properties.load(reader);
-
             projectType = (ProjectType) Class.forName(properties.getProperty("project.type")).getDeclaredConstructor()
                     .newInstance();
             projectDirectory = new File(properties.getProperty("project.directory"));
@@ -140,14 +136,6 @@ public class ApplicationBean {
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException
                 | NoSuchMethodException | InvocationTargetException e) {
             throw new LoggingException(LOGGER, "Unable to load properties from file " + appPropsPath + ".", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOGGER.warn("Unable to close reader for file " + appPropsPath + ".", e);
-                }
-            }
         }
     }
 
@@ -156,9 +144,7 @@ public class ApplicationBean {
         // If file name is null or blank, return an empty list.
         if (StringUtils.isNotBlank(fileName)) {
             File file = new File(dir, fileName);
-            CSVReader reader = null;
-            try {
-                reader = new CSVReader(new FileReader(file));
+            try (CSVReader reader = new CSVReader(new FileReader(file))) {
                 List<String[]> rows = reader.readAll();
                 String headingRow[] = null;
                 for (String[] row : rows) {
@@ -178,14 +164,6 @@ public class ApplicationBean {
                 }
             } catch (IOException | CsvException e) {
                 throw new LoggingException(LOGGER, "Unable to read CVS data from file " + fileName + ".", e);
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        LOGGER.warn("Unable to close CVS reader for file " + fileName + ".", e);
-                    }
-                }
             }
         }
         return dataMaps;
