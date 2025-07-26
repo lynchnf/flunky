@@ -9,10 +9,10 @@
 - [ ] Update README for flunky-ref-impl.
 - [x] Write unit tests flunky-main.
 - [x] Write unit tests flunky-ref-impl.
-- [ ] Write unit tests for generated reference implementation.
 - [x] Update dependencies while keeping Java version 8.
 - [ ] Update pom.xml for generated reference implementation.
 - [ ] Automatically close resources instead of explicit close in finally block.
+- [ ] Set up code formatter git hook.
 - [ ] Tag new master release.
 
 ## Medium Term Goals

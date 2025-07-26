@@ -1,11 +1,11 @@
 package norman.flunky.ref.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import norman.flunky.api.GenerationBean;
 import norman.flunky.api.ProjectType;
 import norman.flunky.api.TemplateType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RefImplProjectType implements ProjectType {
     private List<GenerationBean> applicationGenerationProperties = new ArrayList<>();
@@ -29,29 +29,50 @@ public class RefImplProjectType implements ProjectType {
         entityGenerationProperties.add(new GenerationBean("EntityDeleteProcessor-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}DeleteProcessor.java",
                 TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityDeleteProcessorTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}DeleteProcessorTest.java",
+                TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityEdit-jsp.ftl",
                 "/src/main/webapp/${entityName?uncap_first}Edit.jsp", TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityEditLoader-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}EditLoader.java",
                 TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityEditLoaderTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}EditLoaderTest.java",
+                TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityEditProcessor-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}EditProcessor.java",
                 TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityEditProcessorTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}EditProcessorTest.java",
+                TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityForm-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/form/${entityName}Form.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityFormTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/form/${entityName}FormTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityList-jsp.ftl",
                 "/src/main/webapp/${entityName?uncap_first}List.jsp", TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityListLoader-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}ListLoader.java",
                 TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityListLoaderTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}ListLoaderTest.java",
+                TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityService-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName}Service.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityServiceTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/service/${entityName}ServiceTest.java",
                 TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("entityView-jsp.ftl",
                 "/src/main/webapp/${entityName?uncap_first}View.jsp", TemplateType.GENERATE));
         entityGenerationProperties.add(new GenerationBean("EntityViewLoader-java.ftl",
                 "/src/main/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}ViewLoader.java",
+                TemplateType.GENERATE));
+        entityGenerationProperties.add(new GenerationBean("EntityViewLoaderTest-java.ftl",
+                "/src/test/java/${application.basePackage?replace(\".\", \"/\")}/${entityName}ViewLoaderTest.java",
                 TemplateType.GENERATE));
     }
 

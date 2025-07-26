@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ${entityName}Service {
     // If this was a real application, this service would use a real database.
-    private static Map<Long, ${entityName}> entities = new HashMap<>();
+    protected static Map<Long, ${entityName}> entities = new HashMap<>();
 
     public static List<${entityName}> getAllEntities() {
         ArrayList<${entityName}> allEntities = new ArrayList<>(entities.values());
