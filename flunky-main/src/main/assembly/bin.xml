@@ -21,12 +21,6 @@
             </includes>
         </fileSet>
     </fileSets>
-    <files>
-        <file>
-            <source>../flunky-ref-impl/README.md</source>
-            <destName>flunky-ref-impl.md</destName>
-        </file>
-    </files>
     <dependencySets>
         <dependencySet>
             <includes>
