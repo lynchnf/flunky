@@ -38,7 +38,7 @@ They will also create a reference implementation JAR file in directory `<workspa
 ## To Install
 
 To install Flunky on a Linux machine, copy file `flunky-main-x.x.x-bin.tar.gz` to your target directory and execute `tar -xf flunky-main-x.x.x-bin.tar.gz`.
-    
+
 On a Windows machine, copy file `flunky-main-x.x.x-bin.zip` to your target directory and unzip it.
 
 When done, this will produce a directory named `flunky` which will contain *almost* everything needed to run Flunky.
@@ -66,13 +66,13 @@ To use Flunky to generate a new project, do the following:
 
     See the [Maven guide to naming conventions](https://maven.apache.org/guides/mini/guide-naming-conventions.html) for
     more information on "good" values for your group id, artifact id, and version.
-    
+
 2.  Create CSV files (as documented for your implementation JAR).
     These CSV files need to be in the same directory as your properties file.
 
-3.  On a Linux machine, execute command `./flunky/bin/flunky.sh <path-to-your-properties-file>`. 
+3.  On a Linux machine, execute command `./flunky/bin/flunky.sh <path-to-your-properties-file>`.
     On a Windows machine, execute `flunky\bin\flunky.bat <path-to-your-properties-file>`.
-	
+
 ## To Create a New Implementation JAR
 
 ### Gotchas
